@@ -293,6 +293,154 @@
     line-height: 1.6;
   }
 
+  .actions-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .actions-row.has-freezes { justify-content: space-between; }
+
+  .freeze-badge {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .actions-row.has-freezes .freeze-badge { display: flex; }
+
+  .freeze-icon {
+    font-size: 16px;
+    line-height: 1;
+    filter: drop-shadow(0 0 6px rgba(10, 132, 255, 0.6));
+  }
+
+  .freeze-count {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.05em;
+    color: var(--pack);
+    line-height: 1;
+  }
+
+  .share-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 9px 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .share-btn:active {
+    background: var(--pack);
+    border-color: var(--pack);
+    color: white;
+  }
+
+  .share-btn svg { width: 13px; height: 13px; }
+
+  .setting-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    gap: 12px;
+  }
+
+  .setting-toggle-label {
+    font-size: 12px;
+    color: var(--text);
+    letter-spacing: 0.02em;
+    flex: 1;
+  }
+
+  .setting-toggle-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+
+  .toggle-switch {
+    width: 42px;
+    height: 24px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: var(--text-dim);
+    border-radius: 50%;
+    transition: left 0.2s, background 0.2s;
+  }
+
+  .toggle-switch.on {
+    background: var(--pack);
+    border-color: var(--pack);
+  }
+
+  .toggle-switch.on::after {
+    left: 20px;
+    background: white;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: calc(env(safe-area-inset-bottom) + 32px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface-2);
+    color: var(--text);
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    z-index: 300;
+    animation: toast-in 0.28s ease-out;
+    max-width: 420px;
+    text-align: center;
+  }
+
+  .toast.leaving { opacity: 0; transition: opacity 0.3s; }
+
+  @keyframes toast-in {
+    from { opacity: 0; transform: translate(-50%, 20px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+
   .day {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -975,6 +1123,18 @@
         </div>
       </div>
 
+      <div class="actions-row" id="actions-row">
+        <div class="freeze-badge" id="freeze-badge" aria-live="polite">
+          <span class="freeze-icon" aria-hidden="true">❄</span>
+          <span class="freeze-count" id="freeze-count">0</span>
+          <span id="freeze-label">Streak Freeze</span>
+        </div>
+        <button class="share-btn" id="share-btn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          App teilen
+        </button>
+      </div>
+
       <div class="rest-banner hidden" id="rest-banner">
         <div class="rest-banner-title">Rest Day</div>
         <div class="rest-banner-text">Heute ist frei. Gönn dir Regeneration oder mach leichtes Cardio.</div>
@@ -1200,6 +1360,13 @@
         <strong>Pause:</strong> 2–3 min bei schweren Sätzen, 60–90 s bei Isolation<br>
         <strong>Aufwärmen:</strong> 2 leichte Sätze vor jeder Grundübung<br>
         <strong>Deload:</strong> Alle 6–8 Wochen eine leichtere Woche einplanen
+        <div class="setting-toggle">
+          <div>
+            <div class="setting-toggle-label">Intelligente Gewichtsvorschläge</div>
+            <div class="setting-toggle-desc">Plus/Minus-Puls zeigt, wann du hoch- oder runtergehen solltest.</div>
+          </div>
+          <div class="toggle-switch on" id="rec-toggle" role="switch" aria-checked="true" tabindex="0"></div>
+        </div>
       </div>
 
     </div>
@@ -1640,7 +1807,16 @@
     return null;
   }
 
+  function loadRecEnabled() {
+    try { return localStorage.getItem('ppl-rec-enabled') !== '0'; } catch (e) { return true; }
+  }
+
+  function saveRecEnabled(v) {
+    try { localStorage.setItem('ppl-rec-enabled', v ? '1' : '0'); } catch (e) {}
+  }
+
   function refreshRecommendations() {
+    const enabled = loadRecEnabled();
     const profile = getProfile();
     document.querySelectorAll('.ex').forEach(ex => {
       const nameEl = ex.querySelector('.ex-name');
@@ -1648,10 +1824,31 @@
       const exId = exerciseId(nameEl.textContent);
       const widget = ex.querySelector('.ex-weight');
       if (!widget) return;
-      const rec = weightRecommendation(exId, profile);
       widget.classList.remove('rec-up', 'rec-down');
+      if (!enabled) return;
+      const rec = weightRecommendation(exId, profile);
       if (rec === 'increase') widget.classList.add('rec-up');
       else if (rec === 'decrease') widget.classList.add('rec-down');
+    });
+  }
+
+  function initRecToggle() {
+    const toggle = document.getElementById('rec-toggle');
+    if (!toggle) return;
+    const apply = (on) => {
+      toggle.classList.toggle('on', on);
+      toggle.setAttribute('aria-checked', on ? 'true' : 'false');
+    };
+    apply(loadRecEnabled());
+    const handler = () => {
+      const next = !toggle.classList.contains('on');
+      apply(next);
+      saveRecEnabled(next);
+      refreshRecommendations();
+    };
+    toggle.addEventListener('click', handler);
+    toggle.addEventListener('keydown', e => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); handler(); }
     });
   }
 
@@ -1751,6 +1948,47 @@
     try { localStorage.setItem('ppl-sessions', JSON.stringify(arr)); } catch (e) {}
   }
 
+  function loadFreezes() {
+    try {
+      const saved = localStorage.getItem('ppl-freezes');
+      if (saved) {
+        const p = JSON.parse(saved);
+        if (p && typeof p.available === 'number' && Array.isArray(p.used)) return p;
+      }
+    } catch (e) {}
+    return { available: 0, used: [] };
+  }
+
+  function saveFreezes(f) {
+    try { localStorage.setItem('ppl-freezes', JSON.stringify(f)); } catch (e) {}
+  }
+
+  function renderFreezeBadge() {
+    const f = loadFreezes();
+    const row = document.getElementById('actions-row');
+    const count = document.getElementById('freeze-count');
+    const label = document.getElementById('freeze-label');
+    if (!row) return;
+    row.classList.toggle('has-freezes', f.available > 0);
+    if (count) count.textContent = f.available;
+    if (label) label.textContent = f.available === 1 ? 'Streak Freeze' : 'Streak Freezes';
+  }
+
+  function maybeConsumeFreeze() {
+    const f = loadFreezes();
+    if (f.available === 0) return;
+    const sessions = loadSessions();
+    const allDates = new Set([...sessions.map(s => s.date), ...f.used]);
+    const today = todayIso();
+    const yesterday = addDays(today, -1);
+    const dayBefore = addDays(today, -2);
+    if (allDates.has(today) && !allDates.has(yesterday) && allDates.has(dayBefore)) {
+      f.available -= 1;
+      f.used.push(yesterday);
+      saveFreezes(f);
+    }
+  }
+
   function dayLabel(dayEl) {
     const label = dayEl.querySelector('.day-label')?.textContent?.trim() ?? '';
     const variant = dayEl.querySelector('.variant')?.textContent?.trim();
@@ -1844,7 +2082,9 @@
     });
     sessions.push({ date, day, exercises: exerciseIds });
     saveSessions(sessions);
+    maybeConsumeFreeze();
     renderStats();
+    renderFreezeBadge();
     refreshRecommendations();
   }
 
@@ -1898,8 +2138,9 @@
   }
 
   function calculateStreak(sessions) {
-    if (!sessions.length) return 0;
-    const dates = new Set(sessions.map(s => s.date));
+    const freezes = loadFreezes();
+    const dates = new Set([...sessions.map(s => s.date), ...freezes.used]);
+    if (!dates.size) return 0;
     const today = todayIso();
     let cursor;
     if (dates.has(today)) cursor = today;
@@ -2151,13 +2392,75 @@
     showIntro();
   }
 
+  // Share + Streak Freeze
+  function showToast(msg) {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add('leaving');
+      setTimeout(() => toast.remove(), 320);
+    }, 2800);
+  }
+
+  function grantFreezeIfEligible() {
+    const today = todayIso();
+    let last;
+    try { last = localStorage.getItem('ppl-last-share-reward'); } catch (e) {}
+    if (last === today) return 'already-today';
+    const f = loadFreezes();
+    if (f.available >= 3) return 'capped';
+    f.available += 1;
+    saveFreezes(f);
+    try { localStorage.setItem('ppl-last-share-reward', today); } catch (e) {}
+    renderFreezeBadge();
+    renderStats();
+    return 'granted';
+  }
+
+  async function shareApp() {
+    const url = window.location.origin + '/';
+    const shareData = {
+      title: 'PPL · Push Pull Legs',
+      text: 'Mein Gym-Plan als Mini-App. Offline, ohne Account.',
+      url
+    };
+    let shared = false;
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        shared = true;
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        shared = true;
+      }
+    } catch (e) {
+      if (e && e.name === 'AbortError') return;
+    }
+    if (!shared) { showToast(url); return; }
+    const result = grantFreezeIfEligible();
+    if (result === 'granted') {
+      showToast(navigator.share ? 'Danke fürs Teilen. Streak Freeze für dich.' : 'Link kopiert. Streak Freeze für dich.');
+    } else if (result === 'capped') {
+      showToast('Danke! Du hast bereits das Freeze-Maximum (3) erreicht.');
+    } else {
+      showToast(navigator.share ? 'Danke fürs Teilen.' : 'Link kopiert.');
+    }
+  }
+
   applyFrequency();
   ensureWeightsInitialized();
   renderWeights();
   initExReps();
   renderSets();
   renderStats();
+  renderFreezeBadge();
   refreshRecommendations();
+  initRecToggle();
+  document.getElementById('share-btn')?.addEventListener('click', shareApp);
 
   if (shouldOnboard()) {
     items = [];
