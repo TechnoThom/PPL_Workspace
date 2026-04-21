@@ -417,6 +417,105 @@
     transition: width 0.3s ease;
     width: 0%;
   }
+
+  /* Edit mode */
+  .pack-bar-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .edit-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .edit-btn.active {
+    background: var(--pack);
+    border-color: var(--pack);
+    color: white;
+  }
+
+  .pack-item.editing { cursor: default; }
+
+  .delete-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(255, 59, 48, 0.15);
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    color: var(--push);
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .delete-btn:active { background: var(--push); color: white; }
+  .delete-btn svg { width: 12px; height: 12px; }
+
+  .pack-edit-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    outline: none;
+    padding: 2px 0;
+    min-width: 0;
+  }
+
+  .pack-edit-input:focus { border-bottom-color: var(--pack); }
+
+  .add-row { gap: 12px; }
+
+  .pack-add-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--border);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    outline: none;
+    padding: 2px 0;
+    min-width: 0;
+  }
+
+  .pack-add-input:focus { border-bottom-color: var(--pack); }
+  .pack-add-input::placeholder { color: var(--text-dim); font-size: 13px; }
+
+  .add-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(10, 132, 255, 0.15);
+    border: 1px solid rgba(10, 132, 255, 0.3);
+    color: var(--pack);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .add-btn:active { background: var(--pack); color: white; }
 </style>
 </head>
 <body>
@@ -585,7 +684,10 @@
           <div class="pack-count"><span class="done" id="done">0</span><span class="total" id="total">/20</span></div>
           <div class="progress"><div class="progress-bar" id="progress"></div></div>
         </div>
-        <button class="clear-btn" id="clear">Clear</button>
+        <div class="pack-bar-actions">
+          <button class="edit-btn" id="edit-btn">Bearbeiten</button>
+          <button class="clear-btn" id="clear">Clear</button>
+        </div>
       </div>
 
       <div class="pack-list" id="pack-list">
@@ -615,7 +717,7 @@
   });
 
   // Packliste
-  const items = [
+  const DEFAULT_ITEMS = [
     'Hose', 'Shirt', 'Karte', 'SportSchuhe', 'Geräte Handtuch',
     'Flasche', 'Socken', 'Trockenhandtuch', 'Unterhose', 'Deo',
     'Shampoo', 'Schlappen', 'Creme', 'Parfum', 'AirPods',
@@ -628,56 +730,131 @@
   const totalEl = document.getElementById('total');
   const progressEl = document.getElementById('progress');
   const clearBtn = document.getElementById('clear');
+  const editBtn = document.getElementById('edit-btn');
 
-  totalEl.textContent = '/' + items.length;
+  let items = [];
+  let state = [];
+  let editMode = false;
 
-  // State persistence via localStorage
-  let state = new Array(items.length).fill(false);
+  function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function escapeAttr(str) {
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  }
+
+  function loadItems() {
+    try {
+      const saved = localStorage.getItem('ppl-pack-items');
+      if (saved) { items = JSON.parse(saved); return; }
+    } catch (e) {}
+    items = [...DEFAULT_ITEMS];
+  }
+
+  function saveItems() {
+    try { localStorage.setItem('ppl-pack-items', JSON.stringify(items)); } catch (e) {}
+  }
 
   function loadState() {
     try {
       const saved = localStorage.getItem('ppl-pack-state');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length === items.length) {
-          state = parsed;
+        if (Array.isArray(parsed)) {
+          state = parsed.slice(0, items.length);
+          while (state.length < items.length) state.push(false);
+          return;
         }
       }
-    } catch (e) { /* ignore */ }
-    render();
+    } catch (e) {}
+    state = new Array(items.length).fill(false);
   }
 
   function saveState() {
-    try {
-      localStorage.setItem('ppl-pack-state', JSON.stringify(state));
-    } catch (e) { /* ignore */ }
+    try { localStorage.setItem('ppl-pack-state', JSON.stringify(state)); } catch (e) {}
+  }
+
+  function deleteItem(i) {
+    items.splice(i, 1);
+    state.splice(i, 1);
+    saveItems();
+    saveState();
+    render();
+  }
+
+  function addItem(text) {
+    items.push(text);
+    state.push(false);
+    saveItems();
+    saveState();
+    render();
+    // focus next add input
+    const addInput = list.querySelector('.pack-add-input');
+    if (addInput) addInput.focus();
   }
 
   function render() {
     list.innerHTML = '';
     items.forEach((item, i) => {
       const row = document.createElement('div');
-      row.className = 'pack-item' + (state[i] ? ' checked' : '');
-      row.innerHTML = `
-        <div class="checkbox">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <div class="pack-label">${item}</div>
-      `;
-      row.addEventListener('click', () => {
-        state[i] = !state[i];
-        saveState();
-        render();
-      });
+
+      if (editMode) {
+        row.className = 'pack-item editing';
+        row.innerHTML = `
+          <button class="delete-btn" aria-label="Löschen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <input type="text" class="pack-edit-input" value="${escapeAttr(item)}" placeholder="Item...">
+        `;
+        row.querySelector('.delete-btn').addEventListener('click', () => deleteItem(i));
+        const input = row.querySelector('.pack-edit-input');
+        input.addEventListener('input', () => {
+          items[i] = input.value;
+          saveItems();
+        });
+      } else {
+        row.className = 'pack-item' + (state[i] ? ' checked' : '');
+        row.innerHTML = `
+          <div class="checkbox">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="pack-label">${escapeHtml(item)}</div>
+        `;
+        row.addEventListener('click', () => {
+          state[i] = !state[i];
+          saveState();
+          render();
+        });
+      }
       list.appendChild(row);
     });
+
+    if (editMode) {
+      const addRow = document.createElement('div');
+      addRow.className = 'pack-item add-row';
+      addRow.innerHTML = `
+        <input type="text" class="pack-add-input" placeholder="Neues Item hinzufügen...">
+        <button class="add-btn" aria-label="Hinzufügen">+</button>
+      `;
+      const addInput = addRow.querySelector('.pack-add-input');
+      const addBtnEl = addRow.querySelector('.add-btn');
+      const doAdd = () => {
+        const val = addInput.value.trim();
+        if (val) { addItem(val); addInput.value = ''; }
+      };
+      addBtnEl.addEventListener('click', doAdd);
+      addInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doAdd(); } });
+      list.appendChild(addRow);
+    }
+
     updateCount();
   }
 
   function updateCount() {
     const done = state.filter(Boolean).length;
     doneEl.textContent = done;
-    progressEl.style.width = (done / items.length * 100) + '%';
+    totalEl.textContent = '/' + items.length;
+    progressEl.style.width = items.length ? (done / items.length * 100) + '%' : '0%';
   }
 
   clearBtn.addEventListener('click', () => {
@@ -686,7 +863,16 @@
     render();
   });
 
+  editBtn.addEventListener('click', () => {
+    editMode = !editMode;
+    editBtn.textContent = editMode ? 'Fertig' : 'Bearbeiten';
+    editBtn.classList.toggle('active', editMode);
+    render();
+  });
+
+  loadItems();
   loadState();
+  render();
 
   // Service Worker registrieren
   if ('serviceWorker' in navigator) {
