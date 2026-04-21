@@ -253,6 +253,46 @@
   .t.p-legs { background: rgba(255, 204, 0, 0.15); color: var(--legs); }
   .t.rest { background: var(--surface-2); color: var(--text-dim); }
 
+  .week-day.today .d {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .week-day.today .t {
+    outline: 2px solid var(--text);
+    outline-offset: 2px;
+  }
+
+  .day.is-today {
+    border-color: var(--text);
+    box-shadow: 0 0 0 1px var(--text);
+  }
+
+  .rest-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .rest-banner.hidden { display: none; }
+
+  .rest-banner-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .rest-banner-text {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
   .day {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -933,6 +973,11 @@
           <div class="stat-label">Sessions</div>
           <div class="stat-value" id="stat-total">0</div>
         </div>
+      </div>
+
+      <div class="rest-banner hidden" id="rest-banner">
+        <div class="rest-banner-title">Rest Day</div>
+        <div class="rest-banner-text">Heute ist frei. Gönn dir Regeneration oder mach leichtes Cardio.</div>
       </div>
 
       <div class="plan-variant" data-freq="6">
@@ -1896,6 +1941,44 @@
       eyebrow.textContent = '6× pro Woche · A/B Split';
       sub.textContent = 'Jede Muskelgruppe 2× pro Woche · Tap für Details';
     }
+    applyCalendar(freq);
+  }
+
+  // Kalender-Sync: heutigen Wochentag markieren und passenden Day aufklappen
+  const DAY_TO_LABEL_6X = {
+    0: 'Push A', 1: 'Pull A', 2: 'Legs A',
+    3: 'Push B', 4: 'Pull B', 5: 'Legs B'
+  };
+  const DAY_TO_LABEL_3X = { 0: 'Push', 2: 'Pull', 4: 'Legs' };
+
+  function getWeekdayIndex() {
+    const js = new Date().getDay(); // 0=So, 1=Mo, ..., 6=Sa
+    return js === 0 ? 6 : js - 1;   // 0=Mo, ..., 6=So
+  }
+
+  function findDayByLabel(variantEl, label) {
+    if (!variantEl || !label) return null;
+    return Array.from(variantEl.querySelectorAll('.day')).find(d => {
+      const l = d.querySelector('.day-label')?.textContent?.trim() ?? '';
+      const v = d.querySelector('.variant')?.textContent?.trim();
+      return (v ? `${l} ${v}` : l) === label;
+    });
+  }
+
+  function applyCalendar(freq) {
+    const today = getWeekdayIndex();
+    const variantEl = document.querySelector(`.plan-variant[data-freq="${freq}"]`);
+    if (!variantEl) return;
+    variantEl.querySelectorAll('.week-day').forEach((el, i) => {
+      el.classList.toggle('today', i === today);
+    });
+    variantEl.querySelectorAll('.day').forEach(d => d.classList.remove('open', 'is-today'));
+    const map = freq === '3' ? DAY_TO_LABEL_3X : DAY_TO_LABEL_6X;
+    const label = map[today] || null;
+    const target = findDayByLabel(variantEl, label);
+    if (target) target.classList.add('open', 'is-today');
+    const banner = document.getElementById('rest-banner');
+    if (banner) banner.classList.toggle('hidden', !!target);
   }
 
   // Onboarding
