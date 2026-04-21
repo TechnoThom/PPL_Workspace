@@ -392,6 +392,83 @@
     50% { transform: translateY(10px); opacity: 1; }
   }
 
+  .ig-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.96);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(env(safe-area-inset-top, 0px) + 80px) 24px calc(env(safe-area-inset-bottom, 0px) + 24px);
+  }
+
+  .ig-overlay.hidden { display: none; }
+
+  .ig-arrow-up {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 16px);
+    right: 24px;
+    color: var(--pack);
+    animation: arrow-up-bounce 1.2s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(10, 132, 255, 0.6));
+  }
+
+  @keyframes arrow-up-bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.9; }
+    50% { transform: translateY(-10px); opacity: 1; }
+  }
+
+  .ig-card {
+    max-width: 420px;
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 28px 24px 22px;
+    text-align: center;
+  }
+
+  .ig-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .ig-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 34px;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+
+  .ig-text {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .ig-text strong { color: var(--text); font-weight: 500; }
+
+  .ig-dismiss {
+    display: block;
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px;
+    border-radius: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
   .setting-toggle {
     display: flex;
     align-items: center;
@@ -1441,7 +1518,65 @@
     </div>
   </div>
 
+  <div class="ig-overlay hidden" id="ig-overlay" aria-hidden="true">
+    <svg class="ig-arrow-up" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="12" y1="19" x2="12" y2="5"/>
+      <polyline points="6 11 12 5 18 11"/>
+    </svg>
+    <div class="ig-card">
+      <div class="ig-eyebrow">In-App Browser</div>
+      <div class="ig-title">In Browser öffnen</div>
+      <div class="ig-text">Tippe oben rechts auf <strong>⋯</strong> und wähle <strong>"Im externen Browser öffnen"</strong>. Nur dort kannst du die App zum Home-Bildschirm hinzufügen.</div>
+      <button class="ig-dismiss" id="ig-dismiss" type="button">Trotzdem fortfahren</button>
+    </div>
+  </div>
+
 <script>
+  // Daten zwischen Safari und PWA via URL-Parameter übertragen
+  // (iOS isoliert localStorage zwischen Safari und installierter PWA)
+  const PPL_MIGRATABLE_KEYS = [
+    'ppl-pack-items', 'ppl-pack-state', 'ppl-onboarded', 'ppl-frequency',
+    'ppl-profile', 'ppl-weights', 'ppl-weight-history', 'ppl-sets',
+    'ppl-sessions', 'ppl-freezes', 'ppl-last-share-reward', 'ppl-rec-enabled',
+    'ppl-install-dismissed'
+  ];
+
+  function exportStateToUrl() {
+    try {
+      const data = {};
+      PPL_MIGRATABLE_KEYS.forEach(k => {
+        const v = localStorage.getItem(k);
+        if (v !== null) data[k] = v;
+      });
+      if (!Object.keys(data).length) return;
+      const encoded = encodeURIComponent(JSON.stringify(data));
+      const url = new URL(window.location.href);
+      url.searchParams.set('s', encoded);
+      history.replaceState(null, '', url.pathname + url.search);
+    } catch (e) {}
+  }
+
+  function importStateFromUrl() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const encoded = params.get('s');
+      if (!encoded) return;
+      const url = new URL(window.location.href);
+      url.searchParams.delete('s');
+      const clean = url.pathname + (url.search || '');
+      history.replaceState(null, '', clean);
+      if (localStorage.getItem('ppl-onboarded') || localStorage.getItem('ppl-pack-items')) return;
+      const data = JSON.parse(decodeURIComponent(encoded));
+      Object.keys(data).forEach(k => {
+        if (PPL_MIGRATABLE_KEYS.includes(k) && typeof data[k] === 'string') {
+          localStorage.setItem(k, data[k]);
+        }
+      });
+    } catch (e) {}
+  }
+
+  importStateFromUrl();
+
   // Tab switching
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -2302,6 +2437,7 @@
       render();
       overlay.classList.add('hidden');
       overlay.setAttribute('aria-hidden', 'true');
+      if (!isStandalone) exportStateToUrl();
     }
 
     function showIntro() {
@@ -2550,11 +2686,25 @@
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   const isStandalone = window.navigator.standalone === true ||
                        window.matchMedia('(display-mode: standalone)').matches;
+  const isInAppWebView = /Instagram|FBAN|FBAV|FB_IAB|FBIOS|Snapchat|Line|MicroMessenger|TikTok|musical_ly|Bytedance/i.test(navigator.userAgent);
+
+  if (isInAppWebView && !isStandalone) {
+    const igOverlay = document.getElementById('ig-overlay');
+    if (igOverlay) {
+      igOverlay.classList.remove('hidden');
+      igOverlay.setAttribute('aria-hidden', 'false');
+      document.getElementById('ig-dismiss')?.addEventListener('click', () => {
+        igOverlay.classList.add('hidden');
+        igOverlay.setAttribute('aria-hidden', 'true');
+      });
+    }
+  }
 
   function showInstallHint(options) {
     const forced = options && options.forced;
     if (!forced && localStorage.getItem('ppl-install-dismissed')) return;
     if (document.getElementById('ppl-install-banner')) return;
+    exportStateToUrl();
     const banner = document.createElement('div');
     banner.id = 'ppl-install-banner';
     banner.style.cssText = `

@@ -44,6 +44,17 @@ PPL_Workspace/
 - `ppl-last-share-reward`: "YYYY-MM-DD". Verhindert, dass mehrfaches Drücken des Share-Buttons am selben Tag mehr als einen Freeze gibt
 - `ppl-rec-enabled`: "0" | "1". Toggle für intelligente Gewichtsvorschläge im Footer. Bei "0" werden die Plus/Minus-Puls-Animationen unterdrückt
 
+# Safari → PWA Daten-Migration
+iOS isoliert localStorage zwischen Safari und der "Zum Home-Bildschirm"-PWA.
+Damit Onboarding und Fortschritt nicht verloren gehen, packen wir alle
+`ppl-*` Keys als URL-Param `?s=...` (JSON, URL-encoded) in die aktuelle
+URL, wenn der Install-Hint erscheint oder das Onboarding abgeschlossen
+wird. iOS übernimmt beim "Zum Home-Bildschirm" die aktuelle URL, die PWA
+liest die Daten beim ersten Start via `importStateFromUrl()` in
+localStorage und bereinigt die URL via `history.replaceState`. Import
+läuft nur wenn noch kein State vorhanden ist, damit fremde Links
+bestehende Daten nicht überschreiben.
+
 Bei Änderungen an der Items-Struktur die Länge von items und state synchron
 halten. loadState() kürzt oder erweitert state automatisch, damit beide Arrays
 gleich lang bleiben.
