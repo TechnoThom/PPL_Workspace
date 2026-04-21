@@ -33,6 +33,13 @@ PPL_Workspace/
 - `ppl-pack-items`: Array<string>, die Packlisten-Items des Users
 - `ppl-pack-state`: Array<boolean>, Checkbox-Zustände parallel zu items
 - `ppl-install-dismissed`: iOS-Install-Banner wurde geschlossen
+- `ppl-onboarded`: Onboarding-Q&A wurde abgeschlossen oder übersprungen
+- `ppl-frequency`: Trainings-Häufigkeit, "3" oder "6". Steuert welcher Plan (3× oder 6× A/B-Split) in der Plan-View angezeigt wird
+- `ppl-profile`: User-Profil `{ gender, age, nutrition, commitment }`. Bestimmt die Startgewichte pro Übung
+- `ppl-weights`: Map `{ exerciseId: kg }` für alle nicht-bodyweight Übungen. IDs sind aus dem Übungs-Namen normalisiert (siehe `exerciseId()`)
+- `ppl-weight-history`: Map `{ exerciseId: [{ date, weight }, ...] }`. Basis für die Empfehlungs-Logik (letzte Änderung, ob es ein Increase war). Pro Übung auf 50 Einträge gekappt
+- `ppl-sets`: `{ date: 'YYYY-MM-DD', sets: { '<freq>/<dayLabel>/<exerciseId>': [bool, ...] } }`. Satz-Checkboxen pro Übung pro Tag. Setzt sich am nächsten Kalendertag automatisch zurück (loadSets prüft date)
+- `ppl-sessions`: Array `[{ date, day }]`. Wird erweitert sobald an einem Tag alle Sätze eines Day-Cards abgehakt sind (dedupliziert pro date+day). Basis für Streak und Sessions-Total oben im Plan-Tab
 
 Bei Änderungen an der Items-Struktur die Länge von items und state synchron
 halten. loadState() kürzt oder erweitert state automatisch, damit beide Arrays
