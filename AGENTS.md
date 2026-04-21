@@ -1,91 +1,52 @@
 # PPL · Push · Pull · Legs
 
-Offline-fähige Mobile-Webapp (PWA) für einen Push-Pull-Legs Trainingsplan und
-die Gym-Packliste. Wird am iPhone via "Zum Home-Bildschirm" als App installiert.
+Offline-fähige Mobile-Webapp (PWA) für einen Push-Pull-Legs Trainingsplan
+und die Gym-Packliste. Wird am iPhone via "Zum Home-Bildschirm" als App
+installiert.
 
-# Kern-Prinzip
-Die App ist und bleibt offline-first und ohne Build-Step. Einfachheit ist das
-Feature, nicht die Einschränkung. Alles läuft clientseitig im Browser.
+- Repo: `github.com/TechnoThom/PPL_Workspace`
+- Netlify: Auto-Deploy bei jedem Push auf `main`, keine Build-Befehle
+- Lokal: `npx serve -p 4200 .` dann `http://localhost:4200`
+
+# Kern-Prinzipien
+- Offline-first. Alles läuft clientseitig im Browser, kein Backend.
+- Kein Build-Step, kein Bundler, kein Framework.
+- Einzige externe Abhängigkeiten: Google Fonts (Bebas Neue, JetBrains Mono)
+  und Browser-APIs.
+- Einfachheit ist das Feature, nicht die Einschränkung.
 
 # Schreibregeln
-- Keine Gedankenstriche (— oder –) in Texten. Kommas, Punkte oder Umformulierungen nutzen.
-- Alle UI-Texte auf Deutsch. Duzen ("du", nicht "Sie").
-- Code (Variablen, Funktionen) auf Englisch. Content-Strings auf Deutsch.
-
-# Tech-Stack
-- Reines HTML / CSS / JS. Keine Frameworks, kein Bundler, kein Build-Step.
-- Service Worker (sw.js) für Offline-Caching (Cache-First Strategie).
-- localStorage für State-Persistenz.
-- Google Fonts: Bebas Neue (Display), JetBrains Mono (Body).
+- **Keine Gedankenstriche** (— oder –) in UI-Texten. Kommas, Punkte
+  oder Umformulierungen nutzen.
+- Alle UI-Texte auf Deutsch, Duzen ("du", nicht "Sie").
+- Code (Variablen, Funktionen) auf Englisch, Content-Strings auf Deutsch.
 
 # Dateistruktur
 ```
 PPL_Workspace/
-  index.html        # Markup (Views, Overlays, Stats-Bar, …)
+  index.html        # Markup (Views, Overlays, Stats-Bar, Footer)
   styles.css        # Komplette Styles
-  app.js            # Gesamte App-Logik (Onboarding, Tracking, Timer, Sub-Stitutes, …)
-  sw.js             # Service Worker (Cache-Name: ppl-vN)
+  app.js            # Gesamte App-Logik
+  sw.js             # Service Worker, Cache-Name "ppl-vN"
   manifest.json     # PWA-Manifest
   icon-180.png      # Apple Touch Icon
   icon-192.png      # Standard-Icon
-  icon-512.png      # Hi-Res Icon (auch maskable)
-  story.html        # Standalone 9:19.5 Instagram-Story-Ad mit 7 Scenes
+  icon-512.png      # Hi-Res Icon, auch maskable
+  story.html        # Standalone 9:19.5 Instagram-Story-Ad (7 Scenes)
 ```
 
-Kein Build-Step: Die drei Asset-Typen (HTML, CSS, JS) liegen getrennt,
-werden aber direkt vom Browser geladen (`<link>` und `<script>`). Wenn
-`app.js` weiter wächst, kann man in Zukunft nach Feature splitten
-(z. B. `onboarding.js`, `tracking.js`, …) und die Dateien einzeln per
-`<script>` einbinden. Kein Bundler.
+HTML, CSS und JS werden direkt vom Browser geladen (`<link>`, `<script>`),
+kein Bundler. Wenn `app.js` weiter wächst, kann man nach Feature splitten
+(z. B. `onboarding.js`, `tracking.js`) und zusätzliche `<script>`-Tags
+einfügen.
 
-# localStorage-Keys
-- `ppl-pack-items`: Array<string>, die Packlisten-Items des Users
-- `ppl-pack-state`: Array<boolean>, Checkbox-Zustände parallel zu items
-- `ppl-install-dismissed`: iOS-Install-Banner wurde geschlossen
-- `ppl-onboarded`: Onboarding-Q&A wurde abgeschlossen oder übersprungen
-- `ppl-frequency`: Trainings-Häufigkeit, "3" oder "6". Steuert welcher Plan (3× oder 6× A/B-Split) in der Plan-View angezeigt wird
-- `ppl-profile`: User-Profil `{ gender, age, nutrition, commitment }`. Bestimmt die Startgewichte pro Übung
-- `ppl-weights`: Map `{ exerciseId: kg }` für alle nicht-bodyweight Übungen. IDs sind aus dem Übungs-Namen normalisiert (siehe `exerciseId()`)
-- `ppl-weight-history`: Map `{ exerciseId: [{ date, weight }, ...] }`. Basis für die Empfehlungs-Logik (letzte Änderung, ob es ein Increase war). Pro Übung auf 50 Einträge gekappt
-- `ppl-sets`: `{ date: 'YYYY-MM-DD', sets: { '<freq>/<dayLabel>/<exerciseId>': [bool, ...] } }`. Satz-Checkboxen pro Übung pro Tag. Setzt sich am nächsten Kalendertag automatisch zurück (loadSets prüft date)
-- `ppl-sessions`: Array `[{ date, day }]`. Wird erweitert sobald an einem Tag alle Sätze eines Day-Cards abgehakt sind (dedupliziert pro date+day). Basis für Streak und Sessions-Total oben im Plan-Tab
-- `ppl-freezes`: `{ available: number, used: string[] }`. Streak-Freezes, die über den "App teilen"-Button verdient werden (+1 pro Share, maximal 3 gleichzeitig, maximal 1 pro Tag). Werden von `maybeConsumeFreeze` automatisch einem gestrigen Lücken-Tag zugewiesen, wenn heute eine Session abgeschlossen wurde und vorgestern eine Session war
-- `ppl-last-share-reward`: "YYYY-MM-DD". Verhindert, dass mehrfaches Drücken des Share-Buttons am selben Tag mehr als einen Freeze gibt
-- `ppl-rec-enabled`: "0" | "1". Toggle für intelligente Gewichtsvorschläge im Footer. Bei "0" werden die Plus/Minus-Puls-Animationen unterdrückt
-- `ppl-substitutes`: Map `{ "<freq>/<dayLabel>/<originalExId>": "<newExId>" }`. Alternative Übungen pro Slot. Setzt ex-name/ex-note zur Laufzeit via `applySubstitutes`, Gewichts- und Satz-Tracking hängen anschließend an der neuen `exId`
+# Tech-Stack
+- Reines HTML / CSS / JavaScript.
+- Service Worker für Offline-Caching (Cache-First Strategie).
+- `localStorage` für State-Persistenz.
+- Google Fonts: **Bebas Neue** (Display), **JetBrains Mono** (Body).
 
-# Safari → PWA Daten-Migration
-iOS isoliert localStorage zwischen Safari und der "Zum Home-Bildschirm"-PWA.
-Damit Onboarding und Fortschritt nicht verloren gehen, packen wir alle
-`ppl-*` Keys als URL-Param `?s=...` (JSON, URL-encoded) in die aktuelle
-URL, wenn der Install-Hint erscheint oder das Onboarding abgeschlossen
-wird. iOS übernimmt beim "Zum Home-Bildschirm" die aktuelle URL, die PWA
-liest die Daten beim ersten Start via `importStateFromUrl()` in
-localStorage und bereinigt die URL via `history.replaceState`. Import
-läuft nur wenn noch kein State vorhanden ist, damit fremde Links
-bestehende Daten nicht überschreiben.
-
-Bei Änderungen an der Items-Struktur die Länge von items und state synchron
-halten. loadState() kürzt oder erweitert state automatisch, damit beide Arrays
-gleich lang bleiben.
-
-# Service Worker · WICHTIG
-Bei jeder Änderung an index.html, sw.js oder manifest.json den Cache-Namen in
-sw.js erhöhen (z. B. `ppl-v3` zu `ppl-v4`). Ohne Bump sehen installierte User
-ewig die alte Version, weil der Service Worker Cache-First lädt. Der neue
-Worker löscht alte Caches automatisch beim activate-Event.
-
-Update-Flow:
-1. Neuer Worker installiert sich (state `installed`), bleibt aber `waiting`.
-2. index.html zeigt das "Neue Version verfügbar" Banner.
-3. Klick auf "Neu laden" postet `'skipWaiting'` an den wartenden Worker.
-4. Worker aktiviert sich, `controllerchange`-Listener in index.html löst den
-   Reload aus.
-
-Deshalb kein `self.skipWaiting()` mehr im install-Event, sonst überspringt
-der Worker das Warten und der User sieht das Banner nie.
-
-# Design-Tokens (CSS-Variablen in :root)
+# Design-Tokens (CSS-Variablen in `:root`)
 | Token         | Hex        | Verwendung                          |
 |---------------|------------|-------------------------------------|
 | `--bg`        | `#0a0a0a`  | Seiten-Hintergrund                  |
@@ -99,24 +60,85 @@ der Worker das Warten und der User sieht das Banner nie.
 | `--legs`      | `#ffcc00`  | Legs-Akzent (gelb)                  |
 | `--pack`      | `#0a84ff`  | Packliste-Akzent (blau)             |
 
-# Deployment
-- Repo: github.com/TechnoThom/PPL_Workspace
-- Netlify: Auto-Deploy bei jedem Push auf `main` (keine Build-Befehle nötig)
+# localStorage-Keys
+
+## Onboarding & Installation
+- `ppl-onboarded`: Onboarding-Q&A wurde abgeschlossen oder übersprungen.
+- `ppl-install-dismissed`: Install-Banner wurde geschlossen.
+
+## Profil & Plan
+- `ppl-profile`: `{ gender, age, nutrition, commitment }`. Bestimmt die
+  Startgewichte und die Frequenz der Gewichtsempfehlungen.
+- `ppl-frequency`: `"3"` oder `"6"`. Welcher Plan in der Plan-View
+  angezeigt wird (3× Push/Pull/Legs oder 6× A/B-Split).
+- `ppl-substitutes`: Map `{ "<freq>/<dayLabel>/<originalExId>": "<newExId>" }`.
+  Alternative Übungen pro Slot. `applySubstitutes` überschreibt zur
+  Laufzeit `ex-name` und `ex-note`, Gewichts- und Satz-Tracking hängen
+  dann an der neuen `exId`.
+
+## Training-State
+- `ppl-weights`: Map `{ exerciseId: kg }` für alle nicht-bodyweight
+  Übungen. IDs sind aus dem Namen normalisiert via `exerciseId()`.
+- `ppl-weight-history`: Map `{ exerciseId: [{ date, weight }, ...] }`.
+  Basis der Empfehlungs-Logik, pro Übung auf 50 Einträge gekappt.
+- `ppl-sets`: `{ date: 'YYYY-MM-DD', sets: { '<freq>/<dayLabel>/<exerciseId>': [bool, ...] } }`.
+  Satz-Checkboxen pro Übung pro Tag. Reset automatisch am nächsten
+  Kalendertag (`loadSets` prüft das Datum).
+- `ppl-sessions`: Array `[{ date, day, exercises }]`. Wird erweitert,
+  sobald an einem Tag alle Sätze eines Day-Cards abgehakt sind (deduped
+  pro `date+day`). Basis für Streak und Sessions-Total.
+
+## Streak-Freezes
+- `ppl-freezes`: `{ available: number, used: string[] }`. Werden über den
+  "Teilen"-Button verdient (+1 pro Share, max. 3 gleichzeitig).
+  `maybeConsumeFreeze` weist einen Freeze automatisch einem gestrigen
+  Lücken-Tag zu, sobald heute eine Session abgeschlossen und vorgestern
+  eine Session vorhanden ist.
+- `ppl-last-share-reward`: `"YYYY-MM-DD"`. Verhindert mehr als einen
+  Freeze pro Tag.
+
+## Packliste
+- `ppl-pack-items`: `Array<string>`, die Packlisten-Items.
+- `ppl-pack-state`: `Array<boolean>`, Checkbox-Zustände parallel zu
+  `ppl-pack-items`. `loadState()` kürzt oder erweitert das Array
+  automatisch, damit beide Arrays gleich lang bleiben.
+
+## Settings
+- `ppl-rec-enabled`: `"0"` oder `"1"`. Toggle für intelligente
+  Gewichtsvorschläge im Footer. Bei `"0"` werden die Plus/Minus-Puls-
+  Animationen unterdrückt.
+
+# Service Worker
+
+Bei jeder Änderung an `index.html`, `styles.css`, `app.js`, `sw.js` oder
+`manifest.json` den Cache-Namen in `sw.js` erhöhen (z. B. `ppl-v19` zu
+`ppl-v20`). Ohne Bump sehen installierte User ewig die alte Version,
+weil der Service Worker Cache-First lädt. Der neue Worker löscht alte
+Caches automatisch beim `activate`-Event.
+
+**Update-Flow**:
+1. Neuer Worker installiert sich (`state === 'installed'`), bleibt aber
+   `waiting`.
+2. `app.js` zeigt das "Neue Version verfügbar"-Banner.
+3. Klick auf "Neu laden" postet `'skipWaiting'` an den wartenden Worker.
+4. Worker aktiviert sich, `controllerchange`-Listener in `app.js` löst
+   den Reload aus.
+
+Deshalb **kein** `self.skipWaiting()` im `install`-Event, sonst
+überspringt der Worker das Warten und der User sieht das Banner nie.
+
+# Safari → PWA Daten-Migration
+
+iOS isoliert `localStorage` zwischen Safari und der "Zum Home-Bildschirm"-PWA.
+Damit Onboarding und Fortschritt nicht verloren gehen, packen wir alle
+`ppl-*` Keys als URL-Param `?s=...` (JSON, URL-encoded) in die aktuelle
+URL, wenn der Install-Hint erscheint oder das Onboarding abgeschlossen
+wird. iOS übernimmt beim "Zum Home-Bildschirm" die aktuelle URL, die
+PWA liest die Daten beim ersten Start via `importStateFromUrl()` in
+`localStorage` und bereinigt die URL via `history.replaceState`. Der
+Import läuft **nur**, wenn noch kein State vorhanden ist, damit geteilte
+Links bestehende Daten nicht überschreiben.
 
 # Git-Workflow
-- Feature-Branch für neue Features (`feature/<name>`)
-- main ist der Netlify-Produktionsstand
-
-# Lokal ausführen
-```
-npx serve -p 4200 .
-```
-Dann http://localhost:4200 öffnen. PWA-Install im Desktop-Chrome über das
-Install-Icon in der Adressleiste.
-
-# Dont's
-- KEIN Framework (React, Vue, …) und KEIN Build-Step einführen.
-- KEINE externen Abhängigkeiten außer Google Fonts und Browser-APIs.
-- KEIN Backend. Alles clientseitig im localStorage.
-- Cache-Name in sw.js nicht vergessen zu bumpen.
-- KEINE Gedankenstriche in UI-Texten.
+- Feature-Branch für neue Features (`feature/<name>`).
+- `main` ist der Netlify-Produktionsstand.
