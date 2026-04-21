@@ -72,7 +72,7 @@
     background: var(--text);
     transform: scaleX(0);
     transform-origin: left;
-    animation: progress-fill 18s linear infinite;
+    animation: progress-fill 21s linear infinite;
   }
 
   .progress-seg:nth-child(1)::after { animation-name: progress-seg-1; }
@@ -80,29 +80,41 @@
   .progress-seg:nth-child(3)::after { animation-name: progress-seg-3; }
   .progress-seg:nth-child(4)::after { animation-name: progress-seg-4; }
   .progress-seg:nth-child(5)::after { animation-name: progress-seg-5; }
+  .progress-seg:nth-child(6)::after { animation-name: progress-seg-6; }
+  .progress-seg:nth-child(7)::after { animation-name: progress-seg-7; }
 
   @keyframes progress-seg-1 {
     0% { transform: scaleX(0); }
-    20% { transform: scaleX(1); }
+    14.28% { transform: scaleX(1); }
     100% { transform: scaleX(1); }
   }
   @keyframes progress-seg-2 {
-    0%, 20% { transform: scaleX(0); }
-    40% { transform: scaleX(1); }
+    0%, 14.28% { transform: scaleX(0); }
+    28.57% { transform: scaleX(1); }
     100% { transform: scaleX(1); }
   }
   @keyframes progress-seg-3 {
-    0%, 40% { transform: scaleX(0); }
-    60% { transform: scaleX(1); }
+    0%, 28.57% { transform: scaleX(0); }
+    42.85% { transform: scaleX(1); }
     100% { transform: scaleX(1); }
   }
   @keyframes progress-seg-4 {
-    0%, 60% { transform: scaleX(0); }
-    80% { transform: scaleX(1); }
+    0%, 42.85% { transform: scaleX(0); }
+    57.14% { transform: scaleX(1); }
     100% { transform: scaleX(1); }
   }
   @keyframes progress-seg-5 {
-    0%, 80% { transform: scaleX(0); }
+    0%, 57.14% { transform: scaleX(0); }
+    71.42% { transform: scaleX(1); }
+    100% { transform: scaleX(1); }
+  }
+  @keyframes progress-seg-6 {
+    0%, 71.42% { transform: scaleX(0); }
+    85.71% { transform: scaleX(1); }
+    100% { transform: scaleX(1); }
+  }
+  @keyframes progress-seg-7 {
+    0%, 85.71% { transform: scaleX(0); }
     100% { transform: scaleX(1); }
   }
 
@@ -114,7 +126,7 @@
     flex-direction: column;
     justify-content: center;
     opacity: 0;
-    animation-duration: 18s;
+    animation-duration: 21s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
   }
@@ -124,38 +136,54 @@
   .scene:nth-child(4) { animation-name: scene-3; }
   .scene:nth-child(5) { animation-name: scene-4; }
   .scene:nth-child(6) { animation-name: scene-5; }
+  .scene:nth-child(7) { animation-name: scene-6; }
+  .scene:nth-child(8) { animation-name: scene-7; }
 
   @keyframes scene-1 {
     0% { opacity: 0; transform: scale(0.96); }
-    3% { opacity: 1; transform: scale(1); }
-    18% { opacity: 1; transform: scale(1); }
-    20% { opacity: 0; transform: scale(1.03); }
+    2% { opacity: 1; transform: scale(1); }
+    13% { opacity: 1; transform: scale(1); }
+    15% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes scene-2 {
-    0%, 20% { opacity: 0; transform: scale(0.96); }
-    23% { opacity: 1; transform: scale(1); }
-    38% { opacity: 1; transform: scale(1); }
-    40% { opacity: 0; transform: scale(1.03); }
+    0%, 15% { opacity: 0; transform: scale(0.96); }
+    17% { opacity: 1; transform: scale(1); }
+    27% { opacity: 1; transform: scale(1); }
+    29% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes scene-3 {
-    0%, 40% { opacity: 0; transform: scale(0.96); }
-    43% { opacity: 1; transform: scale(1); }
-    58% { opacity: 1; transform: scale(1); }
-    60% { opacity: 0; transform: scale(1.03); }
+    0%, 29% { opacity: 0; transform: scale(0.96); }
+    31% { opacity: 1; transform: scale(1); }
+    41% { opacity: 1; transform: scale(1); }
+    43% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes scene-4 {
-    0%, 60% { opacity: 0; transform: scale(0.96); }
-    63% { opacity: 1; transform: scale(1); }
-    78% { opacity: 1; transform: scale(1); }
-    80% { opacity: 0; transform: scale(1.03); }
+    0%, 43% { opacity: 0; transform: scale(0.96); }
+    45% { opacity: 1; transform: scale(1); }
+    55% { opacity: 1; transform: scale(1); }
+    57% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes scene-5 {
-    0%, 80% { opacity: 0; transform: scale(0.96); }
-    83% { opacity: 1; transform: scale(1); }
+    0%, 57% { opacity: 0; transform: scale(0.96); }
+    59% { opacity: 1; transform: scale(1); }
+    69% { opacity: 1; transform: scale(1); }
+    71% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes scene-6 {
+    0%, 71% { opacity: 0; transform: scale(0.96); }
+    73% { opacity: 1; transform: scale(1); }
+    84% { opacity: 1; transform: scale(1); }
+    86% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes scene-7 {
+    0%, 86% { opacity: 0; transform: scale(0.96); }
+    88% { opacity: 1; transform: scale(1); }
     100% { opacity: 1; transform: scale(1); }
   }
 
@@ -482,7 +510,138 @@
     flex-shrink: 0;
   }
 
-  /* Scene 5: CTA */
+  /* Smart Weights scene */
+  .rec-pair {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+
+  .rec-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+
+  .rec-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .rec-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .rec-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .rec-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.03em;
+  }
+
+  .w-btn.pulse-up {
+    border-color: var(--pull);
+    color: var(--pull);
+    background: rgba(48, 209, 88, 0.15);
+    animation: pulse-up 1.6s ease-in-out infinite;
+  }
+
+  .w-btn.pulse-down {
+    border-color: var(--legs);
+    color: var(--legs);
+    background: rgba(255, 204, 0, 0.16);
+    animation: pulse-down 1.6s ease-in-out infinite;
+  }
+
+  @keyframes pulse-up {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.6); }
+    70% { box-shadow: 0 0 0 10px rgba(48, 209, 88, 0); }
+  }
+
+  @keyframes pulse-down {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.6); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 204, 0, 0); }
+  }
+
+  /* Packing list scene */
+  .pack-preview {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+
+  .pack-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 18px;
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+  }
+
+  .pack-item:first-child { border-top: none; }
+
+  .pack-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .pack-check.checked {
+    background: var(--pack);
+    border-color: var(--pack);
+  }
+
+  .pack-check.checked svg { opacity: 1; }
+  .pack-check svg { width: 12px; height: 12px; color: white; opacity: 0; }
+
+  .pack-item.done .pack-label {
+    color: var(--text-dim);
+    text-decoration: line-through;
+  }
+
+  .pack-count-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+  }
+
+  .pack-count-bar .done-count { color: var(--pack); }
+  .pack-count-bar .total-count { color: var(--text-dim); }
+
+  /* Scene 7: CTA */
   .cta-card {
     text-align: center;
   }
@@ -561,6 +720,8 @@
       <div class="progress-seg"></div>
       <div class="progress-seg"></div>
       <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
     </div>
 
     <!-- SCENE 1 · Hook -->
@@ -570,7 +731,7 @@
         <span class="push">PUSH</span><span class="dot">·</span><span class="pull">PULL</span><span class="dot">·</span><span class="legs">LEGS</span>
       </h1>
       <div class="caption">
-        <strong>Meine eigene App.</strong><br>
+        <strong>Die App gehört dir.</strong><br>
         Offline. Ohne Account. Ohne Ads.
       </div>
     </div>
@@ -623,7 +784,77 @@
       <div class="caption">Der <strong>Pausentimer</strong> startet automatisch.</div>
     </div>
 
-    <!-- SCENE 4 · Streak + Smart -->
+    <!-- SCENE 4 · Smart Weights -->
+    <div class="scene">
+      <div class="eyebrow">Smart</div>
+      <div class="scene-title green">Hoch oder<br>zurück?</div>
+      <div class="rec-pair">
+        <div class="rec-card">
+          <div class="rec-label">
+            <span class="rec-dot" style="background: var(--pull)"></span>
+            Empfehlung hoch
+          </div>
+          <div class="rec-row">
+            <span class="rec-name">Bankdrücken</span>
+            <div class="ex-weight-demo">
+              <div class="w-btn">−</div>
+              <div><span class="w-val">40</span> <span class="w-unit">kg</span></div>
+              <div class="w-btn pulse-up">+</div>
+            </div>
+          </div>
+        </div>
+        <div class="rec-card">
+          <div class="rec-label">
+            <span class="rec-dot" style="background: var(--legs)"></span>
+            Empfehlung zurück
+          </div>
+          <div class="rec-row">
+            <span class="rec-name">Kniebeuge</span>
+            <div class="ex-weight-demo">
+              <div class="w-btn pulse-down">−</div>
+              <div><span class="w-val">60</span> <span class="w-unit">kg</span></div>
+              <div class="w-btn">+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">Sie schlägt dir vor, wann du <strong>hoch oder zurück</strong> gehen sollst.</div>
+    </div>
+
+    <!-- SCENE 5 · Packliste -->
+    <div class="scene">
+      <div class="eyebrow">Packliste</div>
+      <div class="scene-title blue">Nichts mehr<br>vergessen.</div>
+      <div class="pack-count-bar">
+        <span><span class="done-count">6</span><span class="total-count">/9</span></span>
+        <span style="font-size: 10px; letter-spacing: 0.2em; color: var(--text-dim)">Gym Bag</span>
+      </div>
+      <div class="pack-preview">
+        <div class="pack-item done">
+          <div class="pack-check checked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <span class="pack-label">Hose</span>
+        </div>
+        <div class="pack-item done">
+          <div class="pack-check checked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <span class="pack-label">Shirt</span>
+        </div>
+        <div class="pack-item done">
+          <div class="pack-check checked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <span class="pack-label">Geräte Handtuch</span>
+        </div>
+        <div class="pack-item">
+          <div class="pack-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <span class="pack-label">Kopfhörer</span>
+        </div>
+        <div class="pack-item">
+          <div class="pack-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <span class="pack-label">Schlüssel</span>
+        </div>
+      </div>
+      <div class="caption">Beim Onboarding gebaut, danach <strong>immer bei dir.</strong></div>
+    </div>
+
+    <!-- SCENE 6 · Streak -->
     <div class="scene">
       <div class="eyebrow" style="text-align:center">Bleib dran</div>
       <div class="streak-wrap">
@@ -634,13 +865,12 @@
       </div>
       <div class="streak-label">Tage Streak</div>
       <div class="features-list">
-        <div class="feat"><div class="feat-dot" style="background: var(--legs)"></div><span>Streak Freezes für Pausen</span></div>
-        <div class="feat"><div class="feat-dot" style="background: var(--pull)"></div><span>Smarte Gewichts-Empfehlungen</span></div>
-        <div class="feat"><div class="feat-dot" style="background: var(--pack)"></div><span>Gym-Packliste, personalisiert</span></div>
+        <div class="feat"><div class="feat-dot" style="background: var(--legs)"></div><span>Streak Freezes als Belohnung fürs Teilen</span></div>
+        <div class="feat"><div class="feat-dot" style="background: var(--push)"></div><span>Sessions-Historie trackt alle Trainings</span></div>
       </div>
     </div>
 
-    <!-- SCENE 5 · CTA -->
+    <!-- SCENE 7 · CTA -->
     <div class="scene">
       <div class="cta-card">
         <div class="cta-mark">PPL</div>
