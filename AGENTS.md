@@ -40,9 +40,19 @@ gleich lang bleiben.
 
 # Service Worker · WICHTIG
 Bei jeder Änderung an index.html, sw.js oder manifest.json den Cache-Namen in
-sw.js erhöhen (z. B. `ppl-v2` zu `ppl-v3`). Ohne Bump sehen installierte User
+sw.js erhöhen (z. B. `ppl-v3` zu `ppl-v4`). Ohne Bump sehen installierte User
 ewig die alte Version, weil der Service Worker Cache-First lädt. Der neue
 Worker löscht alte Caches automatisch beim activate-Event.
+
+Update-Flow:
+1. Neuer Worker installiert sich (state `installed`), bleibt aber `waiting`.
+2. index.html zeigt das "Neue Version verfügbar" Banner.
+3. Klick auf "Neu laden" postet `'skipWaiting'` an den wartenden Worker.
+4. Worker aktiviert sich, `controllerchange`-Listener in index.html löst den
+   Reload aus.
+
+Deshalb kein `self.skipWaiting()` mehr im install-Event, sonst überspringt
+der Worker das Warten und der User sieht das Banner nie.
 
 # Design-Tokens (CSS-Variablen in :root)
 | Token         | Hex        | Verwendung                          |
