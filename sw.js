@@ -1,4 +1,4 @@
-const CACHE = 'ppl-v2';
+const CACHE = 'ppl-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -13,7 +13,10 @@ self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE).then((cache) => cache.addAll(ASSETS).catch(() => {}))
   );
-  self.skipWaiting();
+});
+
+self.addEventListener('message', (e) => {
+  if (e.data === 'skipWaiting') self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {

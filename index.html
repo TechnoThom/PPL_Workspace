@@ -516,6 +516,41 @@
   }
 
   .add-btn:active { background: var(--pack); color: white; }
+
+  /* Update-Banner */
+  .update-banner {
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 16px);
+    left: 16px;
+    right: 16px;
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--surface-2);
+    border: 1px solid var(--pack);
+    border-radius: 14px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+    z-index: 101;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .update-banner button {
+    background: var(--pack);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
 </style>
 </head>
 <body>
@@ -875,10 +910,37 @@
   loadState();
   render();
 
-  // Service Worker registrieren
+  // Service Worker registrieren + Update-Benachrichtigung
+  function showUpdateBanner(worker) {
+    if (document.querySelector('.update-banner')) return;
+    const banner = document.createElement('div');
+    banner.className = 'update-banner';
+    banner.innerHTML = `<span>Neue Version verfügbar</span><button type="button">Neu laden</button>`;
+    banner.querySelector('button').addEventListener('click', () => {
+      worker.postMessage('skipWaiting');
+    });
+    document.body.appendChild(banner);
+  }
+
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        if (reg.waiting && navigator.serviceWorker.controller) showUpdateBanner(reg.waiting);
+        reg.addEventListener('updatefound', () => {
+          const nw = reg.installing;
+          if (!nw) return;
+          nw.addEventListener('statechange', () => {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) showUpdateBanner(nw);
+          });
+        });
+      }).catch(() => {});
+
+      let reloading = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (reloading) return;
+        reloading = true;
+        window.location.reload();
+      });
     });
   }
 
