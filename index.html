@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PPL">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<title>Push · Pull · Legs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #151515;
+    --surface-2: #1f1f1f;
+    --border: #2a2a2a;
+    --text: #f5f5f5;
+    --text-dim: #888;
+    --push: #ff3b30;
+    --pull: #30d158;
+    --legs: #ffcc00;
+    --pack: #0a84ff;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    overflow-x: hidden;
+  }
+
+  .container {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 24px 20px 40px;
+  }
+
+  header {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 14vw, 72px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    margin-bottom: 4px;
+  }
+
+  h1 .dot { display: inline-block; margin: 0 4px; }
+  h1 .push-t { color: var(--push); }
+  h1 .pull-t { color: var(--pull); }
+  h1 .legs-t { color: var(--legs); }
+
+  .sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 12px;
+  }
+
+  .tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 24px;
+  }
+
+  .tab {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.1em;
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .tab.active {
+    background: var(--surface-2);
+    color: var(--text);
+  }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  .week {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 12px;
+    margin-bottom: 24px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    text-align: center;
+  }
+
+  .week-day {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .week-day .d {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .week-day .t {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    padding: 4px 2px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .t.p-push { background: rgba(255, 59, 48, 0.15); color: var(--push); }
+  .t.p-pull { background: rgba(48, 209, 88, 0.15); color: var(--pull); }
+  .t.p-legs { background: rgba(255, 204, 0, 0.15); color: var(--legs); }
+  .t.rest { background: var(--surface-2); color: var(--text-dim); }
+
+  .day {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+
+  .day-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+
+  .day-head:active { background: var(--surface-2); }
+
+  .day-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .accent {
+    width: 4px;
+    height: 32px;
+    border-radius: 2px;
+  }
+
+  .accent.push { background: var(--push); }
+  .accent.pull { background: var(--pull); }
+  .accent.legs { background: var(--legs); }
+
+  .day-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.05em;
+  }
+
+  .variant {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    padding: 3px 8px;
+    background: var(--surface-2);
+    border-radius: 4px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .focus {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .chevron {
+    width: 20px;
+    height: 20px;
+    color: var(--text-dim);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .day.open .chevron { transform: rotate(180deg); }
+
+  .exercises {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+
+  .day.open .exercises { max-height: 800px; }
+
+  .ex {
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+    align-items: center;
+  }
+
+  .ex-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--text-dim);
+    width: 28px;
+  }
+
+  .ex-name {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .ex-note {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 3px;
+  }
+
+  .ex-reps {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: right;
+    white-space: nowrap;
+    padding: 4px 8px;
+    background: var(--surface-2);
+    border-radius: 6px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    margin: 28px 0 12px 4px;
+    text-transform: uppercase;
+  }
+
+  .footer {
+    margin-top: 32px;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .footer strong { color: var(--text); font-weight: 500; }
+
+  .footer-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--text);
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+
+  /* Packliste */
+  .pack-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .pack-count {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  .pack-count .done {
+    color: var(--pack);
+  }
+
+  .pack-count .total {
+    color: var(--text-dim);
+  }
+
+  .clear-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .clear-btn:active {
+    background: var(--pack);
+    border-color: var(--pack);
+  }
+
+  .pack-list {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .pack-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+    border-top: 1px solid var(--border);
+  }
+
+  .pack-item:first-child { border-top: none; }
+
+  .pack-item:active { background: var(--surface-2); }
+
+  .checkbox {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--text-dim);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .pack-item.checked .checkbox {
+    background: var(--pack);
+    border-color: var(--pack);
+  }
+
+  .checkbox svg {
+    width: 12px;
+    height: 12px;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .pack-item.checked .checkbox svg { opacity: 1; }
+
+  .pack-label {
+    font-size: 15px;
+    transition: all 0.2s;
+  }
+
+  .pack-item.checked .pack-label {
+    color: var(--text-dim);
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+  }
+
+  .progress {
+    height: 3px;
+    background: var(--surface-2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 12px;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--pack);
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="eyebrow">6× pro Woche · A/B Split</div>
+      <h1>
+        <span class="push-t">PUSH</span><span class="dot">·</span><span class="pull-t">PULL</span><span class="dot">·</span><span class="legs-t">LEGS</span>
+      </h1>
+      <div class="sub">Jede Muskelgruppe 2× pro Woche · Tap für Details</div>
+    </header>
+
+    <div class="tabs">
+      <div class="tab active" data-view="plan">Plan</div>
+      <div class="tab" data-view="pack">Packliste</div>
+    </div>
+
+    <!-- PLAN VIEW -->
+    <div class="view active" id="view-plan">
+
+      <div class="week">
+        <div class="week-day"><div class="d">MO</div><div class="t p-push">P A</div></div>
+        <div class="week-day"><div class="d">DI</div><div class="t p-pull">P A</div></div>
+        <div class="week-day"><div class="d">MI</div><div class="t p-legs">L A</div></div>
+        <div class="week-day"><div class="d">DO</div><div class="t p-push">P B</div></div>
+        <div class="week-day"><div class="d">FR</div><div class="t p-pull">P B</div></div>
+        <div class="week-day"><div class="d">SA</div><div class="t p-legs">L B</div></div>
+        <div class="week-day"><div class="d">SO</div><div class="t rest">OFF</div></div>
+      </div>
+
+      <div class="section-title">Push</div>
+
+      <div class="day open">
+        <div class="day-head">
+          <div class="day-title">
+            <div class="accent push"></div>
+            <div>
+              <div><span class="day-label">Push</span><span class="variant">A</span></div>
+              <div class="focus">Schwer · niedrige Wdh</div>
+            </div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="exercises">
+          <div class="ex"><div class="ex-num">01</div><div><div class="ex-name">Bankdrücken Langhantel</div><div class="ex-note">Hauptübung Brust</div></div><div class="ex-reps">4×6–8</div></div>
+          <div class="ex"><div class="ex-num">02</div><div><div class="ex-name">Schulterdrücken Kurzhantel</div><div class="ex-note">Sitzend · vordere Schulter</div></div><div class="ex-reps">3×8–10</div></div>
+          <div class="ex"><div class="ex-num">03</div><div><div class="ex-name">Seitheben</div><div class="ex-note">Seitliche Schulter · Breite</div></div><div class="ex-reps">3×12–15</div></div>
+          <div class="ex"><div class="ex-num">04</div><div><div class="ex-name">Trizepsdrücken Kabel</div><div class="ex-note">Isolation</div></div><div class="ex-reps">3×12–15</div></div>
+        </div>
+      </div>
+
+      <div class="day">
+        <div class="day-head">
+          <div class="day-title">
+            <div class="accent push"></div>
+            <div>
+              <div><span class="day-label">Push</span><span class="variant">B</span></div>
+              <div class="focus">Volumen · höhere Wdh</div>
+            </div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="exercises">
+          <div class="ex"><div class="ex-num">01</div><div><div class="ex-name">Schrägbankdrücken KH</div><div class="ex-note">Obere Brust</div></div><div class="ex-reps">4×8–10</div></div>
+          <div class="ex"><div class="ex-num">02</div><div><div class="ex-name">Seitheben</div><div class="ex-note">Zweiter Reiz seitliche Schulter</div></div><div class="ex-reps">3×12–15</div></div>
+          <div class="ex"><div class="ex-num">03</div><div><div class="ex-name">Dips oder Brustpresse</div><div class="ex-note">Untere Brust · Trizeps</div></div><div class="ex-reps">3×10–12</div></div>
+          <div class="ex"><div class="ex-num">04</div><div><div class="ex-name">Trizeps Overhead</div><div class="ex-note">Langer Trizeps-Kopf</div></div><div class="ex-reps">3×10–12</div></div>
+        </div>
+      </div>
+
+      <div class="section-title">Pull</div>
+
+      <div class="day">
+        <div class="day-head">
+          <div class="day-title">
+            <div class="accent pull"></div>
+            <div>
+              <div><span class="day-label">Pull</span><span class="variant">A</span></div>
+              <div class="focus">Schwer · Grundübungen</div>
+            </div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="exercises">
+          <div class="ex"><div class="ex-num">01</div><div><div class="ex-name">Klimmzüge</div><div class="ex-note">Breiter Griff · Rücken-Basis</div></div><div class="ex-reps">4×max</div></div>
+          <div class="ex"><div class="ex-num">02</div><div><div class="ex-name">Rudern Langhantel</div><div class="ex-note">Horizontaler Zug · schwer</div></div><div class="ex-reps">4×6–8</div></div>
+          <div class="ex"><div class="ex-num">03</div><div><div class="ex-name">Face Pulls</div><div class="ex-note">Hintere Schulter · Haltung</div></div><div class="ex-reps">3×12–15</div></div>
+          <div class="ex"><div class="ex-num">04</div><div><div class="ex-name">Langhantel-Curls</div><div class="ex-note">Bizeps Isolation</div></div><div class="ex-reps">3×10–12</div></div>
+        </div>
+      </div>
+
+      <div class="day">
+        <div class="day-head">
+          <div class="day-title">
+            <div class="accent pull"></div>
+            <div>
+              <div><span class="day-label">Pull</span><span class="variant">B</span></div>
+              <div class="focus">Volumen · andere Winkel</div>
+            </div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="exercises">
+          <div class="ex"><div class="ex-num">01</div><div><div class="ex-name">Latzug Untergriff</div><div class="ex-note">Vertikaler Zug · Bizeps-Fokus</div></div><div class="ex-reps">4×8–10</div></div>
+          <div class="ex"><div class="ex-num">02</div><div><div class="ex-name">Kabelrudern eng</div><div class="ex-note">Mittlerer Rücken</div></div><div class="ex-reps">3×10–12</div></div>
+          <div class="ex"><div class="ex-num">03</div><div><div class="ex-name">Reverse Flys</div><div class="ex-note">Hintere Schulter</div></div><div class="ex-reps">3×12–15</div></div>
+          <div class="ex"><div class="ex-num">04</div><div><div class="ex-name">Hammer Curls</div><div class="ex-note">Brachialis · Unterarm</div></div><div class="ex-reps">3×10–12</div></div>
+        </div>
+      </div>
+
+      <div class="section-title">Legs</div>
+
+      <div class="day">
+        <div class="day-head">
+          <div class="day-title">
+            <div class="accent legs"></div>
+            <div>
+              <div><span class="day-label">Legs</span><span class="variant">A</span></div>
+              <div class="focus">Quad-Fokus</div>
+            </div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="exercises">
+          <div class="ex"><div class="ex-num">01</div><div><div class="ex-name">Kniebeuge</div><div class="ex-note">Langhantel · Hauptübung</div></div><div class="ex-reps">4×6–8</div></div>
+          <div class="ex"><div class="ex-num">02</div><div><div class="ex-name">Rumänisches Kreuzheben</div><div class="ex-note">Hamstrings · Po</div></div><div class="ex-reps">3×8–10</div></div>
+          <div class="ex"><div class="ex-num">03</div><div><div class="ex-name">Beinpresse</div><div class="ex-note">Zweiter Quad-Reiz</div></div><div class="ex-reps">3×10–12</div></div>
+          <div class="ex"><div class="ex-num">04</div><div><div class="ex-name">Beinbeuger liegend</div><div class="ex-note">Hamstrings übers Knie</div></div><div class="ex-reps">3×12–15</div></div>
+        </div>
+      </div>
+
+      <div class="day">
+        <div class="day-head">
+          <div class="day-title">
+            <div class="accent legs"></div>
+            <div>
+              <div><span class="day-label">Legs</span><span class="variant">B</span></div>
+              <div class="focus">Hamstring · Po</div>
+            </div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="exercises">
+          <div class="ex"><div class="ex-num">01</div><div><div class="ex-name">Rumänisches Kreuzheben</div><div class="ex-note">Schwer · Posterior Chain</div></div><div class="ex-reps">4×6–8</div></div>
+          <div class="ex"><div class="ex-num">02</div><div><div class="ex-name">Bulgarian Split Squats</div><div class="ex-note">Pro Bein · Po-Aktivierung</div></div><div class="ex-reps">3×8–10</div></div>
+          <div class="ex"><div class="ex-num">03</div><div><div class="ex-name">Beinbeuger sitzend</div><div class="ex-note">Anderer Winkel als A</div></div><div class="ex-reps">3×10–12</div></div>
+          <div class="ex"><div class="ex-num">04</div><div><div class="ex-name">Wadenheben stehend</div><div class="ex-note">Waden</div></div><div class="ex-reps">4×12–15</div></div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-title">Hinweise</div>
+        <strong>Progression:</strong> Gewicht steigern wenn oberes Wdh-Ziel in allen Sätzen sauber geschafft<br>
+        <strong>Pause:</strong> 2–3 min bei schweren Sätzen, 60–90 s bei Isolation<br>
+        <strong>Aufwärmen:</strong> 2 leichte Sätze vor jeder Grundübung<br>
+        <strong>Deload:</strong> Alle 6–8 Wochen eine leichtere Woche einplanen
+      </div>
+
+    </div>
+
+    <!-- PACKLISTE VIEW -->
+    <div class="view" id="view-pack">
+
+      <div class="pack-bar">
+        <div>
+          <div class="pack-count"><span class="done" id="done">0</span><span class="total" id="total">/20</span></div>
+          <div class="progress"><div class="progress-bar" id="progress"></div></div>
+        </div>
+        <button class="clear-btn" id="clear">Clear</button>
+      </div>
+
+      <div class="pack-list" id="pack-list">
+        <!-- Items via JS -->
+      </div>
+
+    </div>
+
+  </div>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('view-' + tab.dataset.view).classList.add('active');
+    });
+  });
+
+  // Day toggle
+  document.querySelectorAll('.day-head').forEach(head => {
+    head.addEventListener('click', () => {
+      head.parentElement.classList.toggle('open');
+    });
+  });
+
+  // Packliste
+  const items = [
+    'Hose', 'Shirt', 'Karte', 'SportSchuhe', 'Geräte Handtuch',
+    'Flasche', 'Socken', 'Trockenhandtuch', 'Unterhose', 'Deo',
+    'Shampoo', 'Schlappen', 'Creme', 'Parfum', 'AirPods',
+    'Schlüssel', 'Pulli -nebendran', 'Trikot -nebendran',
+    'Sporthose -nebendran', 'alte Socken -nebendran'
+  ];
+
+  const list = document.getElementById('pack-list');
+  const doneEl = document.getElementById('done');
+  const totalEl = document.getElementById('total');
+  const progressEl = document.getElementById('progress');
+  const clearBtn = document.getElementById('clear');
+
+  totalEl.textContent = '/' + items.length;
+
+  // State persistence via localStorage
+  let state = new Array(items.length).fill(false);
+
+  function loadState() {
+    try {
+      const saved = localStorage.getItem('ppl-pack-state');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length === items.length) {
+          state = parsed;
+        }
+      }
+    } catch (e) { /* ignore */ }
+    render();
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem('ppl-pack-state', JSON.stringify(state));
+    } catch (e) { /* ignore */ }
+  }
+
+  function render() {
+    list.innerHTML = '';
+    items.forEach((item, i) => {
+      const row = document.createElement('div');
+      row.className = 'pack-item' + (state[i] ? ' checked' : '');
+      row.innerHTML = `
+        <div class="checkbox">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="pack-label">${item}</div>
+      `;
+      row.addEventListener('click', () => {
+        state[i] = !state[i];
+        saveState();
+        render();
+      });
+      list.appendChild(row);
+    });
+    updateCount();
+  }
+
+  function updateCount() {
+    const done = state.filter(Boolean).length;
+    doneEl.textContent = done;
+    progressEl.style.width = (done / items.length * 100) + '%';
+  }
+
+  clearBtn.addEventListener('click', () => {
+    state = new Array(items.length).fill(false);
+    saveState();
+    render();
+  });
+
+  loadState();
+
+  // Service Worker registrieren
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+
+  // Install-Hinweis für iOS Safari (einmalig)
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isStandalone = window.navigator.standalone === true ||
+                       window.matchMedia('(display-mode: standalone)').matches;
+
+  if (isIOS && !isStandalone && !localStorage.getItem('ppl-install-dismissed')) {
+    const banner = document.createElement('div');
+    banner.style.cssText = `
+      position: fixed; bottom: 20px; left: 20px; right: 20px;
+      background: #1f1f1f; border: 1px solid #2a2a2a; border-radius: 14px;
+      padding: 16px; z-index: 100; color: #f5f5f5;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.5;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      max-width: 480px; margin: 0 auto;
+    `;
+    banner.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px;">
+        <div>
+          <div style="font-family: 'Bebas Neue'; font-size: 18px; letter-spacing: 0.05em; margin-bottom: 4px;">Als App installieren</div>
+          <div style="color: #888; font-size: 11px;">Teilen-Button → "Zum Home-Bildschirm"</div>
+        </div>
+        <button id="ppl-dismiss" style="background: #2a2a2a; border: none; color: #f5f5f5; padding: 6px 10px; border-radius: 6px; font-family: inherit; font-size: 11px; cursor: pointer;">OK</button>
+      </div>
+    `;
+    document.body.appendChild(banner);
+    document.getElementById('ppl-dismiss').addEventListener('click', () => {
+      localStorage.setItem('ppl-install-dismissed', '1');
+      banner.remove();
+    });
+  }
+</script>
+</body>
+</html>
