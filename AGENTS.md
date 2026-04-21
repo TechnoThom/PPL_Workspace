@@ -43,6 +43,7 @@ PPL_Workspace/
 - `ppl-freezes`: `{ available: number, used: string[] }`. Streak-Freezes, die über den "App teilen"-Button verdient werden (+1 pro Share, maximal 3 gleichzeitig, maximal 1 pro Tag). Werden von `maybeConsumeFreeze` automatisch einem gestrigen Lücken-Tag zugewiesen, wenn heute eine Session abgeschlossen wurde und vorgestern eine Session war
 - `ppl-last-share-reward`: "YYYY-MM-DD". Verhindert, dass mehrfaches Drücken des Share-Buttons am selben Tag mehr als einen Freeze gibt
 - `ppl-rec-enabled`: "0" | "1". Toggle für intelligente Gewichtsvorschläge im Footer. Bei "0" werden die Plus/Minus-Puls-Animationen unterdrückt
+- `ppl-substitutes`: Map `{ "<freq>/<dayLabel>/<originalExId>": "<newExId>" }`. Alternative Übungen pro Slot. Setzt ex-name/ex-note zur Laufzeit via `applySubstitutes`, Gewichts- und Satz-Tracking hängen anschließend an der neuen `exId`
 
 # Safari → PWA Daten-Migration
 iOS isoliert localStorage zwischen Safari und der "Zum Home-Bildschirm"-PWA.

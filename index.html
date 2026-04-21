@@ -344,6 +344,15 @@
     </div>
   </div>
 
+  <div class="swap-sheet hidden" id="swap-sheet" aria-hidden="true">
+    <div class="swap-card">
+      <div class="swap-eyebrow">Alternative wählen</div>
+      <div class="swap-title" id="swap-title"></div>
+      <div class="swap-list" id="swap-list"></div>
+      <button class="swap-close" id="swap-close" type="button">Abbrechen</button>
+    </div>
+  </div>
+
 <script>
   // Daten zwischen Safari und PWA via URL-Parameter übertragen
   // (iOS isoliert localStorage zwischen Safari und installierter PWA)
@@ -351,7 +360,7 @@
     'ppl-pack-items', 'ppl-pack-state', 'ppl-onboarded', 'ppl-frequency',
     'ppl-profile', 'ppl-weights', 'ppl-weight-history', 'ppl-sets',
     'ppl-sessions', 'ppl-freezes', 'ppl-last-share-reward', 'ppl-rec-enabled',
-    'ppl-install-dismissed'
+    'ppl-install-dismissed', 'ppl-substitutes'
   ];
 
   function exportStateToUrl() {
@@ -628,30 +637,50 @@
     render();
   });
 
-  // Übungen (base = Startgewicht in kg, step = +/- Schritt, rest = Pause in Sekunden, bodyweight = ohne Gewichts-Tracking)
+  // Übungen — base = Startgewicht kg, step = +/- Schritt kg, rest = Pause s,
+  // bodyweight = ohne Gewichts-Tracking, alternatives = gängige Austausch-Optionen.
+  // name/note werden beim Swap ins DOM geschrieben.
   const EXERCISES = {
-    'bankdruecken-langhantel':     { base: 40, step: 2.5, rest: 180 },
-    'schulterdruecken-kurzhantel': { base: 12, step: 1,   rest: 90 },
-    'seitheben':                   { base: 6,  step: 0.5, rest: 60 },
-    'trizepsdruecken-kabel':       { base: 15, step: 2.5, rest: 60 },
-    'schraegbankdruecken-kh':      { base: 15, step: 1,   rest: 120 },
-    'dips-oder-brustpresse':       { bodyweight: true,    rest: 120 },
-    'trizeps-overhead':            { base: 10, step: 1,   rest: 60 },
-    'klimmzuege':                  { bodyweight: true,    rest: 180 },
-    'rudern-langhantel':           { base: 30, step: 2.5, rest: 180 },
-    'face-pulls':                  { base: 12, step: 2.5, rest: 60 },
-    'langhantel-curls':            { base: 15, step: 2.5, rest: 60 },
-    'latzug-untergriff':           { base: 30, step: 2.5, rest: 120 },
-    'kabelrudern-eng':             { base: 30, step: 2.5, rest: 120 },
-    'reverse-flys':                { base: 5,  step: 0.5, rest: 60 },
-    'hammer-curls':                { base: 8,  step: 1,   rest: 60 },
-    'kniebeuge':                   { base: 40, step: 2.5, rest: 180 },
-    'rumaenisches-kreuzheben':     { base: 40, step: 2.5, rest: 180 },
-    'beinpresse':                  { base: 50, step: 5,   rest: 120 },
-    'beinbeuger-liegend':          { base: 20, step: 2.5, rest: 90 },
-    'bulgarian-split-squats':      { base: 8,  step: 1,   rest: 120 },
-    'beinbeuger-sitzend':          { base: 20, step: 2.5, rest: 90 },
-    'wadenheben-stehend':          { base: 40, step: 2.5, rest: 60 }
+    'bankdruecken-langhantel':     { name: 'Bankdrücken Langhantel', note: 'Hauptübung Brust',                base: 40, step: 2.5, rest: 180, alternatives: ['schraegbankdruecken-kh', 'bankdruecken-kurzhantel'] },
+    'schulterdruecken-kurzhantel': { name: 'Schulterdrücken Kurzhantel', note: 'Sitzend · vordere Schulter',  base: 12, step: 1,   rest: 90,  alternatives: ['schulterdruecken-langhantel', 'arnold-press'] },
+    'seitheben':                   { name: 'Seitheben', note: 'Seitliche Schulter · Breite',                  base: 6,  step: 0.5, rest: 60,  alternatives: ['seitheben-kabel', 'seitheben-maschine'] },
+    'trizepsdruecken-kabel':       { name: 'Trizepsdrücken Kabel', note: 'Isolation',                         base: 15, step: 2.5, rest: 60,  alternatives: ['trizeps-overhead', 'french-press'] },
+    'schraegbankdruecken-kh':      { name: 'Schrägbankdrücken KH', note: 'Obere Brust',                       base: 15, step: 1,   rest: 120, alternatives: ['bankdruecken-langhantel', 'bankdruecken-kurzhantel'] },
+    'dips-oder-brustpresse':       { name: 'Dips oder Brustpresse', note: 'Untere Brust · Trizeps',           bodyweight: true,    rest: 120, alternatives: ['bankdruecken-langhantel', 'trizepsdruecken-kabel'] },
+    'trizeps-overhead':            { name: 'Trizeps Overhead', note: 'Langer Trizeps-Kopf',                   base: 10, step: 1,   rest: 60,  alternatives: ['trizepsdruecken-kabel', 'french-press'] },
+    'klimmzuege':                  { name: 'Klimmzüge', note: 'Breiter Griff · Rücken-Basis',                 bodyweight: true,    rest: 180, alternatives: ['latzug-untergriff', 'latzug-breit'] },
+    'rudern-langhantel':           { name: 'Rudern Langhantel', note: 'Horizontaler Zug · schwer',            base: 30, step: 2.5, rest: 180, alternatives: ['kabelrudern-eng', 'rudern-kurzhantel'] },
+    'face-pulls':                  { name: 'Face Pulls', note: 'Hintere Schulter · Haltung',                  base: 12, step: 2.5, rest: 60,  alternatives: ['reverse-flys', 'seitheben'] },
+    'langhantel-curls':            { name: 'Langhantel-Curls', note: 'Bizeps Isolation',                      base: 15, step: 2.5, rest: 60,  alternatives: ['kurzhantel-curls', 'hammer-curls'] },
+    'latzug-untergriff':           { name: 'Latzug Untergriff', note: 'Vertikaler Zug · Bizeps-Fokus',        base: 30, step: 2.5, rest: 120, alternatives: ['klimmzuege', 'latzug-breit'] },
+    'kabelrudern-eng':             { name: 'Kabelrudern eng', note: 'Mittlerer Rücken',                       base: 30, step: 2.5, rest: 120, alternatives: ['rudern-langhantel', 'rudern-kurzhantel'] },
+    'reverse-flys':                { name: 'Reverse Flys', note: 'Hintere Schulter',                          base: 5,  step: 0.5, rest: 60,  alternatives: ['face-pulls', 'seitheben'] },
+    'hammer-curls':                { name: 'Hammer Curls', note: 'Brachialis · Unterarm',                     base: 8,  step: 1,   rest: 60,  alternatives: ['kurzhantel-curls', 'langhantel-curls'] },
+    'kniebeuge':                   { name: 'Kniebeuge', note: 'Langhantel · Hauptübung',                      base: 40, step: 2.5, rest: 180, alternatives: ['beinpresse', 'front-squat'] },
+    'rumaenisches-kreuzheben':     { name: 'Rumänisches Kreuzheben', note: 'Hamstrings · Po',                 base: 40, step: 2.5, rest: 180, alternatives: ['kreuzheben', 'good-mornings'] },
+    'beinpresse':                  { name: 'Beinpresse', note: 'Zweiter Quad-Reiz',                           base: 50, step: 5,   rest: 120, alternatives: ['kniebeuge', 'hackschmidt-squat'] },
+    'beinbeuger-liegend':          { name: 'Beinbeuger liegend', note: 'Hamstrings übers Knie',               base: 20, step: 2.5, rest: 90,  alternatives: ['beinbeuger-sitzend', 'nordic-curls'] },
+    'bulgarian-split-squats':      { name: 'Bulgarian Split Squats', note: 'Pro Bein · Po-Aktivierung',       base: 8,  step: 1,   rest: 120, alternatives: ['ausfallschritte', 'kniebeuge'] },
+    'beinbeuger-sitzend':          { name: 'Beinbeuger sitzend', note: 'Anderer Winkel als A',                base: 20, step: 2.5, rest: 90,  alternatives: ['beinbeuger-liegend', 'nordic-curls'] },
+    'wadenheben-stehend':          { name: 'Wadenheben stehend', note: 'Waden',                               base: 40, step: 2.5, rest: 60,  alternatives: ['wadenheben-sitzend', 'beinpresse'] },
+
+    // Alternativen ohne eigene alternatives-Liste (Endknoten)
+    'bankdruecken-kurzhantel':     { name: 'Bankdrücken Kurzhantel', note: 'Brust · mehr Stabi-Arbeit',       base: 14, step: 1,   rest: 120 },
+    'schulterdruecken-langhantel': { name: 'Schulterdrücken Langhantel', note: 'Overhead Press',              base: 25, step: 2.5, rest: 150 },
+    'arnold-press':                { name: 'Arnold Press', note: 'Rotation · vordere Schulter',               base: 10, step: 1,   rest: 90 },
+    'seitheben-kabel':             { name: 'Seitheben Kabel', note: 'Konstante Spannung',                     base: 8,  step: 1,   rest: 60 },
+    'seitheben-maschine':          { name: 'Seitheben Maschine', note: 'Geführte Bewegung',                   base: 15, step: 2.5, rest: 60 },
+    'french-press':                { name: 'French Press', note: 'Trizeps · Stirndrücken',                    base: 15, step: 2.5, rest: 60 },
+    'latzug-breit':                { name: 'Latzug breit', note: 'Latissimus-Fokus',                          base: 30, step: 2.5, rest: 120 },
+    'rudern-kurzhantel':           { name: 'Rudern Kurzhantel', note: 'Einseitig · Asymmetrien ausgleichen',  base: 16, step: 1,   rest: 120 },
+    'kurzhantel-curls':            { name: 'Kurzhantel-Curls', note: 'Bizeps · mehr Kontrolle',               base: 8,  step: 1,   rest: 60 },
+    'front-squat':                 { name: 'Front Squat', note: 'Quad-Fokus · aufrechter Oberkörper',         base: 30, step: 2.5, rest: 180 },
+    'hackschmidt-squat':           { name: 'Hackschmidt-Squat', note: 'Quads isoliert',                       base: 40, step: 5,   rest: 120 },
+    'kreuzheben':                  { name: 'Kreuzheben', note: 'Posterior Chain · schwer',                    base: 60, step: 5,   rest: 180 },
+    'good-mornings':               { name: 'Good Mornings', note: 'Hamstrings · unterer Rücken',              base: 20, step: 2.5, rest: 120 },
+    'nordic-curls':                { name: 'Nordic Curls', note: 'Hamstring-Exzentrik · anspruchsvoll',       bodyweight: true,    rest: 120 },
+    'ausfallschritte':             { name: 'Ausfallschritte', note: 'Pro Bein · KH in jeder Hand',            base: 10, step: 1,   rest: 90 },
+    'wadenheben-sitzend':          { name: 'Wadenheben sitzend', note: 'Soleus-Fokus',                        base: 25, step: 2.5, rest: 60 }
   };
 
   const DEFAULT_PROFILE = { gender: 'male', age: '26-35', nutrition: 'protein', commitment: 'full' };
@@ -1152,6 +1181,143 @@
     if (streakStat) streakStat.classList.toggle('streak-active', streak > 0);
   }
 
+  // Alternative Übungen pro Slot (freq/day/originalExId -> newExId)
+  function loadSubstitutes() {
+    try {
+      const saved = localStorage.getItem('ppl-substitutes');
+      if (saved) return JSON.parse(saved) || {};
+    } catch (e) {}
+    return {};
+  }
+
+  function saveSubstitutes(s) {
+    try { localStorage.setItem('ppl-substitutes', JSON.stringify(s)); } catch (e) {}
+  }
+
+  function subsSlotKey(freq, dayEl, originalExId) {
+    return `${freq}/${dayLabel(dayEl)}/${originalExId}`;
+  }
+
+  function initExOriginals() {
+    document.querySelectorAll('.ex').forEach(ex => {
+      const nameEl = ex.querySelector('.ex-name');
+      const noteEl = ex.querySelector('.ex-note');
+      if (!nameEl || nameEl.dataset.originalName) return;
+      const name = nameEl.textContent.trim();
+      nameEl.dataset.originalName = name;
+      nameEl.dataset.originalId = exerciseId(name);
+      if (noteEl) noteEl.dataset.originalNote = noteEl.textContent.trim();
+    });
+  }
+
+  function applySubstitutes() {
+    const subs = loadSubstitutes();
+    const freq = localStorage.getItem('ppl-frequency') || '6';
+    document.querySelectorAll('.ex').forEach(ex => {
+      const nameEl = ex.querySelector('.ex-name');
+      const noteEl = ex.querySelector('.ex-note');
+      const dayEl = ex.closest('.day');
+      if (!nameEl || !nameEl.dataset.originalId || !dayEl) return;
+      const origId = nameEl.dataset.originalId;
+      const key = subsSlotKey(freq, dayEl, origId);
+      const subId = subs[key];
+      const targetId = subId && EXERCISES[subId] ? subId : origId;
+      const def = EXERCISES[targetId] || EXERCISES[origId];
+      if (!def) return;
+      nameEl.textContent = def.name || nameEl.dataset.originalName;
+      if (noteEl) noteEl.textContent = def.note || noteEl.dataset.originalNote || '';
+    });
+  }
+
+  const SWAP_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>';
+
+  function renderSwapButtons() {
+    document.querySelectorAll('.ex').forEach(ex => {
+      const nameEl = ex.querySelector('.ex-name');
+      if (!nameEl || !nameEl.dataset.originalId) return;
+      const def = EXERCISES[nameEl.dataset.originalId];
+      if (!def || !Array.isArray(def.alternatives) || !def.alternatives.length) return;
+      if (nameEl.parentElement && nameEl.parentElement.classList.contains('ex-name-row')) return;
+      const row = document.createElement('div');
+      row.className = 'ex-name-row';
+      nameEl.parentNode.insertBefore(row, nameEl);
+      row.appendChild(nameEl);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'swap-btn';
+      btn.setAttribute('aria-label', 'Alternative wählen');
+      btn.innerHTML = SWAP_ICON;
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        openSwapSheet(ex);
+      });
+      row.appendChild(btn);
+    });
+  }
+
+  function openSwapSheet(exEl) {
+    const nameEl = exEl.querySelector('.ex-name');
+    const dayEl = exEl.closest('.day');
+    if (!nameEl || !dayEl) return;
+    const origId = nameEl.dataset.originalId;
+    const origDef = EXERCISES[origId];
+    if (!origDef || !Array.isArray(origDef.alternatives)) return;
+    const freq = localStorage.getItem('ppl-frequency') || '6';
+    const key = subsSlotKey(freq, dayEl, origId);
+    const subs = loadSubstitutes();
+    const currentId = subs[key] && EXERCISES[subs[key]] ? subs[key] : origId;
+
+    const sheet = document.getElementById('swap-sheet');
+    const title = document.getElementById('swap-title');
+    const list = document.getElementById('swap-list');
+    if (!sheet || !title || !list) return;
+
+    title.textContent = origDef.name || nameEl.dataset.originalName;
+    list.innerHTML = '';
+
+    [origId, ...origDef.alternatives].forEach((exId, idx) => {
+      const def = EXERCISES[exId];
+      if (!def) return;
+      const opt = document.createElement('button');
+      opt.type = 'button';
+      opt.className = 'swap-option' + (exId === currentId ? ' active' : '');
+      opt.innerHTML = `
+        <div class="swap-option-body">
+          <div class="swap-option-name">${escapeHtml(def.name || exId)}</div>
+          <div class="swap-option-note">${escapeHtml(def.note || '')}</div>
+        </div>
+        <div class="swap-option-badge">${idx === 0 ? 'Original' : 'Alternative'}</div>
+      `;
+      opt.addEventListener('click', () => {
+        const current = loadSubstitutes();
+        if (exId === origId) delete current[key];
+        else current[key] = exId;
+        saveSubstitutes(current);
+        closeSwapSheet();
+        applySubstitutes();
+        renderWeights();
+        renderSets();
+        refreshRecommendations();
+      });
+      list.appendChild(opt);
+    });
+
+    sheet.classList.remove('hidden');
+    sheet.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeSwapSheet() {
+    const sheet = document.getElementById('swap-sheet');
+    if (!sheet) return;
+    sheet.classList.add('hidden');
+    sheet.setAttribute('aria-hidden', 'true');
+  }
+
+  document.getElementById('swap-close')?.addEventListener('click', closeSwapSheet);
+  document.getElementById('swap-sheet')?.addEventListener('click', e => {
+    if (e.target.id === 'swap-sheet') closeSwapSheet();
+  });
+
   // Frequency (3× vs 6× pro Woche)
   function applyFrequency() {
     let freq = '6';
@@ -1440,6 +1606,9 @@
 
   applyFrequency();
   ensureWeightsInitialized();
+  initExOriginals();
+  applySubstitutes();
+  renderSwapButtons();
   renderWeights();
   initExReps();
   renderSets();
