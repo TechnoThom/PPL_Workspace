@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PPL · Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #151515;
+    --surface-2: #1f1f1f;
+    --border: #2a2a2a;
+    --text: #f5f5f5;
+    --text-dim: #888;
+    --push: #ff3b30;
+    --pull: #30d158;
+    --legs: #ffcc00;
+    --pack: #0a84ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: #000;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    overflow: hidden;
+    height: 100%;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .story {
+    position: relative;
+    background: var(--bg);
+    width: 100vw;
+    height: 100vh;
+    max-width: calc(100vh * 9 / 16);
+    overflow: hidden;
+  }
+
+  .progress {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    gap: 4px;
+    z-index: 10;
+  }
+
+  .progress-seg {
+    flex: 1;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .progress-seg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--text);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: progress-fill 18s linear infinite;
+  }
+
+  .progress-seg:nth-child(1)::after { animation-name: progress-seg-1; }
+  .progress-seg:nth-child(2)::after { animation-name: progress-seg-2; }
+  .progress-seg:nth-child(3)::after { animation-name: progress-seg-3; }
+  .progress-seg:nth-child(4)::after { animation-name: progress-seg-4; }
+  .progress-seg:nth-child(5)::after { animation-name: progress-seg-5; }
+
+  @keyframes progress-seg-1 {
+    0% { transform: scaleX(0); }
+    20% { transform: scaleX(1); }
+    100% { transform: scaleX(1); }
+  }
+  @keyframes progress-seg-2 {
+    0%, 20% { transform: scaleX(0); }
+    40% { transform: scaleX(1); }
+    100% { transform: scaleX(1); }
+  }
+  @keyframes progress-seg-3 {
+    0%, 40% { transform: scaleX(0); }
+    60% { transform: scaleX(1); }
+    100% { transform: scaleX(1); }
+  }
+  @keyframes progress-seg-4 {
+    0%, 60% { transform: scaleX(0); }
+    80% { transform: scaleX(1); }
+    100% { transform: scaleX(1); }
+  }
+  @keyframes progress-seg-5 {
+    0%, 80% { transform: scaleX(0); }
+    100% { transform: scaleX(1); }
+  }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    padding: 60px 32px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    animation-duration: 18s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+  }
+
+  .scene:nth-child(2) { animation-name: scene-1; }
+  .scene:nth-child(3) { animation-name: scene-2; }
+  .scene:nth-child(4) { animation-name: scene-3; }
+  .scene:nth-child(5) { animation-name: scene-4; }
+  .scene:nth-child(6) { animation-name: scene-5; }
+
+  @keyframes scene-1 {
+    0% { opacity: 0; transform: scale(0.96); }
+    3% { opacity: 1; transform: scale(1); }
+    18% { opacity: 1; transform: scale(1); }
+    20% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes scene-2 {
+    0%, 20% { opacity: 0; transform: scale(0.96); }
+    23% { opacity: 1; transform: scale(1); }
+    38% { opacity: 1; transform: scale(1); }
+    40% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes scene-3 {
+    0%, 40% { opacity: 0; transform: scale(0.96); }
+    43% { opacity: 1; transform: scale(1); }
+    58% { opacity: 1; transform: scale(1); }
+    60% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes scene-4 {
+    0%, 60% { opacity: 0; transform: scale(0.96); }
+    63% { opacity: 1; transform: scale(1); }
+    78% { opacity: 1; transform: scale(1); }
+    80% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes scene-5 {
+    0%, 80% { opacity: 0; transform: scale(0.96); }
+    83% { opacity: 1; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+  }
+
+  .hero-title {
+    font-size: clamp(64px, 17vw, 120px);
+    margin-bottom: 24px;
+  }
+
+  .hero-title .dot { color: var(--text); margin: 0 6px; }
+  .hero-title .push { color: var(--push); }
+  .hero-title .pull { color: var(--pull); }
+  .hero-title .legs { color: var(--legs); }
+
+  .caption {
+    font-size: 15px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    max-width: 320px;
+  }
+
+  .caption strong { color: var(--text); font-weight: 500; }
+
+  .scene-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(44px, 12vw, 72px);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    margin-bottom: 20px;
+  }
+
+  .scene-title.red { color: var(--push); }
+  .scene-title.green { color: var(--pull); }
+  .scene-title.yellow { color: var(--legs); }
+  .scene-title.blue { color: var(--pack); }
+
+  /* Scene 2: week preview */
+  .week {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 14px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .week-day {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .wd { font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; }
+
+  .wt {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    padding: 6px 2px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .wt.p-push { background: rgba(255, 59, 48, 0.15); color: var(--push); }
+  .wt.p-pull { background: rgba(48, 209, 88, 0.15); color: var(--pull); }
+  .wt.p-legs { background: rgba(255, 204, 0, 0.15); color: var(--legs); }
+  .wt.rest { background: var(--surface-2); color: var(--text-dim); }
+
+  .week-day.today .wd { color: var(--text); font-weight: 700; }
+  .week-day.today .wt { outline: 2px solid var(--text); outline-offset: 2px; }
+
+  /* Scene 3: exercise mockup */
+  .ex-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+
+  .ex-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .ex-accent {
+    width: 4px;
+    height: 32px;
+    border-radius: 2px;
+    background: var(--push);
+  }
+
+  .ex-name-big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.03em;
+  }
+
+  .ex-note-big {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  .ex-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .ex-weight-demo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .w-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .w-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+  }
+
+  .w-unit { font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; }
+
+  .sets-demo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .sets-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  .s-box {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--text-dim);
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .s-box.done {
+    background: var(--pack);
+    border-color: var(--pack);
+  }
+
+  .s-box.done svg { opacity: 1; }
+  .s-box svg { width: 12px; height: 12px; color: white; opacity: 0; }
+
+  .s-box.filling {
+    animation: fill-box 1s ease-out forwards;
+    animation-delay: 1.2s;
+  }
+
+  @keyframes fill-box {
+    from { background: var(--surface-2); border-color: var(--text-dim); }
+    to { background: var(--pack); border-color: var(--pack); }
+  }
+
+  .s-box.filling svg {
+    animation: show-check 0.4s ease-out forwards;
+    animation-delay: 1.6s;
+  }
+
+  @keyframes show-check {
+    to { opacity: 1; }
+  }
+
+  .timer-demo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    color: var(--pack);
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+  }
+
+  /* Scene 4: streak */
+  .streak-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 12px 0 30px;
+    position: relative;
+  }
+
+  .streak-box {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 24px;
+    isolation: isolate;
+  }
+
+  .streak-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 140px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    text-shadow: 0 0 24px rgba(255, 140, 0, 0.7), 0 0 8px rgba(255, 220, 100, 0.8);
+    position: relative;
+    z-index: 2;
+  }
+
+  .flame-bg {
+    position: absolute;
+    left: 50%;
+    bottom: -15%;
+    width: 110%;
+    height: 150%;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+
+  .flame-bg::before,
+  .flame-bg::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    filter: blur(12px);
+  }
+
+  .flame-bg::before {
+    width: 85%;
+    height: 85%;
+    background: radial-gradient(ellipse 55% 75% at 50% 80%,
+      rgba(255, 200, 70, 0.6) 0%,
+      rgba(255, 120, 20, 0.5) 30%,
+      rgba(255, 50, 0, 0.3) 60%,
+      transparent 85%);
+    animation: flame-flicker 1.9s ease-in-out infinite;
+  }
+
+  .flame-bg::after {
+    width: 55%;
+    height: 70%;
+    background: radial-gradient(ellipse 55% 70% at 50% 80%,
+      rgba(255, 245, 180, 0.8) 0%,
+      rgba(255, 180, 40, 0.6) 40%,
+      transparent 90%);
+    filter: blur(5px);
+    animation: flame-flicker 1.2s ease-in-out infinite reverse;
+  }
+
+  @keyframes flame-flicker {
+    0%, 100% { transform: translateX(-50%) scale(1, 1); opacity: 0.85; }
+    20% { transform: translateX(-52%) scale(0.96, 1.1); opacity: 1; }
+    45% { transform: translateX(-48%) scale(1.06, 0.95); opacity: 0.9; }
+    70% { transform: translateX(-51%) scale(0.98, 1.05); opacity: 1; }
+  }
+
+  .streak-label {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .feat {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .feat-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--pull);
+    flex-shrink: 0;
+  }
+
+  /* Scene 5: CTA */
+  .cta-card {
+    text-align: center;
+  }
+
+  .cta-mark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(70px, 20vw, 140px);
+    letter-spacing: 0.08em;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--push) 0%, var(--legs) 50%, var(--pull) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: 20px;
+  }
+
+  .cta-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(26px, 7vw, 44px);
+    line-height: 1;
+    margin-bottom: 18px;
+  }
+
+  .cta-sub {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    max-width: 300px;
+    margin: 0 auto 28px;
+  }
+
+  .cta-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    background: var(--text);
+    color: var(--bg);
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    animation: cta-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes cta-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 245, 245, 0.6); }
+    50% { transform: scale(1.03); box-shadow: 0 0 0 14px rgba(245, 245, 245, 0); }
+  }
+
+  .cta-arrow {
+    display: inline-block;
+    margin-left: 4px;
+  }
+
+  .brand-footer {
+    position: absolute;
+    bottom: 24px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+  <div class="story">
+
+    <div class="progress">
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+    </div>
+
+    <!-- SCENE 1 · Hook -->
+    <div class="scene">
+      <div class="eyebrow">Made for gym</div>
+      <h1 class="hero-title">
+        <span class="push">PUSH</span><span class="dot">·</span><span class="pull">PULL</span><span class="dot">·</span><span class="legs">LEGS</span>
+      </h1>
+      <div class="caption">
+        <strong>Meine eigene App.</strong><br>
+        Offline. Ohne Account. Ohne Ads.
+      </div>
+    </div>
+
+    <!-- SCENE 2 · Plan -->
+    <div class="scene">
+      <div class="eyebrow">Dein Plan</div>
+      <div class="scene-title">3× oder 6×<br>pro Woche</div>
+      <div class="week">
+        <div class="week-day"><div class="wd">MO</div><div class="wt p-push">P A</div></div>
+        <div class="week-day today"><div class="wd">DI</div><div class="wt p-pull">P A</div></div>
+        <div class="week-day"><div class="wd">MI</div><div class="wt p-legs">L A</div></div>
+        <div class="week-day"><div class="wd">DO</div><div class="wt p-push">P B</div></div>
+        <div class="week-day"><div class="wd">FR</div><div class="wt p-pull">P B</div></div>
+        <div class="week-day"><div class="wd">SA</div><div class="wt p-legs">L B</div></div>
+        <div class="week-day"><div class="wd">SO</div><div class="wt rest">OFF</div></div>
+      </div>
+      <div class="caption">Sie zeigt dir jeden Tag, <strong>was heute dran ist.</strong></div>
+    </div>
+
+    <!-- SCENE 3 · Training -->
+    <div class="scene">
+      <div class="eyebrow">Beim Training</div>
+      <div class="scene-title red">Abhaken.<br>Fertig.</div>
+      <div class="ex-card">
+        <div class="ex-head">
+          <div class="ex-accent"></div>
+          <div>
+            <div class="ex-name-big">Bankdrücken</div>
+            <div class="ex-note-big">Hauptübung Brust</div>
+          </div>
+        </div>
+        <div class="ex-row">
+          <div class="ex-weight-demo">
+            <div class="w-btn">−</div>
+            <div><span class="w-val">40</span> <span class="w-unit">kg</span></div>
+            <div class="w-btn">+</div>
+          </div>
+          <div class="sets-demo">
+            <div class="sets-row">
+              <div class="s-box done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="s-box done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="s-box filling"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="s-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            </div>
+            <div class="timer-demo">2:47</div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">Der <strong>Pausentimer</strong> startet automatisch.</div>
+    </div>
+
+    <!-- SCENE 4 · Streak + Smart -->
+    <div class="scene">
+      <div class="eyebrow" style="text-align:center">Bleib dran</div>
+      <div class="streak-wrap">
+        <div class="streak-box">
+          <div class="flame-bg"></div>
+          <div class="streak-number">7</div>
+        </div>
+      </div>
+      <div class="streak-label">Tage Streak</div>
+      <div class="features-list">
+        <div class="feat"><div class="feat-dot" style="background: var(--legs)"></div><span>Streak Freezes für Pausen</span></div>
+        <div class="feat"><div class="feat-dot" style="background: var(--pull)"></div><span>Smarte Gewichts-Empfehlungen</span></div>
+        <div class="feat"><div class="feat-dot" style="background: var(--pack)"></div><span>Gym-Packliste, personalisiert</span></div>
+      </div>
+    </div>
+
+    <!-- SCENE 5 · CTA -->
+    <div class="scene">
+      <div class="cta-card">
+        <div class="cta-mark">PPL</div>
+        <div class="cta-headline">Link in Bio</div>
+        <div class="cta-sub">Zum Homebildschirm hinzufügen, fertig. Läuft wie 'ne App, ist aber 'ne Website.</div>
+        <div class="cta-box">
+          Jetzt installieren <span class="cta-arrow">→</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-footer">Push · Pull · Legs</div>
+  </div>
+</body>
+</html>
