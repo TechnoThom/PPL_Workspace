@@ -21,13 +21,22 @@ Feature, nicht die Einschränkung. Alles läuft clientseitig im Browser.
 # Dateistruktur
 ```
 PPL_Workspace/
-  index.html        # Gesamte App: HTML + inline CSS + inline JS
+  index.html        # Markup (Views, Overlays, Stats-Bar, …)
+  styles.css        # Komplette Styles
+  app.js            # Gesamte App-Logik (Onboarding, Tracking, Timer, Sub-Stitutes, …)
   sw.js             # Service Worker (Cache-Name: ppl-vN)
   manifest.json     # PWA-Manifest
   icon-180.png      # Apple Touch Icon
   icon-192.png      # Standard-Icon
   icon-512.png      # Hi-Res Icon (auch maskable)
+  story.html        # Standalone 9:19.5 Instagram-Story-Ad mit 7 Scenes
 ```
+
+Kein Build-Step: Die drei Asset-Typen (HTML, CSS, JS) liegen getrennt,
+werden aber direkt vom Browser geladen (`<link>` und `<script>`). Wenn
+`app.js` weiter wächst, kann man in Zukunft nach Feature splitten
+(z. B. `onboarding.js`, `tracking.js`, …) und die Dateien einzeln per
+`<script>` einbinden. Kein Bundler.
 
 # localStorage-Keys
 - `ppl-pack-items`: Array<string>, die Packlisten-Items des Users

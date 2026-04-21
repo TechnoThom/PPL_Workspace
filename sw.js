@@ -1,8 +1,9 @@
-const CACHE = 'ppl-v18';
+const CACHE = 'ppl-v19';
 const ASSETS = [
   './',
   './index.html',
   './styles.css',
+  './app.js',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
