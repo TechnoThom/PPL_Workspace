@@ -1297,6 +1297,16 @@ if ('serviceWorker' in navigator) {
           if (nw.state === 'installed' && navigator.serviceWorker.controller) showUpdateBanner(nw);
         });
       });
+
+      // iOS PWAs prüfen Service Worker sonst frühestens alle 24h oder gar
+      // nicht mehr. Deshalb: aktiver Check beim Laden und bei jedem
+      // Wechsel aus dem Hintergrund in den Vordergrund.
+      const forceUpdate = () => { reg.update().catch(() => {}); };
+      forceUpdate();
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') forceUpdate();
+      });
+      window.addEventListener('focus', forceUpdate);
     }).catch(() => {});
 
     let reloading = false;
