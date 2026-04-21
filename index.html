@@ -795,6 +795,25 @@
 
   function render() {
     list.innerHTML = '';
+
+    if (editMode) {
+      const addRow = document.createElement('div');
+      addRow.className = 'pack-item add-row';
+      addRow.innerHTML = `
+        <input type="text" class="pack-add-input" placeholder="Neues Item hinzufügen...">
+        <button class="add-btn" aria-label="Hinzufügen">+</button>
+      `;
+      const addInput = addRow.querySelector('.pack-add-input');
+      const addBtnEl = addRow.querySelector('.add-btn');
+      const doAdd = () => {
+        const val = addInput.value.trim();
+        if (val) { addItem(val); addInput.value = ''; }
+      };
+      addBtnEl.addEventListener('click', doAdd);
+      addInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doAdd(); } });
+      list.appendChild(addRow);
+    }
+
     items.forEach((item, i) => {
       const row = document.createElement('div');
 
@@ -828,24 +847,6 @@
       }
       list.appendChild(row);
     });
-
-    if (editMode) {
-      const addRow = document.createElement('div');
-      addRow.className = 'pack-item add-row';
-      addRow.innerHTML = `
-        <input type="text" class="pack-add-input" placeholder="Neues Item hinzufügen...">
-        <button class="add-btn" aria-label="Hinzufügen">+</button>
-      `;
-      const addInput = addRow.querySelector('.pack-add-input');
-      const addBtnEl = addRow.querySelector('.add-btn');
-      const doAdd = () => {
-        const val = addInput.value.trim();
-        if (val) { addItem(val); addInput.value = ''; }
-      };
-      addBtnEl.addEventListener('click', doAdd);
-      addInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doAdd(); } });
-      list.appendChild(addRow);
-    }
 
     updateCount();
   }
