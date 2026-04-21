@@ -2589,10 +2589,14 @@
 
   if (isIOS && !isStandalone) showInstallHint();
 
-  document.getElementById('install-btn')?.addEventListener('click', () => {
-    if (isStandalone) { showToast('Läuft bereits als App.'); return; }
-    showInstallHint({ forced: true });
-  });
+  const installBtn = document.getElementById('install-btn');
+  if (installBtn) {
+    if (isStandalone) {
+      installBtn.remove();
+    } else {
+      installBtn.addEventListener('click', () => showInstallHint({ forced: true }));
+    }
+  }
 </script>
 </body>
 </html>
