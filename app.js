@@ -1158,29 +1158,44 @@ function renderEditor() {
     card.className = 'editor-day-card';
     card.innerHTML = `
       <div class="editor-day-head">
-        <input class="editor-input flex" value="${escapeAttr(day.label || '')}" placeholder="Label (z. B. Push)" data-f="label">
+        <label class="editor-field">
+          <span class="editor-field-label">Tag-Label</span>
+          <input class="editor-input" value="${escapeAttr(day.label || '')}" placeholder="z. B. Push, Pull, Oberkörper" data-f="label">
+        </label>
         <button class="editor-icon-btn" data-a="del-day" aria-label="Tag löschen" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <div class="editor-row-meta">
-        <select class="editor-select" data-f="accent">
-          <option value="push"${day.accent === 'push' ? ' selected' : ''}>Push (rot)</option>
-          <option value="pull"${day.accent === 'pull' ? ' selected' : ''}>Pull (grün)</option>
-          <option value="legs"${day.accent === 'legs' ? ' selected' : ''}>Legs (gelb)</option>
-        </select>
-        <select class="editor-select" data-f="weekday">
-          <option value="-1"${!(day.weekday >= 0 && day.weekday <= 6) ? ' selected' : ''}>Kein Wochentag</option>
-          <option value="0"${day.weekday === 0 ? ' selected' : ''}>Montag</option>
-          <option value="1"${day.weekday === 1 ? ' selected' : ''}>Dienstag</option>
-          <option value="2"${day.weekday === 2 ? ' selected' : ''}>Mittwoch</option>
-          <option value="3"${day.weekday === 3 ? ' selected' : ''}>Donnerstag</option>
-          <option value="4"${day.weekday === 4 ? ' selected' : ''}>Freitag</option>
-          <option value="5"${day.weekday === 5 ? ' selected' : ''}>Samstag</option>
-          <option value="6"${day.weekday === 6 ? ' selected' : ''}>Sonntag</option>
-        </select>
-        <input class="editor-input flex" value="${escapeAttr(day.focus || '')}" placeholder="Fokus (z. B. Schwer, Volumen)" data-f="focus">
-        <input class="editor-input small" value="${escapeAttr(day.variant || '')}" placeholder="A/B" data-f="variant">
+        <label class="editor-field">
+          <span class="editor-field-label">Akzentfarbe</span>
+          <select class="editor-select" data-f="accent">
+            <option value="push"${day.accent === 'push' ? ' selected' : ''}>Push (rot)</option>
+            <option value="pull"${day.accent === 'pull' ? ' selected' : ''}>Pull (grün)</option>
+            <option value="legs"${day.accent === 'legs' ? ' selected' : ''}>Legs (gelb)</option>
+          </select>
+        </label>
+        <label class="editor-field">
+          <span class="editor-field-label">Wochentag</span>
+          <select class="editor-select" data-f="weekday">
+            <option value="-1"${!(day.weekday >= 0 && day.weekday <= 6) ? ' selected' : ''}>Kein Wochentag</option>
+            <option value="0"${day.weekday === 0 ? ' selected' : ''}>Montag</option>
+            <option value="1"${day.weekday === 1 ? ' selected' : ''}>Dienstag</option>
+            <option value="2"${day.weekday === 2 ? ' selected' : ''}>Mittwoch</option>
+            <option value="3"${day.weekday === 3 ? ' selected' : ''}>Donnerstag</option>
+            <option value="4"${day.weekday === 4 ? ' selected' : ''}>Freitag</option>
+            <option value="5"${day.weekday === 5 ? ' selected' : ''}>Samstag</option>
+            <option value="6"${day.weekday === 6 ? ' selected' : ''}>Sonntag</option>
+          </select>
+        </label>
+        <label class="editor-field fixed" style="flex: 0 0 80px">
+          <span class="editor-field-label">Variante</span>
+          <input class="editor-input" value="${escapeAttr(day.variant || '')}" placeholder="A / B" data-f="variant">
+        </label>
+        <label class="editor-field" style="flex: 1 1 100%">
+          <span class="editor-field-label">Fokus (optional)</span>
+          <input class="editor-input" value="${escapeAttr(day.focus || '')}" placeholder="z. B. Schwer, Volumen, Quad-Fokus" data-f="focus">
+        </label>
       </div>
       <div class="editor-section-title">Übungen</div>
     `;
@@ -1204,16 +1219,37 @@ function renderEditor() {
       row.className = 'editor-ex-row';
       row.innerHTML = `
         <div class="editor-ex-fields">
-          <input class="editor-input" value="${escapeAttr(ex.name || '')}" placeholder="Name" data-f="name">
-          <input class="editor-input" value="${escapeAttr(ex.note || '')}" placeholder="Notiz (optional)" data-f="note">
+          <label class="editor-field">
+            <span class="editor-field-label">Name</span>
+            <input class="editor-input" value="${escapeAttr(ex.name || '')}" placeholder="z. B. Bankdrücken" data-f="name">
+          </label>
+          <label class="editor-field">
+            <span class="editor-field-label">Notiz (optional)</span>
+            <input class="editor-input" value="${escapeAttr(ex.note || '')}" placeholder="z. B. Hauptübung Brust" data-f="note">
+          </label>
           <div class="editor-ex-fields-row">
-            <input class="editor-input small" value="${escapeAttr(ex.sets || 3)}" placeholder="Sätze" type="number" min="1" max="10" data-f="sets">
-            <input class="editor-input medium" value="${escapeAttr(ex.range || '')}" placeholder="Wdh (6-8)" data-f="range">
-            <input class="editor-input small" value="${escapeAttr(ex.rest || 90)}" placeholder="Pause s" type="number" min="0" max="600" data-f="rest">
+            <label class="editor-field fixed" style="flex: 0 0 70px">
+              <span class="editor-field-label">Sätze</span>
+              <input class="editor-input" value="${escapeAttr(ex.sets || 3)}" type="number" min="1" max="10" data-f="sets">
+            </label>
+            <label class="editor-field">
+              <span class="editor-field-label">Wdh</span>
+              <input class="editor-input" value="${escapeAttr(ex.range || '8-10')}" placeholder="z. B. 6-8 oder 10-12" data-f="range">
+            </label>
+            <label class="editor-field fixed" style="flex: 0 0 90px">
+              <span class="editor-field-label">Pause (s)</span>
+              <input class="editor-input" value="${escapeAttr(ex.rest || 90)}" type="number" min="0" max="600" step="15" data-f="rest">
+            </label>
           </div>
           <div class="editor-ex-fields-row">
-            <input class="editor-input small" value="${escapeAttr(ex.base || 0)}" placeholder="Start kg" type="number" min="0" step="0.5" data-f="base">
-            <input class="editor-input small" value="${escapeAttr(ex.step || 2.5)}" placeholder="Schritt" type="number" min="0.25" step="0.25" data-f="step">
+            <label class="editor-field">
+              <span class="editor-field-label">Startgewicht (kg)</span>
+              <input class="editor-input" value="${escapeAttr(ex.base || 0)}" type="number" min="0" step="0.5" data-f="base">
+            </label>
+            <label class="editor-field">
+              <span class="editor-field-label">Schritt (kg)</span>
+              <input class="editor-input" value="${escapeAttr(ex.step || 2.5)}" type="number" min="0.25" step="0.25" data-f="step">
+            </label>
           </div>
         </div>
         <button class="editor-icon-btn" data-a="del-ex" aria-label="Übung löschen" type="button">

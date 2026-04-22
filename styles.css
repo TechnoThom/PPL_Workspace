@@ -1538,19 +1538,29 @@ h1 .legs-t { color: var(--legs); }
   cursor: pointer;
 }
 
-.editor-row-meta {
+.editor-field {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 14px;
-  align-items: center;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
 }
 
-.editor-row-meta-label {
+.editor-field.fixed { flex: 0 0 auto; }
+
+.editor-field-label {
   font-size: 10px;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.14em;
   color: var(--text-dim);
   text-transform: uppercase;
+}
+
+.editor-row-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  align-items: stretch;
 }
 
 .editor-section-title {
@@ -1565,9 +1575,9 @@ h1 .legs-t { color: var(--legs); }
 .editor-ex-row {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 8px;
+  gap: 10px;
   align-items: start;
-  padding: 10px 0;
+  padding: 14px 0;
   border-top: 1px solid var(--border);
 }
 
@@ -1576,13 +1586,14 @@ h1 .legs-t { color: var(--legs); }
 .editor-ex-fields {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
 }
 
 .editor-ex-fields-row {
   display: flex;
-  gap: 6px;
+  gap: 10px;
   flex-wrap: wrap;
+  align-items: stretch;
 }
 
 .editor-icon-btn {
