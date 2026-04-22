@@ -74,7 +74,7 @@
     background: var(--text);
     transform: scaleX(0);
     transform-origin: left;
-    animation: progress-fill 21s linear infinite;
+    animation: progress-fill 24s linear infinite;
   }
 
   .progress-seg:nth-child(1)::after { animation-name: progress-seg-1; }
@@ -84,39 +84,45 @@
   .progress-seg:nth-child(5)::after { animation-name: progress-seg-5; }
   .progress-seg:nth-child(6)::after { animation-name: progress-seg-6; }
   .progress-seg:nth-child(7)::after { animation-name: progress-seg-7; }
+  .progress-seg:nth-child(8)::after { animation-name: progress-seg-8; }
 
   @keyframes progress-seg-1 {
     0% { transform: scaleX(0); }
-    14.28% { transform: scaleX(1); }
+    12.5% { transform: scaleX(1); }
     100% { transform: scaleX(1); }
   }
   @keyframes progress-seg-2 {
-    0%, 14.28% { transform: scaleX(0); }
-    28.57% { transform: scaleX(1); }
+    0%, 12.5% { transform: scaleX(0); }
+    25% { transform: scaleX(1); }
     100% { transform: scaleX(1); }
   }
   @keyframes progress-seg-3 {
-    0%, 28.57% { transform: scaleX(0); }
-    42.85% { transform: scaleX(1); }
+    0%, 25% { transform: scaleX(0); }
+    37.5% { transform: scaleX(1); }
     100% { transform: scaleX(1); }
   }
   @keyframes progress-seg-4 {
-    0%, 42.85% { transform: scaleX(0); }
-    57.14% { transform: scaleX(1); }
+    0%, 37.5% { transform: scaleX(0); }
+    50% { transform: scaleX(1); }
     100% { transform: scaleX(1); }
   }
   @keyframes progress-seg-5 {
-    0%, 57.14% { transform: scaleX(0); }
-    71.42% { transform: scaleX(1); }
+    0%, 50% { transform: scaleX(0); }
+    62.5% { transform: scaleX(1); }
     100% { transform: scaleX(1); }
   }
   @keyframes progress-seg-6 {
-    0%, 71.42% { transform: scaleX(0); }
-    85.71% { transform: scaleX(1); }
+    0%, 62.5% { transform: scaleX(0); }
+    75% { transform: scaleX(1); }
     100% { transform: scaleX(1); }
   }
   @keyframes progress-seg-7 {
-    0%, 85.71% { transform: scaleX(0); }
+    0%, 75% { transform: scaleX(0); }
+    87.5% { transform: scaleX(1); }
+    100% { transform: scaleX(1); }
+  }
+  @keyframes progress-seg-8 {
+    0%, 87.5% { transform: scaleX(0); }
     100% { transform: scaleX(1); }
   }
 
@@ -132,7 +138,7 @@
     flex-direction: column;
     justify-content: center;
     opacity: 0;
-    animation-duration: 21s;
+    animation-duration: 24s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
     overflow: hidden;
@@ -145,52 +151,60 @@
   .scene:nth-child(6) { animation-name: scene-5; }
   .scene:nth-child(7) { animation-name: scene-6; }
   .scene:nth-child(8) { animation-name: scene-7; }
+  .scene:nth-child(9) { animation-name: scene-8; }
 
   @keyframes scene-1 {
     0% { opacity: 0; transform: scale(0.96); }
     2% { opacity: 1; transform: scale(1); }
-    13% { opacity: 1; transform: scale(1); }
-    15% { opacity: 0; transform: scale(1.03); }
+    11% { opacity: 1; transform: scale(1); }
+    13% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes scene-2 {
-    0%, 15% { opacity: 0; transform: scale(0.96); }
-    17% { opacity: 1; transform: scale(1); }
-    27% { opacity: 1; transform: scale(1); }
-    29% { opacity: 0; transform: scale(1.03); }
+    0%, 13% { opacity: 0; transform: scale(0.96); }
+    15% { opacity: 1; transform: scale(1); }
+    23% { opacity: 1; transform: scale(1); }
+    25% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes scene-3 {
-    0%, 29% { opacity: 0; transform: scale(0.96); }
-    31% { opacity: 1; transform: scale(1); }
-    41% { opacity: 1; transform: scale(1); }
-    43% { opacity: 0; transform: scale(1.03); }
+    0%, 25% { opacity: 0; transform: scale(0.96); }
+    27% { opacity: 1; transform: scale(1); }
+    36% { opacity: 1; transform: scale(1); }
+    38% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes scene-4 {
-    0%, 43% { opacity: 0; transform: scale(0.96); }
-    45% { opacity: 1; transform: scale(1); }
-    55% { opacity: 1; transform: scale(1); }
-    57% { opacity: 0; transform: scale(1.03); }
+    0%, 38% { opacity: 0; transform: scale(0.96); }
+    40% { opacity: 1; transform: scale(1); }
+    49% { opacity: 1; transform: scale(1); }
+    51% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes scene-5 {
-    0%, 57% { opacity: 0; transform: scale(0.96); }
-    59% { opacity: 1; transform: scale(1); }
-    69% { opacity: 1; transform: scale(1); }
-    71% { opacity: 0; transform: scale(1.03); }
+    0%, 51% { opacity: 0; transform: scale(0.96); }
+    53% { opacity: 1; transform: scale(1); }
+    61% { opacity: 1; transform: scale(1); }
+    63% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes scene-6 {
-    0%, 71% { opacity: 0; transform: scale(0.96); }
-    73% { opacity: 1; transform: scale(1); }
-    84% { opacity: 1; transform: scale(1); }
-    86% { opacity: 0; transform: scale(1.03); }
+    0%, 63% { opacity: 0; transform: scale(0.96); }
+    65% { opacity: 1; transform: scale(1); }
+    74% { opacity: 1; transform: scale(1); }
+    76% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes scene-7 {
-    0%, 86% { opacity: 0; transform: scale(0.96); }
-    88% { opacity: 1; transform: scale(1); }
+    0%, 76% { opacity: 0; transform: scale(0.96); }
+    78% { opacity: 1; transform: scale(1); }
+    86% { opacity: 1; transform: scale(1); }
+    88% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes scene-8 {
+    0%, 88% { opacity: 0; transform: scale(0.96); }
+    90% { opacity: 1; transform: scale(1); }
     100% { opacity: 1; transform: scale(1); }
   }
 
@@ -280,6 +294,79 @@
 
   .week-day.today .wd { color: var(--text); font-weight: 700; }
   .week-day.today .wt { outline: 2px solid var(--text); outline-offset: 2px; }
+
+  /* Custom Plan pitch scene */
+  .custom-quote {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 17px;
+    line-height: 1.4;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 18px;
+  }
+
+  .custom-answer {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 14vw, 84px);
+    line-height: 0.95;
+    color: var(--push);
+    letter-spacing: 0.02em;
+    margin-bottom: 4px;
+  }
+
+  .custom-kicker {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 8vw, 46px);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    margin-bottom: 20px;
+  }
+
+  .custom-body {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 22px;
+    max-width: 360px;
+  }
+
+  .plan-switch-mock {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+  }
+
+  .plan-switch-mock-btn {
+    flex: 1;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 10px 6px;
+    color: var(--text-dim);
+    border-radius: 6px;
+  }
+
+  .plan-switch-mock-btn.active {
+    background: var(--surface-2);
+    color: var(--text);
+  }
+
+  .custom-new-badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: white;
+    background: var(--push);
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+  }
 
   /* Scene 3: exercise mockup */
   .ex-card {
@@ -732,6 +819,7 @@
       <div class="progress-seg"></div>
       <div class="progress-seg"></div>
       <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
     </div>
 
     <!-- SCENE 1 · Hook -->
@@ -762,7 +850,21 @@
       <div class="caption">Sie zeigt dir jeden Tag, <strong>was heute dran ist.</strong></div>
     </div>
 
-    <!-- SCENE 3 · Training -->
+    <!-- SCENE 3 · Custom Plan Pitch -->
+    <div class="scene">
+      <div class="custom-new-badge">Neu</div>
+      <div class="custom-quote">"Puh, schon wieder Leg Day<br>diese Woche?"</div>
+      <div class="custom-answer">KEIN PROBLEM.</div>
+      <div class="custom-kicker">Bau dir deinen eigenen Plan.</div>
+      <div class="custom-body">Trainings-Tage, Übungen, Pausenzeiten, Sätze. Alles selbst.</div>
+      <div class="plan-switch-mock">
+        <div class="plan-switch-mock-btn">3×</div>
+        <div class="plan-switch-mock-btn">6×</div>
+        <div class="plan-switch-mock-btn active">Eigener</div>
+      </div>
+    </div>
+
+    <!-- SCENE 4 · Training -->
     <div class="scene">
       <div class="eyebrow">Beim Training</div>
       <div class="scene-title red">Abhaken.<br>Fertig.</div>
@@ -794,7 +896,7 @@
       <div class="caption">Der <strong>Pausentimer</strong> startet automatisch.</div>
     </div>
 
-    <!-- SCENE 4 · Smart Weights -->
+    <!-- SCENE 5 · Smart Weights -->
     <div class="scene">
       <div class="eyebrow">Smart</div>
       <div class="scene-title green">Hoch oder<br>zurück?</div>
@@ -831,7 +933,7 @@
       <div class="caption">Sie schlägt dir vor, wann du <strong>hoch oder zurück</strong> gehen sollst.</div>
     </div>
 
-    <!-- SCENE 5 · Packliste -->
+    <!-- SCENE 6 · Packliste -->
     <div class="scene">
       <div class="eyebrow">Packliste</div>
       <div class="scene-title blue">Nichts mehr<br>vergessen.</div>
@@ -864,7 +966,7 @@
       <div class="caption">Beim Onboarding gebaut, danach <strong>immer bei dir.</strong></div>
     </div>
 
-    <!-- SCENE 6 · Streak -->
+    <!-- SCENE 7 · Streak -->
     <div class="scene">
       <div class="eyebrow" style="text-align:center">Bleib dran</div>
       <div class="streak-wrap">
@@ -880,7 +982,7 @@
       </div>
     </div>
 
-    <!-- SCENE 7 · CTA -->
+    <!-- SCENE 8 · CTA -->
     <div class="scene">
       <div class="cta-card">
         <div class="cta-mark">PPL</div>
