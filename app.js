@@ -4,7 +4,7 @@ const PPL_MIGRATABLE_KEYS = [
   'ppl-pack-items', 'ppl-pack-state', 'ppl-onboarded', 'ppl-frequency',
   'ppl-profile', 'ppl-weights', 'ppl-weight-history', 'ppl-sets',
   'ppl-sessions', 'ppl-freezes', 'ppl-last-share-reward', 'ppl-rec-enabled',
-  'ppl-install-dismissed', 'ppl-substitutes'
+  'ppl-install-dismissed', 'ppl-substitutes', 'ppl-plan-mode', 'ppl-custom-plan'
 ];
 
 function exportStateToUrl() {
@@ -480,7 +480,7 @@ function refreshRecommendations() {
   document.querySelectorAll('.ex').forEach(ex => {
     const nameEl = ex.querySelector('.ex-name');
     if (!nameEl) return;
-    const exId = exerciseId(nameEl.textContent);
+    const exId = ex.dataset.exId || exerciseId(nameEl.textContent);
     const widget = ex.querySelector('.ex-weight');
     if (!widget) return;
     widget.classList.remove('rec-up', 'rec-down');
@@ -516,7 +516,7 @@ function renderWeights() {
   document.querySelectorAll('.ex').forEach(ex => {
     const nameEl = ex.querySelector('.ex-name');
     if (!nameEl) return;
-    const id = exerciseId(nameEl.textContent);
+    const id = ex.dataset.exId || exerciseId(nameEl.textContent);
     const def = EXERCISES[id];
     if (!def || def.bodyweight) return;
 
@@ -548,7 +548,9 @@ function renderWeights() {
         appendWeightHistory(id, current[id]);
         document.querySelectorAll('.ex').forEach(other => {
           const n = other.querySelector('.ex-name');
-          if (n && exerciseId(n.textContent) === id) {
+          if (!n) return;
+          const otherId = other.dataset.exId || exerciseId(n.textContent);
+          if (otherId === id) {
             const v = other.querySelector('.weight-val');
             if (v) v.textContent = current[id];
           }
@@ -723,7 +725,7 @@ function recordSessionIfDayComplete(dayEl, freq) {
     const nameEl = ex.querySelector('.ex-name');
     const repsEl = ex.querySelector('.ex-reps');
     if (!nameEl || !repsEl) continue;
-    const exId = exerciseId(nameEl.textContent);
+    const exId = ex.dataset.exId || exerciseId(nameEl.textContent);
     const numSets = parseInt(repsEl.dataset.sets || '0', 10);
     if (!numSets) continue;
     const key = setsKey(freq, dayEl, exId);
@@ -737,7 +739,7 @@ function recordSessionIfDayComplete(dayEl, freq) {
   const exerciseIds = [];
   dayEl.querySelectorAll('.ex').forEach(ex => {
     const n = ex.querySelector('.ex-name');
-    if (n) exerciseIds.push(exerciseId(n.textContent));
+    if (n) exerciseIds.push(ex.dataset.exId || exerciseId(n.textContent));
   });
   sessions.push({ date, day, exercises: exerciseIds });
   saveSessions(sessions);
@@ -749,14 +751,15 @@ function recordSessionIfDayComplete(dayEl, freq) {
 
 function renderSets() {
   const state = loadSets();
-  const freq = (localStorage.getItem('ppl-frequency') || '6');
+  const mode = getPlanMode();
+  const freq = mode === 'custom' ? 'custom' : (localStorage.getItem('ppl-frequency') || '6');
   document.querySelectorAll('.ex-reps').forEach(repsEl => {
     const ex = repsEl.closest('.ex');
     const dayEl = repsEl.closest('.day');
     if (!ex || !dayEl) return;
     const nameEl = ex.querySelector('.ex-name');
     if (!nameEl) return;
-    const exId = exerciseId(nameEl.textContent);
+    const exId = ex.dataset.exId || exerciseId(nameEl.textContent);
     const numSets = parseInt(repsEl.dataset.sets || '0', 10);
     if (!numSets) return;
     const range = repsEl.dataset.range || '';
@@ -962,23 +965,395 @@ document.getElementById('swap-sheet')?.addEventListener('click', e => {
   if (e.target.id === 'swap-sheet') closeSwapSheet();
 });
 
-// Frequency (3× vs 6× pro Woche)
+// Custom Plan (User-definierte Trainingstage und Übungen)
+function getPlanMode() {
+  try {
+    return localStorage.getItem('ppl-plan-mode') === 'custom' ? 'custom' : 'preset';
+  } catch (e) { return 'preset'; }
+}
+
+function setPlanMode(mode) {
+  try { localStorage.setItem('ppl-plan-mode', mode === 'custom' ? 'custom' : 'preset'); } catch (e) {}
+}
+
+function loadCustomPlan() {
+  try {
+    const saved = localStorage.getItem('ppl-custom-plan');
+    if (saved) {
+      const p = JSON.parse(saved);
+      if (p && Array.isArray(p.days)) return p;
+    }
+  } catch (e) {}
+  return { days: [] };
+}
+
+function saveCustomPlan(plan) {
+  try { localStorage.setItem('ppl-custom-plan', JSON.stringify(plan)); } catch (e) {}
+}
+
+function genId(prefix) {
+  return prefix + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6);
+}
+
+function defaultCustomPlan() {
+  return {
+    days: [
+      { id: genId('d'), label: 'Push', variant: '', accent: 'push', focus: 'Brust · Schulter · Trizeps', weekday: 0, exercises: [] },
+      { id: genId('d'), label: 'Pull', variant: '', accent: 'pull', focus: 'Rücken · Bizeps', weekday: 2, exercises: [] },
+      { id: genId('d'), label: 'Legs', variant: '', accent: 'legs', focus: 'Beine · Po · Waden', weekday: 4, exercises: [] }
+    ]
+  };
+}
+
+function mergeCustomIntoExercises() {
+  const plan = loadCustomPlan();
+  plan.days.forEach(day => {
+    (day.exercises || []).forEach(ex => {
+      EXERCISES[ex.id] = {
+        name: ex.name,
+        note: ex.note || '',
+        base: ex.base || 0,
+        step: ex.step || 2.5,
+        rest: ex.rest || 90,
+        bodyweight: !!ex.bodyweight
+      };
+    });
+  });
+}
+
+function renderCustomPlan() {
+  const container = document.getElementById('custom-plan-view');
+  if (!container) return;
+  const plan = loadCustomPlan();
+  container.innerHTML = '';
+
+  if (!plan.days.length) {
+    const empty = document.createElement('div');
+    empty.className = 'custom-empty';
+    empty.innerHTML = `
+      <div class="custom-empty-title">Dein Plan</div>
+      <div class="custom-empty-text">Noch keine Trainings-Tage. Leg deinen ersten Tag an und füll ihn mit Übungen.</div>
+      <button class="custom-primary-btn" id="custom-create-btn" type="button">Plan erstellen</button>
+    `;
+    container.appendChild(empty);
+    document.getElementById('custom-create-btn')?.addEventListener('click', openEditor);
+    return;
+  }
+
+  const week = document.createElement('div');
+  week.className = 'week';
+  const weekdayMap = {};
+  plan.days.forEach(d => {
+    if (typeof d.weekday === 'number' && d.weekday >= 0 && d.weekday <= 6) weekdayMap[d.weekday] = d;
+  });
+  ['MO', 'DI', 'MI', 'DO', 'FR', 'SA', 'SO'].forEach((label, i) => {
+    const d = weekdayMap[i];
+    const wd = document.createElement('div');
+    wd.className = 'week-day';
+    if (d) {
+      const short = (d.label || '').slice(0, 3).toUpperCase() + (d.variant ? ' ' + d.variant : '');
+      wd.innerHTML = `<div class="d">${label}</div><div class="t p-${escapeHtml(d.accent || 'push')}">${escapeHtml(short)}</div>`;
+    } else {
+      wd.innerHTML = `<div class="d">${label}</div><div class="t rest">OFF</div>`;
+    }
+    week.appendChild(wd);
+  });
+  container.appendChild(week);
+
+  const groups = { push: [], pull: [], legs: [] };
+  plan.days.forEach(d => {
+    const bucket = groups[d.accent] ? d.accent : 'push';
+    groups[bucket].push(d);
+  });
+
+  ['push', 'pull', 'legs'].forEach(bucket => {
+    if (!groups[bucket].length) return;
+    const sec = document.createElement('div');
+    sec.className = 'section-title';
+    sec.textContent = bucket.charAt(0).toUpperCase() + bucket.slice(1);
+    container.appendChild(sec);
+    groups[bucket].forEach(d => container.appendChild(renderCustomDay(d)));
+  });
+
+  const edit = document.createElement('button');
+  edit.className = 'custom-edit-btn';
+  edit.type = 'button';
+  edit.textContent = 'Plan bearbeiten';
+  edit.addEventListener('click', openEditor);
+  container.appendChild(edit);
+}
+
+function renderCustomDay(d) {
+  const dayEl = document.createElement('div');
+  dayEl.className = 'day';
+  dayEl.dataset.customDayId = d.id;
+  const variantHtml = d.variant ? `<span class="variant">${escapeHtml(d.variant)}</span>` : '';
+  const focusHtml = d.focus ? `<div class="focus">${escapeHtml(d.focus)}</div>` : '';
+  const head = document.createElement('div');
+  head.className = 'day-head';
+  head.innerHTML = `
+    <div class="day-title">
+      <div class="accent ${escapeHtml(d.accent || 'push')}"></div>
+      <div>
+        <div><span class="day-label">${escapeHtml(d.label)}</span>${variantHtml}</div>
+        ${focusHtml}
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  `;
+  head.addEventListener('click', () => dayEl.classList.toggle('open'));
+  dayEl.appendChild(head);
+  const exs = document.createElement('div');
+  exs.className = 'exercises';
+  (d.exercises || []).forEach((ex, idx) => {
+    const exEl = document.createElement('div');
+    exEl.className = 'ex';
+    exEl.dataset.exId = ex.id;
+    const num = String(idx + 1).padStart(2, '0');
+    const repsText = `${ex.sets || 3}×${ex.range || '8-10'}`;
+    exEl.innerHTML = `
+      <div class="ex-num">${num}</div>
+      <div>
+        <div class="ex-name">${escapeHtml(ex.name || 'Übung')}</div>
+        ${ex.note ? `<div class="ex-note">${escapeHtml(ex.note)}</div>` : ''}
+      </div>
+      <div class="ex-reps">${escapeHtml(repsText)}</div>
+    `;
+    exs.appendChild(exEl);
+  });
+  dayEl.appendChild(exs);
+  return dayEl;
+}
+
+// Editor-Overlay
+let editorDraft = null;
+
+function openEditor() {
+  const existing = loadCustomPlan();
+  editorDraft = existing.days.length ? JSON.parse(JSON.stringify(existing)) : defaultCustomPlan();
+  renderEditor();
+  const el = document.getElementById('custom-editor');
+  if (el) {
+    el.classList.remove('hidden');
+    el.setAttribute('aria-hidden', 'false');
+  }
+}
+
+function closeEditor() {
+  const el = document.getElementById('custom-editor');
+  if (el) {
+    el.classList.add('hidden');
+    el.setAttribute('aria-hidden', 'true');
+  }
+  editorDraft = null;
+}
+
+function renderEditor() {
+  const body = document.getElementById('editor-body');
+  if (!body || !editorDraft) return;
+  body.innerHTML = '';
+
+  editorDraft.days.forEach((day, dayIdx) => {
+    const card = document.createElement('div');
+    card.className = 'editor-day-card';
+    card.innerHTML = `
+      <div class="editor-day-head">
+        <input class="editor-input flex" value="${escapeAttr(day.label || '')}" placeholder="Label (z. B. Push)" data-f="label">
+        <button class="editor-icon-btn" data-a="del-day" aria-label="Tag löschen" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="editor-row-meta">
+        <select class="editor-select" data-f="accent">
+          <option value="push"${day.accent === 'push' ? ' selected' : ''}>Push (rot)</option>
+          <option value="pull"${day.accent === 'pull' ? ' selected' : ''}>Pull (grün)</option>
+          <option value="legs"${day.accent === 'legs' ? ' selected' : ''}>Legs (gelb)</option>
+        </select>
+        <select class="editor-select" data-f="weekday">
+          <option value="-1"${!(day.weekday >= 0 && day.weekday <= 6) ? ' selected' : ''}>Kein Wochentag</option>
+          <option value="0"${day.weekday === 0 ? ' selected' : ''}>Montag</option>
+          <option value="1"${day.weekday === 1 ? ' selected' : ''}>Dienstag</option>
+          <option value="2"${day.weekday === 2 ? ' selected' : ''}>Mittwoch</option>
+          <option value="3"${day.weekday === 3 ? ' selected' : ''}>Donnerstag</option>
+          <option value="4"${day.weekday === 4 ? ' selected' : ''}>Freitag</option>
+          <option value="5"${day.weekday === 5 ? ' selected' : ''}>Samstag</option>
+          <option value="6"${day.weekday === 6 ? ' selected' : ''}>Sonntag</option>
+        </select>
+        <input class="editor-input flex" value="${escapeAttr(day.focus || '')}" placeholder="Fokus (z. B. Schwer, Volumen)" data-f="focus">
+        <input class="editor-input small" value="${escapeAttr(day.variant || '')}" placeholder="A/B" data-f="variant">
+      </div>
+      <div class="editor-section-title">Übungen</div>
+    `;
+    card.querySelectorAll('[data-f]').forEach(input => {
+      const field = input.dataset.f;
+      const handler = e => {
+        const v = e.target.value;
+        if (field === 'weekday') day.weekday = parseInt(v, 10);
+        else day[field] = v;
+      };
+      input.addEventListener('input', handler);
+      input.addEventListener('change', handler);
+    });
+    card.querySelector('[data-a="del-day"]').addEventListener('click', () => {
+      editorDraft.days.splice(dayIdx, 1);
+      renderEditor();
+    });
+
+    (day.exercises || []).forEach((ex, exIdx) => {
+      const row = document.createElement('div');
+      row.className = 'editor-ex-row';
+      row.innerHTML = `
+        <div class="editor-ex-fields">
+          <input class="editor-input" value="${escapeAttr(ex.name || '')}" placeholder="Name" data-f="name">
+          <input class="editor-input" value="${escapeAttr(ex.note || '')}" placeholder="Notiz (optional)" data-f="note">
+          <div class="editor-ex-fields-row">
+            <input class="editor-input small" value="${escapeAttr(ex.sets || 3)}" placeholder="Sätze" type="number" min="1" max="10" data-f="sets">
+            <input class="editor-input medium" value="${escapeAttr(ex.range || '')}" placeholder="Wdh (6-8)" data-f="range">
+            <input class="editor-input small" value="${escapeAttr(ex.rest || 90)}" placeholder="Pause s" type="number" min="0" max="600" data-f="rest">
+          </div>
+          <div class="editor-ex-fields-row">
+            <input class="editor-input small" value="${escapeAttr(ex.base || 0)}" placeholder="Start kg" type="number" min="0" step="0.5" data-f="base">
+            <input class="editor-input small" value="${escapeAttr(ex.step || 2.5)}" placeholder="Schritt" type="number" min="0.25" step="0.25" data-f="step">
+          </div>
+        </div>
+        <button class="editor-icon-btn" data-a="del-ex" aria-label="Übung löschen" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      `;
+      row.querySelectorAll('[data-f]').forEach(input => {
+        const field = input.dataset.f;
+        input.addEventListener('input', e => {
+          const v = e.target.value;
+          if (field === 'sets' || field === 'rest') ex[field] = parseInt(v, 10) || 0;
+          else if (field === 'base' || field === 'step') ex[field] = parseFloat(v) || 0;
+          else ex[field] = v;
+        });
+      });
+      row.querySelector('[data-a="del-ex"]').addEventListener('click', () => {
+        day.exercises.splice(exIdx, 1);
+        renderEditor();
+      });
+      card.appendChild(row);
+    });
+
+    const addEx = document.createElement('button');
+    addEx.className = 'editor-add-ex';
+    addEx.type = 'button';
+    addEx.textContent = '+ Übung hinzufügen';
+    addEx.addEventListener('click', () => {
+      if (!day.exercises) day.exercises = [];
+      day.exercises.push({ id: genId('ex'), name: '', note: '', sets: 3, range: '8-10', rest: 90, base: 20, step: 2.5 });
+      renderEditor();
+    });
+    card.appendChild(addEx);
+    body.appendChild(card);
+  });
+
+  const addDay = document.createElement('button');
+  addDay.className = 'editor-add-day';
+  addDay.type = 'button';
+  addDay.textContent = '+ Trainings-Tag hinzufügen';
+  addDay.addEventListener('click', () => {
+    const accents = ['push', 'pull', 'legs'];
+    editorDraft.days.push({
+      id: genId('d'),
+      label: 'Tag',
+      variant: '',
+      accent: accents[editorDraft.days.length % 3],
+      focus: '',
+      weekday: -1,
+      exercises: []
+    });
+    renderEditor();
+  });
+  body.appendChild(addDay);
+}
+
+function sanitizePlan(plan) {
+  return {
+    days: (plan.days || [])
+      .filter(d => (d.label || '').trim())
+      .map(d => ({
+        id: d.id || genId('d'),
+        label: (d.label || 'Tag').trim(),
+        variant: (d.variant || '').trim(),
+        accent: ['push', 'pull', 'legs'].includes(d.accent) ? d.accent : 'push',
+        focus: (d.focus || '').trim(),
+        weekday: typeof d.weekday === 'number' && d.weekday >= 0 && d.weekday <= 6 ? d.weekday : -1,
+        exercises: (d.exercises || [])
+          .filter(e => (e.name || '').trim())
+          .map(e => ({
+            id: e.id || genId('ex'),
+            name: (e.name || '').trim(),
+            note: (e.note || '').trim(),
+            sets: Math.max(1, Math.min(10, parseInt(e.sets, 10) || 3)),
+            range: (e.range || '8-10').trim(),
+            rest: Math.max(0, Math.min(600, parseInt(e.rest, 10) || 90)),
+            base: Math.max(0, parseFloat(e.base) || 0),
+            step: Math.max(0.25, parseFloat(e.step) || 2.5),
+            bodyweight: !!e.bodyweight
+          }))
+      }))
+  };
+}
+
+document.getElementById('editor-cancel')?.addEventListener('click', closeEditor);
+document.getElementById('editor-save')?.addEventListener('click', () => {
+  if (!editorDraft) return;
+  const clean = sanitizePlan(editorDraft);
+  saveCustomPlan(clean);
+  setPlanMode('custom');
+  mergeCustomIntoExercises();
+  // Start-Gewichte für neue Übungen aus base setzen, falls noch nicht vorhanden
+  const weights = loadWeights();
+  const history = loadWeightHistory();
+  const today = todayIso();
+  let changed = false;
+  clean.days.forEach(d => d.exercises.forEach(ex => {
+    if (ex.bodyweight) return;
+    if (weights[ex.id] == null) { weights[ex.id] = ex.base || 0; changed = true; }
+    if (!history[ex.id]) { history[ex.id] = [{ date: today, weight: weights[ex.id] }]; changed = true; }
+  }));
+  if (changed) { saveWeights(weights); saveWeightHistory(history); }
+  closeEditor();
+  applyFrequency();
+  initExOriginals();
+  renderWeights();
+  initExReps();
+  renderSets();
+  refreshRecommendations();
+});
+
+// Frequency / Plan-Modus
 function applyFrequency() {
+  const mode = getPlanMode();
   let freq = '6';
   try { freq = localStorage.getItem('ppl-frequency') || '6'; } catch (e) {}
+  const activeVariant = mode === 'custom' ? 'custom' : freq;
+
+  if (mode === 'custom') {
+    mergeCustomIntoExercises();
+    renderCustomPlan();
+  }
+
   document.querySelectorAll('.plan-variant').forEach(el => {
-    el.style.display = el.dataset.freq === freq ? 'block' : 'none';
+    el.style.display = el.dataset.freq === activeVariant ? 'block' : 'none';
   });
+
   const eyebrow = document.querySelector('.eyebrow');
   const sub = document.querySelector('.sub');
-  if (freq === '3') {
+  if (mode === 'custom') {
+    eyebrow.textContent = 'Eigener Plan';
+    sub.textContent = 'Selbst zusammengestellt · Tap für Details';
+  } else if (freq === '3') {
     eyebrow.textContent = '3× pro Woche · Push · Pull · Legs';
     sub.textContent = 'Jede Muskelgruppe 1× pro Woche · Tap für Details';
   } else {
     eyebrow.textContent = '6× pro Woche · A/B Split';
     sub.textContent = 'Jede Muskelgruppe 2× pro Woche · Tap für Details';
   }
-  applyCalendar(freq);
+
+  applyCalendar(activeVariant);
 }
 
 // Kalender-Sync: heutigen Wochentag markieren und passenden Day aufklappen
@@ -989,8 +1364,8 @@ const DAY_TO_LABEL_6X = {
 const DAY_TO_LABEL_3X = { 0: 'Push', 2: 'Pull', 4: 'Legs' };
 
 function getWeekdayIndex() {
-  const js = new Date().getDay(); // 0=So, 1=Mo, ..., 6=Sa
-  return js === 0 ? 6 : js - 1;   // 0=Mo, ..., 6=So
+  const js = new Date().getDay();
+  return js === 0 ? 6 : js - 1;
 }
 
 function findDayByLabel(variantEl, label) {
@@ -1010,9 +1385,15 @@ function applyCalendar(freq) {
     el.classList.toggle('today', i === today);
   });
   variantEl.querySelectorAll('.day').forEach(d => d.classList.remove('open', 'is-today'));
-  const map = freq === '3' ? DAY_TO_LABEL_3X : DAY_TO_LABEL_6X;
-  const label = map[today] || null;
-  const target = findDayByLabel(variantEl, label);
+  let target = null;
+  if (freq === 'custom') {
+    const plan = loadCustomPlan();
+    const dayToday = plan.days.find(d => typeof d.weekday === 'number' && d.weekday === today);
+    if (dayToday) target = variantEl.querySelector(`.day[data-custom-day-id="${dayToday.id}"]`);
+  } else {
+    const map = freq === '3' ? DAY_TO_LABEL_3X : DAY_TO_LABEL_6X;
+    target = findDayByLabel(variantEl, map[today] || null);
+  }
   if (target) target.classList.add('open', 'is-today');
   const banner = document.getElementById('rest-banner');
   if (banner) banner.classList.toggle('hidden', !!target);
@@ -1038,6 +1419,7 @@ function startOnboarding() {
   const collected = [...BASE_ITEMS];
   const profile = { ...DEFAULT_PROFILE };
   let frequency = '6';
+  let planMode = 'preset';
   const totalSteps = PROFILE_QUESTIONS.length + 1 + ONBOARDING_QUESTIONS.length; // 4 + 1 + 4
 
   function setProgress(step) {
@@ -1053,6 +1435,7 @@ function startOnboarding() {
     saveProfile(profile);
     initWeightsFromProfile(profile);
     try { localStorage.setItem('ppl-frequency', frequency); } catch (e) {}
+    setPlanMode(planMode);
     applyFrequency();
     renderWeights();
     refreshRecommendations();
@@ -1061,6 +1444,7 @@ function startOnboarding() {
     overlay.classList.add('hidden');
     overlay.setAttribute('aria-hidden', 'true');
     if (!isStandalone) exportStateToUrl();
+    if (planMode === 'custom') openEditor();
   }
 
   function showIntro() {
@@ -1115,8 +1499,8 @@ function startOnboarding() {
     content.innerHTML = `
       <div>
         <div class="onboarding-eyebrow">Training</div>
-        <div class="onboarding-title">Wie oft trainierst du pro Woche?</div>
-        <div class="onboarding-hint">Wir zeigen dir danach den passenden Plan. 3× pro Woche hat längere Sessions, 6× pro Woche ist ein A/B-Split mit kürzeren Einheiten.</div>
+        <div class="onboarding-title">Welcher Plan passt?</div>
+        <div class="onboarding-hint">3× pro Woche hat längere Sessions, 6× pro Woche ist ein A/B-Split mit kürzeren Einheiten. Oder stell dir deinen eigenen Plan zusammen.</div>
       </div>
     `;
     actions.innerHTML = '';
@@ -1124,14 +1508,20 @@ function startOnboarding() {
     const btn3 = document.createElement('button');
     btn3.className = 'onboarding-btn';
     btn3.textContent = '3× pro Woche';
-    btn3.addEventListener('click', () => { frequency = '3'; showQuestion(0); });
+    btn3.addEventListener('click', () => { frequency = '3'; planMode = 'preset'; showQuestion(0); });
     actions.appendChild(btn3);
 
     const btn6 = document.createElement('button');
     btn6.className = 'onboarding-btn primary';
     btn6.textContent = '6× pro Woche';
-    btn6.addEventListener('click', () => { frequency = '6'; showQuestion(0); });
+    btn6.addEventListener('click', () => { frequency = '6'; planMode = 'preset'; showQuestion(0); });
     actions.appendChild(btn6);
+
+    const btnCustom = document.createElement('button');
+    btnCustom.className = 'onboarding-btn';
+    btnCustom.textContent = 'Eigener Plan';
+    btnCustom.addEventListener('click', () => { planMode = 'custom'; showQuestion(0); });
+    actions.appendChild(btnCustom);
   }
 
   function showQuestion(i) {

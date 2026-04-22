@@ -68,6 +68,8 @@
         <div class="rest-banner-text">Heute ist frei. Gönn dir Regeneration oder mach leichtes Cardio.</div>
       </div>
 
+      <div class="plan-variant" data-freq="custom" id="custom-plan-view"></div>
+
       <div class="plan-variant" data-freq="6">
 
       <div class="week">
@@ -351,6 +353,17 @@
       <div class="swap-list" id="swap-list"></div>
       <button class="swap-close" id="swap-close" type="button">Abbrechen</button>
     </div>
+  </div>
+
+  <div class="editor hidden" id="custom-editor" aria-hidden="true">
+    <div class="editor-head">
+      <div class="editor-title">Eigener Plan</div>
+      <div class="editor-head-actions">
+        <button class="editor-btn" id="editor-cancel" type="button">Abbrechen</button>
+        <button class="editor-btn primary" id="editor-save" type="button">Speichern</button>
+      </div>
+    </div>
+    <div class="editor-body" id="editor-body"></div>
   </div>
 
 <script src="app.js"></script>

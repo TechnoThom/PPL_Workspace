@@ -69,12 +69,19 @@ einfügen.
 ## Profil & Plan
 - `ppl-profile`: `{ gender, age, nutrition, commitment }`. Bestimmt die
   Startgewichte und die Frequenz der Gewichtsempfehlungen.
-- `ppl-frequency`: `"3"` oder `"6"`. Welcher Plan in der Plan-View
-  angezeigt wird (3× Push/Pull/Legs oder 6× A/B-Split).
+- `ppl-frequency`: `"3"` oder `"6"`. Welcher Preset-Plan in der
+  Plan-View angezeigt wird (3× Push/Pull/Legs oder 6× A/B-Split).
+- `ppl-plan-mode`: `"preset"` oder `"custom"`. Steuert, ob die
+  Preset-Pläne oder der eigene Plan angezeigt werden. Im Custom-Modus
+  wird `ppl-frequency` ignoriert.
+- `ppl-custom-plan`: `{ days: [{ id, label, variant, accent, focus, weekday, exercises: [{ id, name, note, sets, range, rest, base, step, bodyweight }] }] }`.
+  User-definierte Trainings-Tage und Übungen. Beim Rendern werden
+  Custom-Exercises zur Runtime in die globale `EXERCISES`-Map
+  gemergt, damit Gewichts- und Satz-Tracking funktionieren.
 - `ppl-substitutes`: Map `{ "<freq>/<dayLabel>/<originalExId>": "<newExId>" }`.
-  Alternative Übungen pro Slot. `applySubstitutes` überschreibt zur
-  Laufzeit `ex-name` und `ex-note`, Gewichts- und Satz-Tracking hängen
-  dann an der neuen `exId`.
+  Alternative Übungen pro Slot (nur für Preset-Pläne). `applySubstitutes`
+  überschreibt zur Laufzeit `ex-name` und `ex-note`, Gewichts- und
+  Satz-Tracking hängen dann an der neuen `exId`.
 
 ## Training-State
 - `ppl-weights`: Map `{ exerciseId: kg }` für alle nicht-bodyweight
