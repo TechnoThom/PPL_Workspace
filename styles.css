@@ -97,6 +97,38 @@ h1 .legs-t { color: var(--legs); }
 .view { display: none; }
 .view.active { display: block; }
 
+.plan-switch {
+  display: flex;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 12px;
+}
+
+.plan-switch button {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 9px 6px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.plan-switch button.active {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.plan-switch button:active { transform: scale(0.98); }
+
 .stats-bar {
   display: grid;
   grid-template-columns: 1fr 1fr;

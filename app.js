@@ -1353,7 +1353,30 @@ function applyFrequency() {
     sub.textContent = 'Jede Muskelgruppe 2× pro Woche · Tap für Details';
   }
 
+  document.querySelectorAll('#plan-switch button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.choose === activeVariant);
+  });
+
   applyCalendar(activeVariant);
+}
+
+function initPlanSwitch() {
+  document.querySelectorAll('#plan-switch button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const choice = btn.dataset.choose;
+      if (choice === 'custom') {
+        setPlanMode('custom');
+      } else {
+        setPlanMode('preset');
+        try { localStorage.setItem('ppl-frequency', choice); } catch (e) {}
+      }
+      applyFrequency();
+      renderWeights();
+      initExReps();
+      renderSets();
+      refreshRecommendations();
+    });
+  });
 }
 
 // Kalender-Sync: heutigen Wochentag markieren und passenden Day aufklappen
@@ -1638,6 +1661,7 @@ async function shareApp() {
   }
 }
 
+initPlanSwitch();
 applyFrequency();
 ensureWeightsInitialized();
 initExOriginals();
