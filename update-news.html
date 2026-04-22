@@ -246,32 +246,53 @@
   .mock-row .mock-field { flex: 1; }
   .mock-row .mock-field.small { flex: 0 0 72px; }
 
-  /* Scene 4 · Plan-Switch Mockup */
-  .plan-switch-mock {
+  /* Scene 4 · Template-Preview (Frauen-Pläne) */
+  .template-preview {
     display: flex;
-    gap: 4px;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  .template-preview-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 4px;
-    margin-bottom: 20px;
+    border-radius: 12px;
+    padding: 14px 16px;
   }
 
-  .plan-switch-mock-btn {
-    flex: 1;
-    text-align: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.15em;
+  .template-preview-card.featured {
+    border-color: var(--pack);
+    box-shadow: 0 0 0 1px var(--pack);
+  }
+
+  .template-preview-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .template-preview-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .template-preview-tag {
+    font-size: 9px;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    padding: 12px 6px;
     color: var(--text-dim);
-    border-radius: 6px;
+    background: var(--surface-2);
+    padding: 3px 8px;
+    border-radius: 4px;
   }
 
-  .plan-switch-mock-btn.active {
-    background: var(--surface-2);
-    color: var(--text);
+  .template-preview-tag.highlight {
+    background: var(--pack);
+    color: white;
   }
 
   /* Scene 5 · CTA */
@@ -392,16 +413,27 @@
       <div class="sub">Name, Sätze, Wdh, Pause, Gewicht. <strong>Jedes Feld selbst gesetzt.</strong></div>
     </div>
 
-    <!-- SCENE 4 · Plan-Switch Mockup -->
+    <!-- SCENE 4 · Frauen-Pläne / Vorlagen -->
     <div class="scene">
-      <div class="badge" style="background: var(--pull)">Modi</div>
-      <h1 class="headline" style="font-size: clamp(38px, 10vw, 64px)">Jederzeit<br>wechseln.</h1>
-      <div class="plan-switch-mock">
-        <div class="plan-switch-mock-btn">3×</div>
-        <div class="plan-switch-mock-btn">6×</div>
-        <div class="plan-switch-mock-btn active">Eigener</div>
+      <div class="badge" style="background: var(--pull)">Vorlagen</div>
+      <h1 class="headline" style="font-size: clamp(38px, 10vw, 64px)">Auch für<br>Frauen.</h1>
+      <div class="template-preview">
+        <div class="template-preview-card featured">
+          <div class="template-preview-name">Glute Focus 4×</div>
+          <div class="template-preview-tags">
+            <span class="template-preview-tag highlight">Frauen</span>
+            <span class="template-preview-tag">Glutes</span>
+          </div>
+        </div>
+        <div class="template-preview-card featured">
+          <div class="template-preview-name">Ganzkörper Glute-Bias 3×</div>
+          <div class="template-preview-tags">
+            <span class="template-preview-tag highlight">Frauen</span>
+            <span class="template-preview-tag">Anfänger</span>
+          </div>
+        </div>
       </div>
-      <div class="sub">Preset oder eigener Plan. <strong>Ein Tap, umgeschaltet.</strong></div>
+      <div class="sub">Fertige Glute-Pläne, direkt startklar. <strong>Anpassen oder loslegen.</strong></div>
     </div>
 
     <!-- SCENE 5 · CTA -->
