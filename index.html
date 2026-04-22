@@ -366,10 +366,20 @@
       <div class="editor-title">Eigener Plan</div>
       <div class="editor-head-actions">
         <button class="editor-btn" id="editor-cancel" type="button">Abbrechen</button>
+        <button class="editor-btn" id="editor-load" type="button">Vorlage</button>
         <button class="editor-btn primary" id="editor-save" type="button">Speichern</button>
       </div>
     </div>
     <div class="editor-body" id="editor-body"></div>
+  </div>
+
+  <div class="template-sheet hidden" id="template-sheet" aria-hidden="true">
+    <div class="template-card">
+      <div class="swap-eyebrow">Vorlage wählen</div>
+      <div class="swap-title">Starte mit einem fertigen Plan</div>
+      <div class="template-list" id="template-list"></div>
+      <button class="swap-close" id="template-close" type="button">Abbrechen</button>
+    </div>
   </div>
 
 <script src="app.js"></script>

@@ -1654,3 +1654,87 @@ h1 .legs-t { color: var(--legs); }
 }
 
 .editor-add-day:active { color: var(--pack); border-color: var(--pack); }
+
+/* Template-Sheet */
+.template-sheet {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 450;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 20px calc(env(safe-area-inset-right, 0px) + 16px) calc(env(safe-area-inset-bottom, 0px) + 20px) calc(env(safe-area-inset-left, 0px) + 16px);
+  animation: swap-fade 0.25s ease-out;
+}
+
+.template-sheet.hidden { display: none; }
+
+.template-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px 22px 20px;
+  max-width: 520px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: swap-slide 0.3s ease-out;
+}
+
+.template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.template-item {
+  padding: 16px 18px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: var(--text);
+  width: 100%;
+}
+
+.template-item:active { background: var(--border); }
+
+.template-item-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.template-item-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.template-item-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.template-item-tag {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: var(--bg);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.template-item-tag.highlight {
+  background: var(--pack);
+  color: white;
+}

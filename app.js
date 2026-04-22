@@ -1131,6 +1131,218 @@ function renderCustomDay(d) {
   return dayEl;
 }
 
+// Plan-Templates (Vorlagen für den Custom-Plan-Editor)
+const PLAN_TEMPLATES = [
+  {
+    id: 'upper-lower-4',
+    name: 'Upper / Lower 4×',
+    description: 'Klassischer 4er-Split mit Oberkörper und Unterkörper im Wechsel.',
+    tags: ['Klassisch', 'Fortgeschritten'],
+    days: [
+      { label: 'Upper', variant: 'A', accent: 'push', weekday: 0, focus: 'Brust · Rücken · Schulter', exercises: [
+        { name: 'Bankdrücken Langhantel', note: 'Hauptübung Brust', sets: 4, range: '6-8', rest: 180, base: 40, step: 2.5 },
+        { name: 'Rudern Langhantel', note: 'Horizontaler Zug', sets: 4, range: '6-8', rest: 180, base: 30, step: 2.5 },
+        { name: 'Schulterdrücken Kurzhantel', note: 'Vordere Schulter', sets: 3, range: '8-10', rest: 120, base: 12, step: 1 },
+        { name: 'Klimmzüge', note: 'Breiter Griff', sets: 3, range: 'max', rest: 180, bodyweight: true },
+        { name: 'Trizepsdrücken Kabel', note: 'Isolation', sets: 3, range: '10-12', rest: 60, base: 15, step: 2.5 },
+        { name: 'Langhantel-Curls', note: 'Bizeps', sets: 3, range: '10-12', rest: 60, base: 15, step: 2.5 }
+      ]},
+      { label: 'Lower', variant: 'A', accent: 'legs', weekday: 1, focus: 'Quad-Fokus', exercises: [
+        { name: 'Kniebeuge', note: 'Langhantel · Hauptübung', sets: 4, range: '6-8', rest: 180, base: 40, step: 2.5 },
+        { name: 'Rumänisches Kreuzheben', note: 'Hamstrings · Po', sets: 3, range: '8-10', rest: 180, base: 40, step: 2.5 },
+        { name: 'Beinpresse', note: 'Zweiter Quad-Reiz', sets: 3, range: '10-12', rest: 120, base: 50, step: 5 },
+        { name: 'Beinbeuger liegend', note: 'Hamstrings', sets: 3, range: '10-12', rest: 90, base: 20, step: 2.5 },
+        { name: 'Wadenheben stehend', note: 'Waden', sets: 4, range: '12-15', rest: 60, base: 40, step: 2.5 }
+      ]},
+      { label: 'Upper', variant: 'B', accent: 'pull', weekday: 3, focus: 'Rücken-Fokus · Volumen', exercises: [
+        { name: 'Schrägbankdrücken KH', note: 'Obere Brust', sets: 4, range: '8-10', rest: 120, base: 15, step: 1 },
+        { name: 'Latzug Untergriff', note: 'Bizeps-Fokus', sets: 3, range: '10-12', rest: 120, base: 30, step: 2.5 },
+        { name: 'Seitheben', note: 'Breite', sets: 3, range: '12-15', rest: 60, base: 6, step: 0.5 },
+        { name: 'Face Pulls', note: 'Hintere Schulter · Haltung', sets: 3, range: '12-15', rest: 60, base: 12, step: 2.5 },
+        { name: 'Hammer Curls', note: 'Brachialis', sets: 3, range: '10-12', rest: 60, base: 8, step: 1 },
+        { name: 'Trizeps Overhead', note: 'Langer Kopf', sets: 3, range: '10-12', rest: 60, base: 10, step: 1 }
+      ]},
+      { label: 'Lower', variant: 'B', accent: 'legs', weekday: 4, focus: 'Hamstring · Po', exercises: [
+        { name: 'Rumänisches Kreuzheben', note: 'Posterior Chain · schwer', sets: 4, range: '6-8', rest: 180, base: 45, step: 2.5 },
+        { name: 'Bulgarian Split Squats', note: 'Pro Bein · Po-Aktivierung', sets: 3, range: '8-10', rest: 120, base: 8, step: 1 },
+        { name: 'Beinbeuger sitzend', note: 'Anderer Winkel', sets: 3, range: '10-12', rest: 90, base: 20, step: 2.5 },
+        { name: 'Beinpresse', note: 'Volumen', sets: 3, range: '12-15', rest: 90, base: 60, step: 5 },
+        { name: 'Wadenheben sitzend', note: 'Soleus', sets: 4, range: '12-15', rest: 60, base: 25, step: 2.5 }
+      ]}
+    ]
+  },
+  {
+    id: 'full-body-3',
+    name: 'Ganzkörper 3×',
+    description: 'Einsteiger-freundlich. Drei Sessions, jede deckt alles ab.',
+    tags: ['Anfänger', 'Klassisch'],
+    days: [
+      { label: 'Ganzkörper', variant: 'A', accent: 'push', weekday: 0, focus: 'Druck-Fokus', exercises: [
+        { name: 'Kniebeuge', note: 'Langhantel', sets: 3, range: '8-10', rest: 180, base: 30, step: 2.5 },
+        { name: 'Bankdrücken Langhantel', note: 'Brust', sets: 3, range: '8-10', rest: 150, base: 30, step: 2.5 },
+        { name: 'Rudern Langhantel', note: 'Rücken', sets: 3, range: '8-10', rest: 120, base: 25, step: 2.5 },
+        { name: 'Schulterdrücken Kurzhantel', note: 'Schulter', sets: 3, range: '10-12', rest: 90, base: 10, step: 1 },
+        { name: 'Plank', note: 'Core Hold', type: 'hold', sets: 3, range: '30', rest: 60, bodyweight: true }
+      ]},
+      { label: 'Ganzkörper', variant: 'B', accent: 'pull', weekday: 2, focus: 'Zug-Fokus', exercises: [
+        { name: 'Rumänisches Kreuzheben', note: 'Hamstrings', sets: 3, range: '8-10', rest: 180, base: 30, step: 2.5 },
+        { name: 'Klimmzüge', note: 'Vertikaler Zug', sets: 3, range: 'max', rest: 180, bodyweight: true },
+        { name: 'Schrägbankdrücken KH', note: 'Obere Brust', sets: 3, range: '8-10', rest: 120, base: 12, step: 1 },
+        { name: 'Bulgarian Split Squats', note: 'Einbein', sets: 3, range: '8-10', rest: 90, base: 8, step: 1 },
+        { name: 'Face Pulls', note: 'Hintere Schulter', sets: 3, range: '12-15', rest: 60, base: 12, step: 2.5 }
+      ]},
+      { label: 'Ganzkörper', variant: 'C', accent: 'legs', weekday: 4, focus: 'Bein-Fokus', exercises: [
+        { name: 'Beinpresse', note: 'Quad', sets: 3, range: '10-12', rest: 120, base: 40, step: 5 },
+        { name: 'Schrägbankdrücken KH', note: 'Brust', sets: 3, range: '10-12', rest: 90, base: 12, step: 1 },
+        { name: 'Latzug Untergriff', note: 'Rücken', sets: 3, range: '10-12', rest: 90, base: 25, step: 2.5 },
+        { name: 'Seitheben', note: 'Schulter', sets: 3, range: '12-15', rest: 60, base: 6, step: 0.5 },
+        { name: 'Hammer Curls', note: 'Bizeps', sets: 3, range: '10-12', rest: 60, base: 8, step: 1 }
+      ]}
+    ]
+  },
+  {
+    id: 'glute-focus-4',
+    name: 'Glute Focus 4×',
+    description: 'Zwei dedizierte Glute-Days, Oberkörper kompakt. Für Po-Fokus.',
+    tags: ['Frauen', 'Glutes', 'Fortgeschritten'],
+    days: [
+      { label: 'Glutes', variant: 'A', accent: 'legs', weekday: 0, focus: 'Heavy · Hip Thrust & Co', exercises: [
+        { name: 'Hip Thrust', note: 'Hauptübung Po · Langhantel', sets: 4, range: '6-8', rest: 180, base: 40, step: 2.5 },
+        { name: 'Rumänisches Kreuzheben', note: 'Hamstrings · Po', sets: 4, range: '6-8', rest: 180, base: 30, step: 2.5 },
+        { name: 'Bulgarian Split Squats', note: 'Einbein · Po-Aktivierung', sets: 3, range: '8-10', rest: 120, base: 8, step: 1 },
+        { name: 'Cable Kickbacks', note: 'Glute Isolation', sets: 3, range: '12-15', rest: 60, base: 10, step: 2.5 },
+        { name: 'Abduktoren Maschine', note: 'Mittlerer Po', sets: 3, range: '15-20', rest: 60, base: 25, step: 5 }
+      ]},
+      { label: 'Upper', variant: '', accent: 'push', weekday: 1, focus: 'Oberkörper kompakt', exercises: [
+        { name: 'Bankdrücken Kurzhantel', note: 'Brust', sets: 3, range: '8-10', rest: 120, base: 10, step: 1 },
+        { name: 'Rudern Kurzhantel', note: 'Rücken', sets: 3, range: '8-10', rest: 120, base: 12, step: 1 },
+        { name: 'Schulterdrücken Kurzhantel', note: 'Schulter', sets: 3, range: '10-12', rest: 90, base: 8, step: 1 },
+        { name: 'Latzug Untergriff', note: 'Lat + Bizeps', sets: 3, range: '10-12', rest: 90, base: 20, step: 2.5 },
+        { name: 'Seitheben', note: 'Breite', sets: 3, range: '12-15', rest: 60, base: 4, step: 0.5 }
+      ]},
+      { label: 'Glutes', variant: 'B', accent: 'legs', weekday: 3, focus: 'Volumen · Quad + Po', exercises: [
+        { name: 'Hip Thrust', note: 'Zweite Glute-Session', sets: 4, range: '10-12', rest: 150, base: 35, step: 2.5 },
+        { name: 'Kniebeuge', note: 'Quad + Po', sets: 4, range: '8-10', rest: 150, base: 30, step: 2.5 },
+        { name: 'Glute Bridges', note: 'Hohes Volumen', sets: 3, range: '12-15', rest: 60, base: 20, step: 2.5 },
+        { name: 'Beinbeuger liegend', note: 'Hamstrings', sets: 3, range: '10-12', rest: 90, base: 15, step: 2.5 },
+        { name: 'Abduktoren Maschine', note: 'Burnout', sets: 3, range: '15-20', rest: 45, base: 25, step: 5 }
+      ]},
+      { label: 'Upper + Core', variant: '', accent: 'pull', weekday: 4, focus: 'Pull · Core', exercises: [
+        { name: 'Klimmzüge', note: 'Assistiert falls nötig', sets: 3, range: 'max', rest: 150, bodyweight: true },
+        { name: 'Dips oder Brustpresse', note: 'Druck', sets: 3, range: '8-10', rest: 120, bodyweight: true },
+        { name: 'Face Pulls', note: 'Hintere Schulter', sets: 3, range: '12-15', rest: 60, base: 10, step: 2.5 },
+        { name: 'Langhantel-Curls', note: 'Bizeps', sets: 3, range: '10-12', rest: 60, base: 10, step: 2.5 },
+        { name: 'Plank', note: 'Core Hold', type: 'hold', sets: 3, range: '45', rest: 45, bodyweight: true }
+      ]}
+    ]
+  },
+  {
+    id: 'glute-full-body-3',
+    name: 'Ganzkörper Glute-Bias 3×',
+    description: 'Ganzkörper-Plan mit Po-Priorität. Drei Tage, Einsteiger-freundlich.',
+    tags: ['Frauen', 'Anfänger', 'Glutes'],
+    days: [
+      { label: 'Ganzkörper', variant: 'A', accent: 'legs', weekday: 0, focus: 'Po + Oberkörper-Druck', exercises: [
+        { name: 'Hip Thrust', note: 'Po · Hauptübung', sets: 3, range: '10-12', rest: 120, base: 30, step: 2.5 },
+        { name: 'Kniebeuge', note: 'Quad + Po', sets: 3, range: '8-10', rest: 150, base: 25, step: 2.5 },
+        { name: 'Bankdrücken Kurzhantel', note: 'Brust', sets: 3, range: '10-12', rest: 90, base: 8, step: 1 },
+        { name: 'Rudern Kurzhantel', note: 'Rücken', sets: 3, range: '10-12', rest: 90, base: 10, step: 1 },
+        { name: 'Plank', note: 'Core', type: 'hold', sets: 3, range: '30', rest: 45, bodyweight: true }
+      ]},
+      { label: 'Ganzkörper', variant: 'B', accent: 'pull', weekday: 2, focus: 'Hamstrings + Pull', exercises: [
+        { name: 'Rumänisches Kreuzheben', note: 'Hamstrings · Po', sets: 3, range: '8-10', rest: 150, base: 25, step: 2.5 },
+        { name: 'Bulgarian Split Squats', note: 'Einbein · Po', sets: 3, range: '10-12', rest: 90, base: 6, step: 1 },
+        { name: 'Latzug Untergriff', note: 'Rücken', sets: 3, range: '10-12', rest: 90, base: 20, step: 2.5 },
+        { name: 'Schulterdrücken Kurzhantel', note: 'Schulter', sets: 3, range: '10-12', rest: 90, base: 7, step: 1 },
+        { name: 'Abduktoren Maschine', note: 'Po seitlich', sets: 3, range: '15-20', rest: 45, base: 20, step: 5 }
+      ]},
+      { label: 'Ganzkörper', variant: 'C', accent: 'push', weekday: 4, focus: 'Glute Volumen + Ganzkörper', exercises: [
+        { name: 'Hip Thrust', note: 'Zweite Glute-Einheit', sets: 3, range: '12-15', rest: 90, base: 25, step: 2.5 },
+        { name: 'Cable Kickbacks', note: 'Glute Isolation', sets: 3, range: '12-15', rest: 45, base: 8, step: 2.5 },
+        { name: 'Dips oder Brustpresse', note: 'Druck', sets: 3, range: '10-12', rest: 90, bodyweight: true },
+        { name: 'Rudern Kurzhantel', note: 'Rücken', sets: 3, range: '10-12', rest: 90, base: 10, step: 1 },
+        { name: 'Face Pulls', note: 'Hintere Schulter', sets: 3, range: '12-15', rest: 60, base: 10, step: 2.5 }
+      ]}
+    ]
+  }
+];
+
+function applyTemplate(templateId) {
+  const tpl = PLAN_TEMPLATES.find(t => t.id === templateId);
+  if (!tpl) return;
+  editorDraft = {
+    days: tpl.days.map(d => ({
+      id: genId('d'),
+      label: d.label,
+      variant: d.variant || '',
+      accent: d.accent || 'push',
+      weekday: typeof d.weekday === 'number' && d.weekday >= 0 && d.weekday <= 6 ? d.weekday : -1,
+      focus: d.focus || '',
+      exercises: (d.exercises || []).map(e => {
+        const hasWeight = !e.bodyweight && typeof e.base === 'number' && e.base > 0;
+        return {
+          id: genId('ex'),
+          name: e.name,
+          note: e.note || '',
+          type: e.type === 'hold' ? 'hold' : 'reps',
+          sets: e.sets || 3,
+          range: e.range || (e.type === 'hold' ? '30' : '8-10'),
+          rest: e.rest || 90,
+          base: hasWeight ? e.base : 0,
+          step: e.step || 2.5,
+          bodyweight: !hasWeight
+        };
+      })
+    }))
+  };
+  closeTemplateSheet();
+  renderEditor();
+}
+
+function renderTemplateList() {
+  const list = document.getElementById('template-list');
+  if (!list) return;
+  list.innerHTML = '';
+  PLAN_TEMPLATES.forEach(t => {
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'template-item';
+    const tags = (t.tags || []).map(tag =>
+      `<span class="template-item-tag${tag === 'Frauen' ? ' highlight' : ''}">${escapeHtml(tag)}</span>`
+    ).join('');
+    item.innerHTML = `
+      <div class="template-item-name">${escapeHtml(t.name)}</div>
+      <div class="template-item-desc">${escapeHtml(t.description)}</div>
+      <div class="template-item-tags">${tags}</div>
+    `;
+    item.addEventListener('click', () => applyTemplate(t.id));
+    list.appendChild(item);
+  });
+}
+
+function openTemplateSheet() {
+  renderTemplateList();
+  const sheet = document.getElementById('template-sheet');
+  if (sheet) {
+    sheet.classList.remove('hidden');
+    sheet.setAttribute('aria-hidden', 'false');
+  }
+}
+
+function closeTemplateSheet() {
+  const sheet = document.getElementById('template-sheet');
+  if (sheet) {
+    sheet.classList.add('hidden');
+    sheet.setAttribute('aria-hidden', 'true');
+  }
+}
+
+document.getElementById('template-close')?.addEventListener('click', closeTemplateSheet);
+document.getElementById('template-sheet')?.addEventListener('click', e => {
+  if (e.target.id === 'template-sheet') closeTemplateSheet();
+});
+document.getElementById('editor-load')?.addEventListener('click', openTemplateSheet);
+
 // Editor-Overlay
 let editorDraft = null;
 
@@ -1265,7 +1477,7 @@ function renderEditor() {
               <input class="editor-input" value="${escapeAttr(baseValue)}" type="number" min="0" step="0.5" placeholder="leer lassen für Bodyweight" data-f="base">
             </label>
             <label class="editor-field">
-              <span class="editor-field-label">Schritt (kg)</span>
+              <span class="editor-field-label">Schritte zur Gewichtssteigerung (kg)</span>
               <input class="editor-input" value="${escapeAttr(ex.step || 2.5)}" type="number" min="0.25" step="0.25" data-f="step">
             </label>
           </div>
