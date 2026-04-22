@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PPL · Update News</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #151515;
+    --surface-2: #1f1f1f;
+    --border: #2a2a2a;
+    --text: #f5f5f5;
+    --text-dim: #888;
+    --push: #ff3b30;
+    --pull: #30d158;
+    --legs: #ffcc00;
+    --pack: #0a84ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: #000;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    overflow: hidden;
+    height: 100%;
+    height: 100dvh;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .story {
+    position: relative;
+    background: var(--bg);
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: min(100vw, calc(100vh * 9 / 19.5));
+    overflow: hidden;
+  }
+
+  .progress {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    left: calc(env(safe-area-inset-left, 0px) + 16px);
+    right: calc(env(safe-area-inset-right, 0px) + 16px);
+    display: flex;
+    gap: 4px;
+    z-index: 10;
+  }
+
+  .progress-seg {
+    flex: 1;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .progress-seg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--text);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: progress-fill 15s linear infinite;
+  }
+
+  .progress-seg:nth-child(1)::after { animation-name: p1; }
+  .progress-seg:nth-child(2)::after { animation-name: p2; }
+  .progress-seg:nth-child(3)::after { animation-name: p3; }
+  .progress-seg:nth-child(4)::after { animation-name: p4; }
+  .progress-seg:nth-child(5)::after { animation-name: p5; }
+
+  @keyframes p1 { 0% { transform: scaleX(0); } 20% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p2 { 0%, 20% { transform: scaleX(0); } 40% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p3 { 0%, 40% { transform: scaleX(0); } 60% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p4 { 0%, 60% { transform: scaleX(0); } 80% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p5 { 0%, 80% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 48px)
+      calc(env(safe-area-inset-right, 0px) + 24px)
+      calc(env(safe-area-inset-bottom, 0px) + 60px)
+      calc(env(safe-area-inset-left, 0px) + 24px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    animation-duration: 15s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    overflow: hidden;
+  }
+
+  .scene:nth-child(2) { animation-name: s1; }
+  .scene:nth-child(3) { animation-name: s2; }
+  .scene:nth-child(4) { animation-name: s3; }
+  .scene:nth-child(5) { animation-name: s4; }
+  .scene:nth-child(6) { animation-name: s5; }
+
+  @keyframes s1 {
+    0% { opacity: 0; transform: scale(0.96); }
+    3% { opacity: 1; transform: scale(1); }
+    17% { opacity: 1; }
+    20% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s2 {
+    0%, 20% { opacity: 0; transform: scale(0.96); }
+    23% { opacity: 1; transform: scale(1); }
+    37% { opacity: 1; }
+    40% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s3 {
+    0%, 40% { opacity: 0; transform: scale(0.96); }
+    43% { opacity: 1; transform: scale(1); }
+    57% { opacity: 1; }
+    60% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s4 {
+    0%, 60% { opacity: 0; transform: scale(0.96); }
+    63% { opacity: 1; transform: scale(1); }
+    77% { opacity: 1; }
+    80% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s5 {
+    0%, 80% { opacity: 0; transform: scale(0.96); }
+    83% { opacity: 1; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: white;
+    background: var(--push);
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    align-self: flex-start;
+  }
+
+  .headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 13vw, 90px);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    margin-bottom: 16px;
+  }
+
+  .headline .push { color: var(--push); }
+  .headline .pull { color: var(--pull); }
+  .headline .legs { color: var(--legs); }
+
+  .sub {
+    font-size: 15px;
+    color: var(--text-dim);
+    line-height: 1.55;
+    max-width: 360px;
+  }
+
+  .sub strong { color: var(--text); font-weight: 500; }
+
+  /* Scene 2 · Leg Day witz */
+  .quote {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 17px;
+    line-height: 1.4;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 18px;
+  }
+
+  .answer {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 15vw, 96px);
+    line-height: 0.95;
+    color: var(--push);
+    letter-spacing: 0.02em;
+    margin-bottom: 6px;
+  }
+
+  .kicker {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 8vw, 46px);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    margin-bottom: 22px;
+  }
+
+  /* Scene 3 · Editor Mockup */
+  .mock-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 18px 14px;
+    margin-bottom: 22px;
+  }
+
+  .mock-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .mock-input {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 12px;
+  }
+
+  .mock-input.dim { color: var(--text-dim); }
+
+  .mock-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mock-row .mock-field { flex: 1; }
+  .mock-row .mock-field.small { flex: 0 0 72px; }
+
+  /* Scene 4 · Plan-Switch Mockup */
+  .plan-switch-mock {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 20px;
+  }
+
+  .plan-switch-mock-btn {
+    flex: 1;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 12px 6px;
+    color: var(--text-dim);
+    border-radius: 6px;
+  }
+
+  .plan-switch-mock-btn.active {
+    background: var(--surface-2);
+    color: var(--text);
+  }
+
+  /* Scene 5 · CTA */
+  .cta-card {
+    text-align: center;
+  }
+
+  .cta-mark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(70px, 20vw, 140px);
+    letter-spacing: 0.08em;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--push) 0%, var(--legs) 50%, var(--pull) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: 20px;
+  }
+
+  .cta-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(26px, 7vw, 44px);
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+
+  .cta-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    max-width: 300px;
+    margin: 0 auto 24px;
+  }
+
+  .cta-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    background: var(--text);
+    color: var(--bg);
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    animation: cta-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes cta-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 245, 245, 0.6); }
+    50% { transform: scale(1.03); box-shadow: 0 0 0 14px rgba(245, 245, 245, 0); }
+  }
+
+  .brand-footer {
+    position: absolute;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+  <div class="story">
+
+    <div class="progress">
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+    </div>
+
+    <!-- SCENE 1 · Hook -->
+    <div class="scene">
+      <div class="badge">Update</div>
+      <h1 class="headline">
+        <span class="push">NEU</span> in der<br>App.
+      </h1>
+      <div class="sub"><strong>Push · Pull · Legs</strong> kann ab jetzt mehr als nur den Standard-Split.</div>
+    </div>
+
+    <!-- SCENE 2 · Leg Day Witz -->
+    <div class="scene">
+      <div class="quote">"Puh, schon wieder<br>Leg Day diese Woche?"</div>
+      <div class="answer">KEIN PROBLEM.</div>
+      <div class="kicker">Bau dir deinen<br>eigenen Plan.</div>
+      <div class="sub">Trainings-Tage, Übungen, Pausenzeiten. <strong>Alles selbst.</strong></div>
+    </div>
+
+    <!-- SCENE 3 · Editor Mockup -->
+    <div class="scene">
+      <div class="badge" style="background: var(--pack)">Editor</div>
+      <h1 class="headline" style="font-size: clamp(38px, 10vw, 64px)">Jede Übung.<br>Dein Ding.</h1>
+      <div class="mock-card">
+        <div class="mock-label">Name</div>
+        <div class="mock-input">Bankdrücken</div>
+        <div class="mock-row">
+          <div class="mock-field small">
+            <div class="mock-label">Sätze</div>
+            <div class="mock-input">4</div>
+          </div>
+          <div class="mock-field">
+            <div class="mock-label">Wdh</div>
+            <div class="mock-input">6-8</div>
+          </div>
+          <div class="mock-field small">
+            <div class="mock-label">Pause</div>
+            <div class="mock-input">180s</div>
+          </div>
+        </div>
+      </div>
+      <div class="sub">Name, Sätze, Wdh, Pause, Gewicht. <strong>Jedes Feld selbst gesetzt.</strong></div>
+    </div>
+
+    <!-- SCENE 4 · Plan-Switch Mockup -->
+    <div class="scene">
+      <div class="badge" style="background: var(--pull)">Modi</div>
+      <h1 class="headline" style="font-size: clamp(38px, 10vw, 64px)">Jederzeit<br>wechseln.</h1>
+      <div class="plan-switch-mock">
+        <div class="plan-switch-mock-btn">3×</div>
+        <div class="plan-switch-mock-btn">6×</div>
+        <div class="plan-switch-mock-btn active">Eigener</div>
+      </div>
+      <div class="sub">Preset oder eigener Plan. <strong>Ein Tap, umgeschaltet.</strong></div>
+    </div>
+
+    <!-- SCENE 5 · CTA -->
+    <div class="scene">
+      <div class="cta-card">
+        <div class="cta-mark">PPL</div>
+        <div class="cta-headline">Jetzt updaten</div>
+        <div class="cta-sub">Hol dir das neueste Release. Link in Bio. Wenn du die App schon hast, einfach neu öffnen.</div>
+        <div class="cta-box">
+          Öffnen <span>→</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-footer">Push · Pull · Legs · Update</div>
+  </div>
+</body>
+</html>
