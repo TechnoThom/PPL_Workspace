@@ -771,9 +771,11 @@ function renderSets() {
     for (let i = 0; i < numSets; i++) {
       circles += `<button class="set${sets[i] ? ' done' : ''}" data-idx="${i}" aria-label="Satz ${i + 1}">${check}</button>`;
     }
+    const type = repsEl.dataset.type || 'reps';
+    const label = type === 'hold' ? `${range} s` : `${range} Wdh`;
     repsEl.innerHTML = `
       <div class="sets">${circles}</div>
-      <div class="reps-label">${escapeHtml(range)} Wdh</div>
+      <div class="reps-label">${escapeHtml(label)}</div>
       <div class="timer hidden"></div>
     `;
 
@@ -1015,7 +1017,8 @@ function mergeCustomIntoExercises() {
         base: ex.base || 0,
         step: ex.step || 2.5,
         rest: ex.rest || 90,
-        bodyweight: !!ex.bodyweight
+        bodyweight: !!ex.bodyweight,
+        type: ex.type === 'hold' ? 'hold' : 'reps'
       };
     });
   });
@@ -1110,14 +1113,17 @@ function renderCustomDay(d) {
     exEl.className = 'ex';
     exEl.dataset.exId = ex.id;
     const num = String(idx + 1).padStart(2, '0');
-    const repsText = `${ex.sets || 3}×${ex.range || '8-10'}`;
+    const sets = ex.sets || 3;
+    const range = ex.range || (ex.type === 'hold' ? '30' : '8-10');
+    const isHold = ex.type === 'hold';
+    const repsText = isHold ? `${sets}×${range} s` : `${sets}×${range}`;
     exEl.innerHTML = `
       <div class="ex-num">${num}</div>
       <div>
         <div class="ex-name">${escapeHtml(ex.name || 'Übung')}</div>
         ${ex.note ? `<div class="ex-note">${escapeHtml(ex.note)}</div>` : ''}
       </div>
-      <div class="ex-reps">${escapeHtml(repsText)}</div>
+      <div class="ex-reps" data-sets="${sets}" data-range="${escapeAttr(range)}" data-type="${isHold ? 'hold' : 'reps'}">${escapeHtml(repsText)}</div>
     `;
     exs.appendChild(exEl);
   });
@@ -1217,6 +1223,11 @@ function renderEditor() {
     (day.exercises || []).forEach((ex, exIdx) => {
       const row = document.createElement('div');
       row.className = 'editor-ex-row';
+      const isHold = ex.type === 'hold';
+      const rangeLabel = isHold ? 'Dauer (s)' : 'Wdh';
+      const rangeDefault = isHold ? '30' : '8-10';
+      const rangePlaceholder = isHold ? 'z. B. 30 oder 30-45' : 'z. B. 6-8 oder 10-12';
+      const baseValue = ex.bodyweight || ex.base == null || ex.base === '' ? '' : ex.base;
       row.innerHTML = `
         <div class="editor-ex-fields">
           <label class="editor-field">
@@ -1227,14 +1238,21 @@ function renderEditor() {
             <span class="editor-field-label">Notiz (optional)</span>
             <input class="editor-input" value="${escapeAttr(ex.note || '')}" placeholder="z. B. Hauptübung Brust" data-f="note">
           </label>
+          <label class="editor-field">
+            <span class="editor-field-label">Typ</span>
+            <select class="editor-select" data-f="type">
+              <option value="reps"${!isHold ? ' selected' : ''}>Wiederholungen</option>
+              <option value="hold"${isHold ? ' selected' : ''}>Halten (Zeit)</option>
+            </select>
+          </label>
           <div class="editor-ex-fields-row">
             <label class="editor-field fixed" style="flex: 0 0 70px">
               <span class="editor-field-label">Sätze</span>
               <input class="editor-input" value="${escapeAttr(ex.sets || 3)}" type="number" min="1" max="10" data-f="sets">
             </label>
             <label class="editor-field">
-              <span class="editor-field-label">Wdh</span>
-              <input class="editor-input" value="${escapeAttr(ex.range || '8-10')}" placeholder="z. B. 6-8 oder 10-12" data-f="range">
+              <span class="editor-field-label">${rangeLabel}</span>
+              <input class="editor-input" value="${escapeAttr(ex.range || rangeDefault)}" placeholder="${rangePlaceholder}" data-f="range">
             </label>
             <label class="editor-field fixed" style="flex: 0 0 90px">
               <span class="editor-field-label">Pause (s)</span>
@@ -1243,8 +1261,8 @@ function renderEditor() {
           </div>
           <div class="editor-ex-fields-row">
             <label class="editor-field">
-              <span class="editor-field-label">Startgewicht (kg)</span>
-              <input class="editor-input" value="${escapeAttr(ex.base || 0)}" type="number" min="0" step="0.5" data-f="base">
+              <span class="editor-field-label">Startgewicht (kg, leer = Körpergewicht)</span>
+              <input class="editor-input" value="${escapeAttr(baseValue)}" type="number" min="0" step="0.5" placeholder="leer lassen für Bodyweight" data-f="base">
             </label>
             <label class="editor-field">
               <span class="editor-field-label">Schritt (kg)</span>
@@ -1258,12 +1276,24 @@ function renderEditor() {
       `;
       row.querySelectorAll('[data-f]').forEach(input => {
         const field = input.dataset.f;
-        input.addEventListener('input', e => {
+        const handler = e => {
           const v = e.target.value;
-          if (field === 'sets' || field === 'rest') ex[field] = parseInt(v, 10) || 0;
-          else if (field === 'base' || field === 'step') ex[field] = parseFloat(v) || 0;
-          else ex[field] = v;
-        });
+          if (field === 'sets' || field === 'rest') {
+            ex[field] = parseInt(v, 10) || 0;
+          } else if (field === 'base') {
+            if (v === '') { ex.base = null; ex.bodyweight = true; }
+            else { const n = parseFloat(v); ex.base = isNaN(n) ? null : n; ex.bodyweight = !n || n <= 0; }
+          } else if (field === 'step') {
+            ex[field] = parseFloat(v) || 0;
+          } else if (field === 'type') {
+            ex.type = v === 'hold' ? 'hold' : 'reps';
+            renderEditor();
+          } else {
+            ex[field] = v;
+          }
+        };
+        input.addEventListener('input', handler);
+        input.addEventListener('change', handler);
       });
       row.querySelector('[data-a="del-ex"]').addEventListener('click', () => {
         day.exercises.splice(exIdx, 1);
@@ -1318,17 +1348,24 @@ function sanitizePlan(plan) {
         weekday: typeof d.weekday === 'number' && d.weekday >= 0 && d.weekday <= 6 ? d.weekday : -1,
         exercises: (d.exercises || [])
           .filter(e => (e.name || '').trim())
-          .map(e => ({
-            id: e.id || genId('ex'),
-            name: (e.name || '').trim(),
-            note: (e.note || '').trim(),
-            sets: Math.max(1, Math.min(10, parseInt(e.sets, 10) || 3)),
-            range: (e.range || '8-10').trim(),
-            rest: Math.max(0, Math.min(600, parseInt(e.rest, 10) || 90)),
-            base: Math.max(0, parseFloat(e.base) || 0),
-            step: Math.max(0.25, parseFloat(e.step) || 2.5),
-            bodyweight: !!e.bodyweight
-          }))
+          .map(e => {
+            const baseNum = parseFloat(e.base);
+            const hasWeight = !isNaN(baseNum) && baseNum > 0;
+            const type = e.type === 'hold' ? 'hold' : 'reps';
+            const defaultRange = type === 'hold' ? '30' : '8-10';
+            return {
+              id: e.id || genId('ex'),
+              name: (e.name || '').trim(),
+              note: (e.note || '').trim(),
+              type,
+              sets: Math.max(1, Math.min(10, parseInt(e.sets, 10) || 3)),
+              range: ((e.range || defaultRange) + '').trim() || defaultRange,
+              rest: Math.max(0, Math.min(600, parseInt(e.rest, 10) || 90)),
+              base: hasWeight ? baseNum : 0,
+              step: Math.max(0.25, parseFloat(e.step) || 2.5),
+              bodyweight: !hasWeight
+            };
+          })
       }))
   };
 }
