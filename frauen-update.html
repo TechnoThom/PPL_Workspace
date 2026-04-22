@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PPL · Frauen-Update</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #151515;
+    --surface-2: #1f1f1f;
+    --border: #2a2a2a;
+    --text: #f5f5f5;
+    --text-dim: #888;
+    --push: #ff3b30;
+    --pull: #30d158;
+    --legs: #ffcc00;
+    --pack: #0a84ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: #000;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    overflow: hidden;
+    height: 100%;
+    height: 100dvh;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .story {
+    position: relative;
+    background: var(--bg);
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: min(100vw, calc(100vh * 9 / 19.5));
+    overflow: hidden;
+  }
+
+  .progress {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    left: calc(env(safe-area-inset-left, 0px) + 16px);
+    right: calc(env(safe-area-inset-right, 0px) + 16px);
+    display: flex;
+    gap: 4px;
+    z-index: 10;
+  }
+
+  .progress-seg {
+    flex: 1;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .progress-seg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--text);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation-duration: 27s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  .progress-seg:nth-child(1)::after { animation-name: p1; }
+  .progress-seg:nth-child(2)::after { animation-name: p2; }
+  .progress-seg:nth-child(3)::after { animation-name: p3; }
+  .progress-seg:nth-child(4)::after { animation-name: p4; }
+  .progress-seg:nth-child(5)::after { animation-name: p5; }
+  .progress-seg:nth-child(6)::after { animation-name: p6; }
+  .progress-seg:nth-child(7)::after { animation-name: p7; }
+
+  /* Scenes 1-6: je 11.11% (3s); Scene 7 (CTA): 33.33% (9s) */
+  @keyframes p1 { 0% { transform: scaleX(0); } 11.11% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p2 { 0%, 11.11% { transform: scaleX(0); } 22.22% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p3 { 0%, 22.22% { transform: scaleX(0); } 33.33% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p4 { 0%, 33.33% { transform: scaleX(0); } 44.44% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p5 { 0%, 44.44% { transform: scaleX(0); } 55.55% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p6 { 0%, 55.55% { transform: scaleX(0); } 66.66% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p7 { 0%, 66.66% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 48px)
+      calc(env(safe-area-inset-right, 0px) + 24px)
+      calc(env(safe-area-inset-bottom, 0px) + 60px)
+      calc(env(safe-area-inset-left, 0px) + 24px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    animation-duration: 27s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    overflow: hidden;
+  }
+
+  .scene:nth-child(2) { animation-name: s1; }
+  .scene:nth-child(3) { animation-name: s2; }
+  .scene:nth-child(4) { animation-name: s3; }
+  .scene:nth-child(5) { animation-name: s4; }
+  .scene:nth-child(6) { animation-name: s5; }
+  .scene:nth-child(7) { animation-name: s6; }
+  .scene:nth-child(8) { animation-name: s7; }
+
+  /* Scenes 1-6: je 11.11% (3s); Scene 7 (CTA): 33.33% (9s) */
+  @keyframes s1 {
+    0% { opacity: 0; transform: scale(0.96); }
+    2% { opacity: 1; transform: scale(1); }
+    9% { opacity: 1; }
+    11% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s2 {
+    0%, 11% { opacity: 0; transform: scale(0.96); }
+    13% { opacity: 1; transform: scale(1); }
+    20% { opacity: 1; }
+    22% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s3 {
+    0%, 22% { opacity: 0; transform: scale(0.96); }
+    24% { opacity: 1; transform: scale(1); }
+    31% { opacity: 1; }
+    33% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s4 {
+    0%, 33% { opacity: 0; transform: scale(0.96); }
+    35% { opacity: 1; transform: scale(1); }
+    42% { opacity: 1; }
+    44% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s5 {
+    0%, 44% { opacity: 0; transform: scale(0.96); }
+    46% { opacity: 1; transform: scale(1); }
+    53% { opacity: 1; }
+    55% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s6 {
+    0%, 55% { opacity: 0; transform: scale(0.96); }
+    57% { opacity: 1; transform: scale(1); }
+    64% { opacity: 1; }
+    66% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s7 {
+    0%, 66% { opacity: 0; transform: scale(0.96); }
+    68% { opacity: 1; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: white;
+    background: var(--pack);
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    align-self: flex-start;
+  }
+
+  .badge.rose { background: var(--push); }
+
+  .headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(44px, 12vw, 80px);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    margin-bottom: 16px;
+  }
+
+  .headline .punch { color: var(--pack); }
+
+  .sub {
+    font-size: 15px;
+    color: var(--text-dim);
+    line-height: 1.55;
+    max-width: 360px;
+  }
+
+  .sub strong { color: var(--text); font-weight: 500; }
+
+  /* Scene 1 · Hook */
+  .kicker-big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 18vw, 110px);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    color: var(--pack);
+    margin-bottom: 18px;
+  }
+
+  /* Scene 2 · Pain */
+  .pain-list {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 18px;
+  }
+
+  .pain-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 14px;
+  }
+
+  .pain-row .name { color: var(--text); }
+  .pain-row .mark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+  }
+
+  .pain-row .mark.yes { color: var(--pull); }
+  .pain-row .mark.no { color: var(--push); }
+
+  .pain-row + .pain-row { border-top: 1px solid var(--border); }
+
+  /* Scene 4 / 5 · Template cards */
+  .tpl-card {
+    background: var(--surface);
+    border: 1px solid var(--pack);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 0 0 1px var(--pack);
+    margin-bottom: 18px;
+  }
+
+  .tpl-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(26px, 7vw, 36px);
+    line-height: 1;
+    letter-spacing: 0.03em;
+    margin-bottom: 8px;
+  }
+
+  .tpl-tags {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .tpl-tag {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    background: var(--surface-2);
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+
+  .tpl-tag.hot {
+    background: var(--pack);
+    color: white;
+  }
+
+  .tpl-ex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 13px;
+  }
+
+  .tpl-ex + .tpl-ex { border-top: 1px solid var(--border); }
+
+  .tpl-ex .ex-name { color: var(--text); }
+  .tpl-ex .ex-sets {
+    color: var(--text-dim);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+
+  /* Scene 6 · Features */
+  .feat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .feat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--text);
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .feat-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .feat-dot.push { background: var(--push); }
+  .feat-dot.pull { background: var(--pull); }
+  .feat-dot.legs { background: var(--legs); }
+  .feat-dot.pack { background: var(--pack); }
+
+  /* Scene 7 · CTA */
+  .cta-card { text-align: center; }
+
+  .cta-mark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(70px, 20vw, 140px);
+    letter-spacing: 0.08em;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--push) 0%, var(--legs) 50%, var(--pull) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: 20px;
+  }
+
+  .cta-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(26px, 7vw, 44px);
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+
+  .cta-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    max-width: 320px;
+    margin: 0 auto 24px;
+  }
+
+  .cta-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    background: var(--text);
+    color: var(--bg);
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    animation: cta-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes cta-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 245, 245, 0.6); }
+    50% { transform: scale(1.03); box-shadow: 0 0 0 14px rgba(245, 245, 245, 0); }
+  }
+
+  .brand-footer {
+    position: absolute;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+  <div class="story">
+
+    <div class="progress">
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+    </div>
+
+    <!-- SCENE 1 · Hook -->
+    <div class="scene">
+      <div class="badge rose">Für dich</div>
+      <h1 class="headline">Deine Fitness-App hat was vergessen.</h1>
+      <div class="kicker-big">Deinen Po.</div>
+    </div>
+
+    <!-- SCENE 2 · Pain Point -->
+    <div class="scene">
+      <div class="badge">Standard-Apps</div>
+      <h1 class="headline" style="font-size: clamp(36px, 10vw, 64px); margin-bottom: 20px">Alle gleich.</h1>
+      <div class="pain-list">
+        <div class="pain-row"><span class="name">PPL Split</span><span class="mark yes">dabei</span></div>
+        <div class="pain-row"><span class="name">Bro Split</span><span class="mark yes">dabei</span></div>
+        <div class="pain-row"><span class="name">Upper / Lower</span><span class="mark yes">dabei</span></div>
+        <div class="pain-row"><span class="name">Hip Thrust</span><span class="mark no">fehlt</span></div>
+        <div class="pain-row"><span class="name">Cable Kickback</span><span class="mark no">fehlt</span></div>
+        <div class="pain-row"><span class="name">Glute Bridges</span><span class="mark no">fehlt</span></div>
+      </div>
+      <div class="sub">Und dein Po? <strong>Nirgendwo.</strong></div>
+    </div>
+
+    <!-- SCENE 3 · Reveal -->
+    <div class="scene">
+      <div class="badge">Neu</div>
+      <h1 class="headline">Diese hier <span class="punch">schon.</span></h1>
+      <div class="sub">Zwei Pläne, auf Glutes gebaut. Direkt einsatzbereit. <strong>Kostenlos.</strong></div>
+    </div>
+
+    <!-- SCENE 4 · Glute Focus 4× -->
+    <div class="scene">
+      <div class="badge">Plan 1</div>
+      <div class="tpl-card">
+        <div class="tpl-name">Glute Focus 4×</div>
+        <div class="tpl-tags">
+          <span class="tpl-tag hot">Frauen</span>
+          <span class="tpl-tag">Glutes</span>
+          <span class="tpl-tag">Fortgeschritten</span>
+        </div>
+        <div class="tpl-ex"><span class="ex-name">Hip Thrust</span><span class="ex-sets">4×6-8</span></div>
+        <div class="tpl-ex"><span class="ex-name">Rum. Kreuzheben</span><span class="ex-sets">4×6-8</span></div>
+        <div class="tpl-ex"><span class="ex-name">Bulgarian Split Squat</span><span class="ex-sets">3×8-10</span></div>
+        <div class="tpl-ex"><span class="ex-name">Cable Kickbacks</span><span class="ex-sets">3×12-15</span></div>
+        <div class="tpl-ex"><span class="ex-name">Abduktoren Maschine</span><span class="ex-sets">3×15-20</span></div>
+      </div>
+      <div class="sub"><strong>Zwei Glute-Days</strong> pro Woche. Oberkörper kompakt.</div>
+    </div>
+
+    <!-- SCENE 5 · Ganzkörper Glute-Bias 3× -->
+    <div class="scene">
+      <div class="badge">Plan 2</div>
+      <div class="tpl-card">
+        <div class="tpl-name">Ganzkörper Glute-Bias 3×</div>
+        <div class="tpl-tags">
+          <span class="tpl-tag hot">Frauen</span>
+          <span class="tpl-tag">Anfänger</span>
+          <span class="tpl-tag">Glutes</span>
+        </div>
+        <div class="tpl-ex"><span class="ex-name">Hip Thrust</span><span class="ex-sets">3×10-12</span></div>
+        <div class="tpl-ex"><span class="ex-name">Kniebeuge</span><span class="ex-sets">3×8-10</span></div>
+        <div class="tpl-ex"><span class="ex-name">Rum. Kreuzheben</span><span class="ex-sets">3×8-10</span></div>
+        <div class="tpl-ex"><span class="ex-name">Bulgarian Split Squat</span><span class="ex-sets">3×10-12</span></div>
+        <div class="tpl-ex"><span class="ex-name">Plank</span><span class="ex-sets">3×30 s</span></div>
+      </div>
+      <div class="sub"><strong>Drei Tage</strong> pro Woche. Einsteiger-freundlich.</div>
+    </div>
+
+    <!-- SCENE 6 · Features -->
+    <div class="scene">
+      <div class="badge">Plus</div>
+      <h1 class="headline" style="font-size: clamp(36px, 10vw, 60px); margin-bottom: 20px">Alles drin.</h1>
+      <div class="feat-list">
+        <div class="feat-item"><span class="feat-dot pack"></span>Pausentimer startet automatisch</div>
+        <div class="feat-item"><span class="feat-dot pull"></span>Gewichts-Tracking pro Übung</div>
+        <div class="feat-item"><span class="feat-dot legs"></span>Sätze zum Abhaken</div>
+        <div class="feat-item"><span class="feat-dot push"></span>Streak mit Freezes</div>
+      </div>
+      <div class="sub">Kein Abo. Kein Login. <strong>Offline.</strong></div>
+    </div>
+
+    <!-- SCENE 7 · CTA -->
+    <div class="scene">
+      <div class="cta-card">
+        <div class="cta-mark">PPL</div>
+        <div class="cta-headline">Deins.</div>
+        <div class="cta-sub">Link in Bio. In 10 Sekunden auf dem Homebildschirm. Danach gehört sie dir.</div>
+        <div class="cta-box">Jetzt öffnen <span>→</span></div>
+      </div>
+    </div>
+
+    <div class="brand-footer">Push · Pull · Legs · Frauen-Update</div>
+  </div>
+</body>
+</html>
