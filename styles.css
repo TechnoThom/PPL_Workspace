@@ -242,6 +242,27 @@ h1 .legs-t { color: var(--legs); }
   text-shadow: 0 0 14px rgba(255, 140, 0, 0.55), 0 0 4px rgba(255, 220, 100, 0.6);
 }
 
+/* Light Mode: Flamme in Blau-Palette statt Orange */
+html.light .flame::before {
+  background: radial-gradient(ellipse 55% 75% at 50% 80%,
+    rgba(120, 200, 255, 0.6) 0%,
+    rgba(40, 130, 255, 0.5) 35%,
+    rgba(10, 80, 200, 0.25) 65%,
+    transparent 85%);
+}
+
+html.light .flame::after {
+  background: radial-gradient(ellipse 55% 70% at 50% 80%,
+    rgba(220, 240, 255, 0.85) 0%,
+    rgba(120, 180, 255, 0.6) 40%,
+    rgba(10, 132, 255, 0.3) 70%,
+    transparent 90%);
+}
+
+html.light .stat.streak-active .stat-value {
+  text-shadow: 0 0 14px rgba(10, 132, 255, 0.55), 0 0 4px rgba(120, 200, 255, 0.7);
+}
+
 .week {
   background: var(--surface);
   border: 1px solid var(--border);
