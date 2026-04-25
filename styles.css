@@ -1475,22 +1475,26 @@ html.light .stat.streak-active .stat-value {
 
 .custom-edit-btn {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.15em;
+  font-size: 12px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  padding: 9px 16px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  color: var(--text);
-  border-radius: 8px;
+  font-weight: 700;
+  padding: 14px 18px;
+  background: var(--pack);
+  border: 1px solid var(--pack);
+  color: white;
+  border-radius: 10px;
   cursor: pointer;
-  margin-top: 16px;
+  width: 100%;
+  margin-top: 14px;
+  margin-bottom: 4px;
+  transition: transform 0.1s, filter 0.15s;
+  box-shadow: 0 2px 12px rgba(10, 132, 255, 0.25);
 }
 
 .custom-edit-btn:active {
-  background: var(--pack);
-  border-color: var(--pack);
-  color: white;
+  transform: scale(0.98);
+  filter: brightness(0.92);
 }
 
 .editor {

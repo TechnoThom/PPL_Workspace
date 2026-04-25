@@ -1499,6 +1499,13 @@ function renderCustomPlan() {
   });
   container.appendChild(week);
 
+  const edit = document.createElement('button');
+  edit.className = 'custom-edit-btn';
+  edit.type = 'button';
+  edit.textContent = t('custom.edit');
+  edit.addEventListener('click', openEditor);
+  container.appendChild(edit);
+
   const groups = { push: [], pull: [], legs: [] };
   plan.days.forEach(d => {
     const bucket = groups[d.accent] ? d.accent : 'push';
@@ -1513,13 +1520,6 @@ function renderCustomPlan() {
     container.appendChild(sec);
     groups[bucket].forEach(d => container.appendChild(renderCustomDay(d)));
   });
-
-  const edit = document.createElement('button');
-  edit.className = 'custom-edit-btn';
-  edit.type = 'button';
-  edit.textContent = t('custom.edit');
-  edit.addEventListener('click', openEditor);
-  container.appendChild(edit);
 }
 
 function renderCustomDay(d) {
