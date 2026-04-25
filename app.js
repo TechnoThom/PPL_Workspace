@@ -110,6 +110,23 @@ const I18N = {
     'templates.close': 'Abbrechen',
     'sets.suffix.reps': 'Wdh',
     'sets.suffix.hold': 's',
+    'wd.mon': 'MO',
+    'wd.tue': 'DI',
+    'wd.wed': 'MI',
+    'wd.thu': 'DO',
+    'wd.fri': 'FR',
+    'wd.sat': 'SA',
+    'wd.sun': 'SO',
+    'wd.off': 'OFF',
+    'day.focus.push.heavy': 'Schwer · niedrige Wdh',
+    'day.focus.push.volume': 'Volumen · höhere Wdh',
+    'day.focus.pull.heavy': 'Schwer · Grundübungen',
+    'day.focus.pull.volume': 'Volumen · andere Winkel',
+    'day.focus.legs.quad': 'Quad-Fokus',
+    'day.focus.legs.hams': 'Hamstring · Po',
+    'day.focus.push.full': 'Brust · Schulter · Trizeps',
+    'day.focus.pull.full': 'Rücken · Bizeps · hintere Schulter',
+    'day.focus.legs.full': 'Quad · Hamstring · Po · Waden',
     'onb.intro.eyebrow': 'Einrichtung',
     'onb.intro.title': 'Kurze Einrichtung',
     'onb.intro.text': 'Ein paar Fragen zu dir, deinem Training und deiner Packliste. Damit stimmen wir Startgewichte und spätere Empfehlungen auf dich ab. Alles später anpassbar.',
@@ -265,6 +282,23 @@ const I18N = {
     'templates.close': 'Cancel',
     'sets.suffix.reps': 'reps',
     'sets.suffix.hold': 's',
+    'wd.mon': 'MON',
+    'wd.tue': 'TUE',
+    'wd.wed': 'WED',
+    'wd.thu': 'THU',
+    'wd.fri': 'FRI',
+    'wd.sat': 'SAT',
+    'wd.sun': 'SUN',
+    'wd.off': 'OFF',
+    'day.focus.push.heavy': 'Heavy · low reps',
+    'day.focus.push.volume': 'Volume · higher reps',
+    'day.focus.pull.heavy': 'Heavy · compounds',
+    'day.focus.pull.volume': 'Volume · different angles',
+    'day.focus.legs.quad': 'Quad focus',
+    'day.focus.legs.hams': 'Hamstrings · glutes',
+    'day.focus.push.full': 'Chest · shoulders · triceps',
+    'day.focus.pull.full': 'Back · biceps · rear delts',
+    'day.focus.legs.full': 'Quads · hamstrings · glutes · calves',
     'onb.intro.eyebrow': 'Setup',
     'onb.intro.title': 'Quick setup',
     'onb.intro.text': "A few questions about you, your training and your packing list. We'll use them to set your starting weights and tailor later suggestions. Everything is editable later.",
@@ -597,51 +631,63 @@ editBtn.addEventListener('click', () => {
   render();
 });
 
-// Übungen — base = Startgewicht kg, step = +/- Schritt kg, rest = Pause s,
+// Übungen — name/note sind {de, en} Maps für Lokalisierung.
+// base = Startgewicht kg, step = +/- Schritt kg, rest = Pause s.
 // bodyweight = ohne Gewichts-Tracking, alternatives = gängige Austausch-Optionen.
-// name/note werden beim Swap ins DOM geschrieben.
 const EXERCISES = {
-  'bankdruecken-langhantel':     { name: 'Bankdrücken Langhantel', note: 'Hauptübung Brust',                base: 40, step: 2.5, rest: 180, alternatives: ['schraegbankdruecken-kh', 'bankdruecken-kurzhantel'] },
-  'schulterdruecken-kurzhantel': { name: 'Schulterdrücken Kurzhantel', note: 'Sitzend · vordere Schulter',  base: 12, step: 1,   rest: 90,  alternatives: ['schulterdruecken-langhantel', 'arnold-press'] },
-  'seitheben':                   { name: 'Seitheben', note: 'Seitliche Schulter · Breite',                  base: 6,  step: 0.5, rest: 60,  alternatives: ['seitheben-kabel', 'seitheben-maschine'] },
-  'trizepsdruecken-kabel':       { name: 'Trizepsdrücken Kabel', note: 'Isolation',                         base: 15, step: 2.5, rest: 60,  alternatives: ['trizeps-overhead', 'french-press'] },
-  'schraegbankdruecken-kh':      { name: 'Schrägbankdrücken KH', note: 'Obere Brust',                       base: 15, step: 1,   rest: 120, alternatives: ['bankdruecken-langhantel', 'bankdruecken-kurzhantel'] },
-  'dips-oder-brustpresse':       { name: 'Dips oder Brustpresse', note: 'Untere Brust · Trizeps',           bodyweight: true,    rest: 120, alternatives: ['bankdruecken-langhantel', 'trizepsdruecken-kabel'] },
-  'trizeps-overhead':            { name: 'Trizeps Overhead', note: 'Langer Trizeps-Kopf',                   base: 10, step: 1,   rest: 60,  alternatives: ['trizepsdruecken-kabel', 'french-press'] },
-  'klimmzuege':                  { name: 'Klimmzüge', note: 'Breiter Griff · Rücken-Basis',                 bodyweight: true,    rest: 180, alternatives: ['latzug-untergriff', 'latzug-breit'] },
-  'rudern-langhantel':           { name: 'Rudern Langhantel', note: 'Horizontaler Zug · schwer',            base: 30, step: 2.5, rest: 180, alternatives: ['kabelrudern-eng', 'rudern-kurzhantel'] },
-  'face-pulls':                  { name: 'Face Pulls', note: 'Hintere Schulter · Haltung',                  base: 12, step: 2.5, rest: 60,  alternatives: ['reverse-flys', 'seitheben'] },
-  'langhantel-curls':            { name: 'Langhantel-Curls', note: 'Bizeps Isolation',                      base: 15, step: 2.5, rest: 60,  alternatives: ['kurzhantel-curls', 'hammer-curls'] },
-  'latzug-untergriff':           { name: 'Latzug Untergriff', note: 'Vertikaler Zug · Bizeps-Fokus',        base: 30, step: 2.5, rest: 120, alternatives: ['klimmzuege', 'latzug-breit'] },
-  'kabelrudern-eng':             { name: 'Kabelrudern eng', note: 'Mittlerer Rücken',                       base: 30, step: 2.5, rest: 120, alternatives: ['rudern-langhantel', 'rudern-kurzhantel'] },
-  'reverse-flys':                { name: 'Reverse Flys', note: 'Hintere Schulter',                          base: 5,  step: 0.5, rest: 60,  alternatives: ['face-pulls', 'seitheben'] },
-  'hammer-curls':                { name: 'Hammer Curls', note: 'Brachialis · Unterarm',                     base: 8,  step: 1,   rest: 60,  alternatives: ['kurzhantel-curls', 'langhantel-curls'] },
-  'kniebeuge':                   { name: 'Kniebeuge', note: 'Langhantel · Hauptübung',                      base: 40, step: 2.5, rest: 180, alternatives: ['beinpresse', 'front-squat'] },
-  'rumaenisches-kreuzheben':     { name: 'Rumänisches Kreuzheben', note: 'Hamstrings · Po',                 base: 40, step: 2.5, rest: 180, alternatives: ['kreuzheben', 'good-mornings'] },
-  'beinpresse':                  { name: 'Beinpresse', note: 'Zweiter Quad-Reiz',                           base: 50, step: 5,   rest: 120, alternatives: ['kniebeuge', 'hackschmidt-squat'] },
-  'beinbeuger-liegend':          { name: 'Beinbeuger liegend', note: 'Hamstrings übers Knie',               base: 20, step: 2.5, rest: 90,  alternatives: ['beinbeuger-sitzend', 'nordic-curls'] },
-  'bulgarian-split-squats':      { name: 'Bulgarian Split Squats', note: 'Pro Bein · Po-Aktivierung',       base: 8,  step: 1,   rest: 120, alternatives: ['ausfallschritte', 'kniebeuge'] },
-  'beinbeuger-sitzend':          { name: 'Beinbeuger sitzend', note: 'Anderer Winkel als A',                base: 20, step: 2.5, rest: 90,  alternatives: ['beinbeuger-liegend', 'nordic-curls'] },
-  'wadenheben-stehend':          { name: 'Wadenheben stehend', note: 'Waden',                               base: 40, step: 2.5, rest: 60,  alternatives: ['wadenheben-sitzend', 'beinpresse'] },
+  'bankdruecken-langhantel':     { name: { de: 'Bankdrücken Langhantel', en: 'Barbell Bench Press' },        note: { de: 'Hauptübung Brust', en: 'Main chest lift' },           base: 40, step: 2.5, rest: 180, alternatives: ['schraegbankdruecken-kh', 'bankdruecken-kurzhantel'] },
+  'schulterdruecken-kurzhantel': { name: { de: 'Schulterdrücken Kurzhantel', en: 'Dumbbell Shoulder Press' }, note: { de: 'Sitzend · vordere Schulter', en: 'Seated · front delts' }, base: 12, step: 1, rest: 90,  alternatives: ['schulterdruecken-langhantel', 'arnold-press'] },
+  'seitheben':                   { name: { de: 'Seitheben', en: 'Lateral Raises' },                          note: { de: 'Seitliche Schulter · Breite', en: 'Side delts · width' }, base: 6, step: 0.5, rest: 60,  alternatives: ['seitheben-kabel', 'seitheben-maschine'] },
+  'trizepsdruecken-kabel':       { name: { de: 'Trizepsdrücken Kabel', en: 'Cable Triceps Pushdown' },       note: { de: 'Isolation', en: 'Isolation' },                       base: 15, step: 2.5, rest: 60,  alternatives: ['trizeps-overhead', 'french-press'] },
+  'schraegbankdruecken-kh':      { name: { de: 'Schrägbankdrücken KH', en: 'Incline Dumbbell Press' },       note: { de: 'Obere Brust', en: 'Upper chest' },                   base: 15, step: 1,   rest: 120, alternatives: ['bankdruecken-langhantel', 'bankdruecken-kurzhantel'] },
+  'dips-oder-brustpresse':       { name: { de: 'Dips oder Brustpresse', en: 'Dips or Chest Press' },         note: { de: 'Untere Brust · Trizeps', en: 'Lower chest · triceps' }, bodyweight: true, rest: 120, alternatives: ['bankdruecken-langhantel', 'trizepsdruecken-kabel'] },
+  'trizeps-overhead':            { name: { de: 'Trizeps Overhead', en: 'Overhead Triceps Extension' },       note: { de: 'Langer Trizeps-Kopf', en: 'Long head focus' },        base: 10, step: 1,   rest: 60,  alternatives: ['trizepsdruecken-kabel', 'french-press'] },
+  'klimmzuege':                  { name: { de: 'Klimmzüge', en: 'Pull-ups' },                                note: { de: 'Breiter Griff · Rücken-Basis', en: 'Wide grip · back base' }, bodyweight: true, rest: 180, alternatives: ['latzug-untergriff', 'latzug-breit'] },
+  'rudern-langhantel':           { name: { de: 'Rudern Langhantel', en: 'Barbell Row' },                     note: { de: 'Horizontaler Zug · schwer', en: 'Horizontal pull · heavy' }, base: 30, step: 2.5, rest: 180, alternatives: ['kabelrudern-eng', 'rudern-kurzhantel'] },
+  'face-pulls':                  { name: { de: 'Face Pulls', en: 'Face Pulls' },                             note: { de: 'Hintere Schulter · Haltung', en: 'Rear delts · posture' }, base: 12, step: 2.5, rest: 60, alternatives: ['reverse-flys', 'seitheben'] },
+  'langhantel-curls':            { name: { de: 'Langhantel-Curls', en: 'Barbell Curls' },                    note: { de: 'Bizeps Isolation', en: 'Biceps isolation' },         base: 15, step: 2.5, rest: 60,  alternatives: ['kurzhantel-curls', 'hammer-curls'] },
+  'latzug-untergriff':           { name: { de: 'Latzug Untergriff', en: 'Underhand Lat Pulldown' },          note: { de: 'Vertikaler Zug · Bizeps-Fokus', en: 'Vertical pull · biceps focus' }, base: 30, step: 2.5, rest: 120, alternatives: ['klimmzuege', 'latzug-breit'] },
+  'kabelrudern-eng':             { name: { de: 'Kabelrudern eng', en: 'Close-Grip Cable Row' },              note: { de: 'Mittlerer Rücken', en: 'Mid back' },                 base: 30, step: 2.5, rest: 120, alternatives: ['rudern-langhantel', 'rudern-kurzhantel'] },
+  'reverse-flys':                { name: { de: 'Reverse Flys', en: 'Reverse Flys' },                         note: { de: 'Hintere Schulter', en: 'Rear delts' },               base: 5,  step: 0.5, rest: 60,  alternatives: ['face-pulls', 'seitheben'] },
+  'hammer-curls':                { name: { de: 'Hammer Curls', en: 'Hammer Curls' },                         note: { de: 'Brachialis · Unterarm', en: 'Brachialis · forearm' }, base: 8,  step: 1,   rest: 60,  alternatives: ['kurzhantel-curls', 'langhantel-curls'] },
+  'kniebeuge':                   { name: { de: 'Kniebeuge', en: 'Squat' },                                   note: { de: 'Langhantel · Hauptübung', en: 'Barbell · main lift' }, base: 40, step: 2.5, rest: 180, alternatives: ['beinpresse', 'front-squat'] },
+  'rumaenisches-kreuzheben':     { name: { de: 'Rumänisches Kreuzheben', en: 'Romanian Deadlift' },          note: { de: 'Hamstrings · Po', en: 'Hamstrings · glutes' },       base: 40, step: 2.5, rest: 180, alternatives: ['kreuzheben', 'good-mornings'] },
+  'beinpresse':                  { name: { de: 'Beinpresse', en: 'Leg Press' },                              note: { de: 'Zweiter Quad-Reiz', en: 'Secondary quad work' },      base: 50, step: 5,   rest: 120, alternatives: ['kniebeuge', 'hackschmidt-squat'] },
+  'beinbeuger-liegend':          { name: { de: 'Beinbeuger liegend', en: 'Lying Leg Curl' },                 note: { de: 'Hamstrings übers Knie', en: 'Hamstrings via knee' }, base: 20, step: 2.5, rest: 90,  alternatives: ['beinbeuger-sitzend', 'nordic-curls'] },
+  'bulgarian-split-squats':      { name: { de: 'Bulgarian Split Squats', en: 'Bulgarian Split Squats' },     note: { de: 'Pro Bein · Po-Aktivierung', en: 'Per leg · glute activation' }, base: 8, step: 1, rest: 120, alternatives: ['ausfallschritte', 'kniebeuge'] },
+  'beinbeuger-sitzend':          { name: { de: 'Beinbeuger sitzend', en: 'Seated Leg Curl' },                note: { de: 'Anderer Winkel als A', en: 'Different angle than A' }, base: 20, step: 2.5, rest: 90, alternatives: ['beinbeuger-liegend', 'nordic-curls'] },
+  'wadenheben-stehend':          { name: { de: 'Wadenheben stehend', en: 'Standing Calf Raises' },           note: { de: 'Waden', en: 'Calves' },                              base: 40, step: 2.5, rest: 60,  alternatives: ['wadenheben-sitzend', 'beinpresse'] },
 
   // Alternativen ohne eigene alternatives-Liste (Endknoten)
-  'bankdruecken-kurzhantel':     { name: 'Bankdrücken Kurzhantel', note: 'Brust · mehr Stabi-Arbeit',       base: 14, step: 1,   rest: 120 },
-  'schulterdruecken-langhantel': { name: 'Schulterdrücken Langhantel', note: 'Overhead Press',              base: 25, step: 2.5, rest: 150 },
-  'arnold-press':                { name: 'Arnold Press', note: 'Rotation · vordere Schulter',               base: 10, step: 1,   rest: 90 },
-  'seitheben-kabel':             { name: 'Seitheben Kabel', note: 'Konstante Spannung',                     base: 8,  step: 1,   rest: 60 },
-  'seitheben-maschine':          { name: 'Seitheben Maschine', note: 'Geführte Bewegung',                   base: 15, step: 2.5, rest: 60 },
-  'french-press':                { name: 'French Press', note: 'Trizeps · Stirndrücken',                    base: 15, step: 2.5, rest: 60 },
-  'latzug-breit':                { name: 'Latzug breit', note: 'Latissimus-Fokus',                          base: 30, step: 2.5, rest: 120 },
-  'rudern-kurzhantel':           { name: 'Rudern Kurzhantel', note: 'Einseitig · Asymmetrien ausgleichen',  base: 16, step: 1,   rest: 120 },
-  'kurzhantel-curls':            { name: 'Kurzhantel-Curls', note: 'Bizeps · mehr Kontrolle',               base: 8,  step: 1,   rest: 60 },
-  'front-squat':                 { name: 'Front Squat', note: 'Quad-Fokus · aufrechter Oberkörper',         base: 30, step: 2.5, rest: 180 },
-  'hackschmidt-squat':           { name: 'Hackschmidt-Squat', note: 'Quads isoliert',                       base: 40, step: 5,   rest: 120 },
-  'kreuzheben':                  { name: 'Kreuzheben', note: 'Posterior Chain · schwer',                    base: 60, step: 5,   rest: 180 },
-  'good-mornings':               { name: 'Good Mornings', note: 'Hamstrings · unterer Rücken',              base: 20, step: 2.5, rest: 120 },
-  'nordic-curls':                { name: 'Nordic Curls', note: 'Hamstring-Exzentrik · anspruchsvoll',       bodyweight: true,    rest: 120 },
-  'ausfallschritte':             { name: 'Ausfallschritte', note: 'Pro Bein · KH in jeder Hand',            base: 10, step: 1,   rest: 90 },
-  'wadenheben-sitzend':          { name: 'Wadenheben sitzend', note: 'Soleus-Fokus',                        base: 25, step: 2.5, rest: 60 }
+  'bankdruecken-kurzhantel':     { name: { de: 'Bankdrücken Kurzhantel', en: 'Dumbbell Bench Press' },       note: { de: 'Brust · mehr Stabi-Arbeit', en: 'Chest · more stabilizer work' }, base: 14, step: 1, rest: 120 },
+  'schulterdruecken-langhantel': { name: { de: 'Schulterdrücken Langhantel', en: 'Barbell Overhead Press' }, note: { de: 'Overhead Press', en: 'Overhead press' },             base: 25, step: 2.5, rest: 150 },
+  'arnold-press':                { name: { de: 'Arnold Press', en: 'Arnold Press' },                         note: { de: 'Rotation · vordere Schulter', en: 'Rotation · front delts' }, base: 10, step: 1, rest: 90 },
+  'seitheben-kabel':             { name: { de: 'Seitheben Kabel', en: 'Cable Lateral Raise' },               note: { de: 'Konstante Spannung', en: 'Constant tension' },        base: 8,  step: 1,   rest: 60 },
+  'seitheben-maschine':          { name: { de: 'Seitheben Maschine', en: 'Lateral Raise Machine' },          note: { de: 'Geführte Bewegung', en: 'Guided motion' },            base: 15, step: 2.5, rest: 60 },
+  'french-press':                { name: { de: 'French Press', en: 'Skull Crushers' },                       note: { de: 'Trizeps · Stirndrücken', en: 'Triceps · skull crushers' }, base: 15, step: 2.5, rest: 60 },
+  'latzug-breit':                { name: { de: 'Latzug breit', en: 'Wide-Grip Lat Pulldown' },               note: { de: 'Latissimus-Fokus', en: 'Lat focus' },                base: 30, step: 2.5, rest: 120 },
+  'rudern-kurzhantel':           { name: { de: 'Rudern Kurzhantel', en: 'Dumbbell Row' },                    note: { de: 'Einseitig · Asymmetrien ausgleichen', en: 'Single-side · fix imbalances' }, base: 16, step: 1, rest: 120 },
+  'kurzhantel-curls':            { name: { de: 'Kurzhantel-Curls', en: 'Dumbbell Curls' },                   note: { de: 'Bizeps · mehr Kontrolle', en: 'Biceps · more control' }, base: 8, step: 1, rest: 60 },
+  'front-squat':                 { name: { de: 'Front Squat', en: 'Front Squat' },                           note: { de: 'Quad-Fokus · aufrechter Oberkörper', en: 'Quad focus · upright torso' }, base: 30, step: 2.5, rest: 180 },
+  'hackschmidt-squat':           { name: { de: 'Hackschmidt-Squat', en: 'Hack Squat' },                      note: { de: 'Quads isoliert', en: 'Quads isolated' },              base: 40, step: 5,   rest: 120 },
+  'kreuzheben':                  { name: { de: 'Kreuzheben', en: 'Deadlift' },                               note: { de: 'Posterior Chain · schwer', en: 'Posterior chain · heavy' }, base: 60, step: 5, rest: 180 },
+  'good-mornings':               { name: { de: 'Good Mornings', en: 'Good Mornings' },                       note: { de: 'Hamstrings · unterer Rücken', en: 'Hamstrings · lower back' }, base: 20, step: 2.5, rest: 120 },
+  'nordic-curls':                { name: { de: 'Nordic Curls', en: 'Nordic Curls' },                         note: { de: 'Hamstring-Exzentrik · anspruchsvoll', en: 'Hamstring eccentric · demanding' }, bodyweight: true, rest: 120 },
+  'ausfallschritte':             { name: { de: 'Ausfallschritte', en: 'Walking Lunges' },                    note: { de: 'Pro Bein · KH in jeder Hand', en: 'Per leg · DBs each hand' }, base: 10, step: 1, rest: 90 },
+  'wadenheben-sitzend':          { name: { de: 'Wadenheben sitzend', en: 'Seated Calf Raises' },             note: { de: 'Soleus-Fokus', en: 'Soleus focus' },                  base: 25, step: 2.5, rest: 60 }
 };
+
+function exDisplay(idOrDef, field) {
+  const def = typeof idOrDef === 'string' ? EXERCISES[idOrDef] : idOrDef;
+  if (!def) return '';
+  const val = def[field];
+  if (val == null) return '';
+  if (typeof val === 'object') {
+    const lang = loadLang();
+    return val[lang] || val.de || val.en || '';
+  }
+  return String(val);
+}
 
 const DEFAULT_PROFILE = { gender: 'male', age: '26-35', nutrition: 'protein', commitment: 'full' };
 
@@ -860,6 +906,8 @@ function initLangToggle() {
       // Re-render dynamic strings
       applyFrequency();
       renderFreezeBadge();
+      // Re-localize exercise names/notes (preset + custom via merged map)
+      if (typeof applySubstitutes === 'function') applySubstitutes();
       renderSets();
       if (typeof renderCustomPlan === 'function') renderCustomPlan();
       const editor = document.getElementById('custom-editor');
@@ -1233,11 +1281,17 @@ function initExOriginals() {
   document.querySelectorAll('.ex').forEach(ex => {
     const nameEl = ex.querySelector('.ex-name');
     const noteEl = ex.querySelector('.ex-note');
-    if (!nameEl || nameEl.dataset.originalName) return;
-    const name = nameEl.textContent.trim();
-    nameEl.dataset.originalName = name;
-    nameEl.dataset.originalId = exerciseId(name);
-    if (noteEl) noteEl.dataset.originalNote = noteEl.textContent.trim();
+    if (!nameEl) return;
+    // Source of truth: data-ex-id on .ex (preset HTML or custom render).
+    // Fall back to legacy text-based ID for safety.
+    let origId = ex.dataset.exId;
+    if (!origId) {
+      origId = exerciseId(nameEl.textContent.trim());
+      ex.dataset.exId = origId;
+    }
+    if (!nameEl.dataset.originalId) nameEl.dataset.originalId = origId;
+    if (!nameEl.dataset.originalName) nameEl.dataset.originalName = nameEl.textContent.trim();
+    if (noteEl && !noteEl.dataset.originalNote) noteEl.dataset.originalNote = noteEl.textContent.trim();
   });
 }
 
@@ -1255,8 +1309,8 @@ function applySubstitutes() {
     const targetId = subId && EXERCISES[subId] ? subId : origId;
     const def = EXERCISES[targetId] || EXERCISES[origId];
     if (!def) return;
-    nameEl.textContent = def.name || nameEl.dataset.originalName;
-    if (noteEl) noteEl.textContent = def.note || noteEl.dataset.originalNote || '';
+    nameEl.textContent = exDisplay(def, 'name') || nameEl.dataset.originalName;
+    if (noteEl) noteEl.textContent = exDisplay(def, 'note') || noteEl.dataset.originalNote || '';
   });
 }
 
@@ -1303,7 +1357,7 @@ function openSwapSheet(exEl) {
   const list = document.getElementById('swap-list');
   if (!sheet || !title || !list) return;
 
-  title.textContent = origDef.name || nameEl.dataset.originalName;
+  title.textContent = exDisplay(origDef, 'name') || nameEl.dataset.originalName;
   list.innerHTML = '';
 
   [origId, ...origDef.alternatives].forEach((exId, idx) => {
@@ -1314,8 +1368,8 @@ function openSwapSheet(exEl) {
     opt.className = 'swap-option' + (exId === currentId ? ' active' : '');
     opt.innerHTML = `
       <div class="swap-option-body">
-        <div class="swap-option-name">${escapeHtml(def.name || exId)}</div>
-        <div class="swap-option-note">${escapeHtml(def.note || '')}</div>
+        <div class="swap-option-name">${escapeHtml(exDisplay(def, 'name') || exId)}</div>
+        <div class="swap-option-note">${escapeHtml(exDisplay(def, 'note'))}</div>
       </div>
       <div class="swap-option-badge">${escapeHtml(t(idx === 0 ? 'swap.option.original' : 'swap.option.alt'))}</div>
     `;
@@ -1662,10 +1716,15 @@ function applyTemplate(templateId) {
       focus: d.focus || '',
       exercises: (d.exercises || []).map(e => {
         const hasWeight = !e.bodyweight && typeof e.base === 'number' && e.base > 0;
+        // If template name matches a known exercise, pull localized name/note from EXERCISES
+        const knownId = exerciseId(e.name);
+        const knownDef = EXERCISES[knownId];
+        const localizedName = knownDef ? exDisplay(knownDef, 'name') : e.name;
+        const localizedNote = knownDef ? exDisplay(knownDef, 'note') : (e.note || '');
         return {
           id: genId('ex'),
-          name: e.name,
-          note: e.note || '',
+          name: localizedName,
+          note: localizedNote || (e.note || ''),
           type: e.type === 'hold' ? 'hold' : 'reps',
           sets: e.sets || 3,
           range: e.range || (e.type === 'hold' ? '30' : '8-10'),
