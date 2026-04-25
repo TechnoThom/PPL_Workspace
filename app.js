@@ -4,7 +4,8 @@ const PPL_MIGRATABLE_KEYS = [
   'ppl-pack-items', 'ppl-pack-state', 'ppl-onboarded', 'ppl-frequency',
   'ppl-profile', 'ppl-weights', 'ppl-weight-history', 'ppl-sets',
   'ppl-sessions', 'ppl-freezes', 'ppl-last-share-reward', 'ppl-rec-enabled',
-  'ppl-install-dismissed', 'ppl-substitutes', 'ppl-plan-mode', 'ppl-custom-plan'
+  'ppl-install-dismissed', 'ppl-substitutes', 'ppl-plan-mode', 'ppl-custom-plan',
+  'ppl-theme'
 ];
 
 function exportStateToUrl() {
@@ -504,6 +505,44 @@ function initRecToggle() {
     apply(next);
     saveRecEnabled(next);
     refreshRecommendations();
+  };
+  toggle.addEventListener('click', handler);
+  toggle.addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); handler(); }
+  });
+}
+
+function loadTheme() {
+  try { return localStorage.getItem('ppl-theme') === 'light' ? 'light' : 'dark'; }
+  catch (e) { return 'dark'; }
+}
+
+function saveTheme(t) {
+  try { localStorage.setItem('ppl-theme', t); } catch (e) {}
+}
+
+function applyTheme(t) {
+  document.documentElement.classList.toggle('light', t === 'light');
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', t === 'light' ? '#f5f5f7' : '#0a0a0a');
+}
+
+function initThemeToggle() {
+  const toggle = document.getElementById('theme-toggle');
+  if (!toggle) return;
+  const initial = loadTheme();
+  applyTheme(initial);
+  const apply = (on) => {
+    toggle.classList.toggle('on', on);
+    toggle.setAttribute('aria-checked', on ? 'true' : 'false');
+  };
+  apply(initial === 'light');
+  const handler = () => {
+    const next = !toggle.classList.contains('on');
+    apply(next);
+    const theme = next ? 'light' : 'dark';
+    saveTheme(theme);
+    applyTheme(theme);
   };
   toggle.addEventListener('click', handler);
   toggle.addEventListener('keydown', e => {
@@ -1709,6 +1748,11 @@ function applyCalendar(freq) {
 
 // Onboarding
 function shouldOnboard() {
+  // Im Browser kein Onboarding zeigen, sonst hindert es Leute am Installieren.
+  // Erst in der installierten PWA (standalone) lassen wir die Q&A laufen.
+  const installed = window.navigator.standalone === true ||
+                    window.matchMedia('(display-mode: standalone)').matches;
+  if (!installed) return false;
   try {
     return !localStorage.getItem('ppl-onboarded') && !localStorage.getItem('ppl-pack-items');
   } catch (e) { return false; }
@@ -1959,6 +2003,7 @@ renderStats();
 renderFreezeBadge();
 refreshRecommendations();
 initRecToggle();
+initThemeToggle();
 document.getElementById('share-btn')?.addEventListener('click', shareApp);
 
 if (shouldOnboard()) {
@@ -2044,20 +2089,20 @@ function showInstallHint(options) {
   banner.id = 'ppl-install-banner';
   banner.style.cssText = `
     position: fixed; bottom: 20px; left: 20px; right: 20px;
-    background: #1f1f1f; border: 1px solid #2a2a2a; border-radius: 14px;
-    padding: 16px; z-index: 100; color: #f5f5f5;
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px;
+    padding: 16px; z-index: 100; color: var(--text);
     font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.5;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
     max-width: 480px; margin: 0 auto;
   `;
   banner.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
       <div>
         <div style="font-family: 'Bebas Neue'; font-size: 18px; letter-spacing: 0.05em; margin-bottom: 4px;">Als App installieren</div>
-        <div style="color: #888; font-size: 11px;">Drei-Punkt-Menü → Teilen → "Zum Home-Bildschirm"</div>
+        <div style="color: var(--text-dim); font-size: 11px;">Drei-Punkt-Menü → Teilen → "Zum Home-Bildschirm"</div>
       </div>
       <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-        <button id="ppl-dismiss" style="background: #2a2a2a; border: none; color: #f5f5f5; padding: 6px 10px; border-radius: 6px; font-family: inherit; font-size: 11px; cursor: pointer;">OK</button>
+        <button id="ppl-dismiss" style="background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 6px; font-family: inherit; font-size: 11px; cursor: pointer;">OK</button>
         <svg class="install-hint-arrow" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="12" y1="5" x2="12" y2="19"/>
           <polyline points="6 13 12 19 18 13"/>
