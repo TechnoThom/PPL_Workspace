@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PPL · Promo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* Animatable color tokens – needs @property for smooth interpolation */
+  @property --p-bg       { syntax: '<color>'; inherits: true; initial-value: #0a0a0a; }
+  @property --p-surface  { syntax: '<color>'; inherits: true; initial-value: #151515; }
+  @property --p-surface2 { syntax: '<color>'; inherits: true; initial-value: #1f1f1f; }
+  @property --p-border   { syntax: '<color>'; inherits: true; initial-value: #2a2a2a; }
+  @property --p-text     { syntax: '<color>'; inherits: true; initial-value: #f5f5f5; }
+  @property --p-dim      { syntax: '<color>'; inherits: true; initial-value: #888; }
+
+  :root {
+    --bg: var(--p-bg);
+    --surface: var(--p-surface);
+    --surface-2: var(--p-surface2);
+    --border: var(--p-border);
+    --text: var(--p-text);
+    --text-dim: var(--p-dim);
+    --push: #ff3b30;
+    --pull: #30d158;
+    --legs: #ffcc00;
+    --pack: #0a84ff;
+    animation: theme-shift 24s ease-in-out infinite;
+  }
+
+  @keyframes theme-shift {
+    0%, 43% {
+      --p-bg: #0a0a0a;
+      --p-surface: #151515;
+      --p-surface2: #1f1f1f;
+      --p-border: #2a2a2a;
+      --p-text: #f5f5f5;
+      --p-dim: #8a8a8a;
+    }
+    50%, 78% {
+      --p-bg: #f5f5f7;
+      --p-surface: #ffffff;
+      --p-surface2: #ebebed;
+      --p-border: #d2d2d7;
+      --p-text: #1d1d1f;
+      --p-dim: #6e6e73;
+    }
+    85%, 100% {
+      --p-bg: #0a0a0a;
+      --p-surface: #151515;
+      --p-surface2: #1f1f1f;
+      --p-border: #2a2a2a;
+      --p-text: #f5f5f5;
+      --p-dim: #8a8a8a;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: #000;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    overflow: hidden;
+    height: 100%;
+    height: 100dvh;
+  }
+
+  body { display: flex; align-items: center; justify-content: center; }
+
+  .story {
+    position: relative;
+    background: var(--bg);
+    color: var(--text);
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: min(100vw, calc(100vh * 9 / 19.5));
+    overflow: hidden;
+    transition: background 0.05s linear;
+  }
+
+  .progress {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    left: calc(env(safe-area-inset-left, 0px) + 16px);
+    right: calc(env(safe-area-inset-right, 0px) + 16px);
+    display: flex;
+    gap: 4px;
+    z-index: 10;
+  }
+
+  .progress-seg {
+    flex: 1;
+    height: 3px;
+    background: rgba(160, 160, 160, 0.25);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .progress-seg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--text);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation-duration: 24s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  .progress-seg:nth-child(1)::after { animation-name: p1; }
+  .progress-seg:nth-child(2)::after { animation-name: p2; }
+  .progress-seg:nth-child(3)::after { animation-name: p3; }
+  .progress-seg:nth-child(4)::after { animation-name: p4; }
+  .progress-seg:nth-child(5)::after { animation-name: p5; }
+  .progress-seg:nth-child(6)::after { animation-name: p6; }
+
+  /* Each scene 16.66% (= 4s) */
+  @keyframes p1 { 0% { transform: scaleX(0); } 16.66% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p2 { 0%, 16.66% { transform: scaleX(0); } 33.33% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p3 { 0%, 33.33% { transform: scaleX(0); } 50% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p4 { 0%, 50% { transform: scaleX(0); } 66.66% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p5 { 0%, 66.66% { transform: scaleX(0); } 83.33% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p6 { 0%, 83.33% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 50px)
+      calc(env(safe-area-inset-right, 0px) + 26px)
+      calc(env(safe-area-inset-bottom, 0px) + 60px)
+      calc(env(safe-area-inset-left, 0px) + 26px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    animation-duration: 24s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    overflow: hidden;
+  }
+
+  .scene:nth-child(2) { animation-name: s1; }
+  .scene:nth-child(3) { animation-name: s2; }
+  .scene:nth-child(4) { animation-name: s3; }
+  .scene:nth-child(5) { animation-name: s4; }
+  .scene:nth-child(6) { animation-name: s5; }
+  .scene:nth-child(7) { animation-name: s6; }
+
+  @keyframes s1 {
+    0% { opacity: 0; transform: scale(0.96); }
+    2% { opacity: 1; transform: scale(1); }
+    14% { opacity: 1; }
+    17% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s2 {
+    0%, 17% { opacity: 0; transform: scale(0.96); }
+    19% { opacity: 1; transform: scale(1); }
+    31% { opacity: 1; }
+    34% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s3 {
+    0%, 34% { opacity: 0; transform: scale(0.96); }
+    36% { opacity: 1; transform: scale(1); }
+    48% { opacity: 1; }
+    51% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s4 {
+    0%, 51% { opacity: 0; transform: scale(0.96); }
+    53% { opacity: 1; transform: scale(1); }
+    65% { opacity: 1; }
+    68% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s5 {
+    0%, 68% { opacity: 0; transform: scale(0.96); }
+    70% { opacity: 1; transform: scale(1); }
+    82% { opacity: 1; }
+    85% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  @keyframes s6 {
+    0%, 85% { opacity: 0; transform: scale(0.96); }
+    87% { opacity: 1; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: white;
+    background: var(--push);
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    align-self: flex-start;
+  }
+
+  .badge.blue { background: var(--pack); }
+  .badge.green { background: var(--pull); }
+
+  .headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 13vw, 90px);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    margin-bottom: 14px;
+  }
+
+  .headline .accent { color: var(--pack); }
+  .headline .push { color: var(--push); }
+
+  .sub {
+    font-size: 16px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    max-width: 380px;
+  }
+
+  .sub strong { color: var(--text); font-weight: 500; }
+
+  /* Scene 1 · Hook */
+  .hook-quote {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  .hook-q {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 15vw, 100px);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    margin-bottom: 14px;
+  }
+
+  .hook-q .strike {
+    position: relative;
+    display: inline-block;
+    color: var(--text-dim);
+  }
+
+  .hook-q .strike::after {
+    content: '';
+    position: absolute;
+    left: -4%;
+    right: -4%;
+    top: 52%;
+    height: 6px;
+    background: var(--push);
+    border-radius: 3px;
+    transform: rotate(-3deg);
+  }
+
+  /* Scene 2 · Logo Reveal */
+  .logo-mark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(96px, 28vw, 180px);
+    letter-spacing: 0.04em;
+    line-height: 0.9;
+    margin-bottom: 16px;
+  }
+
+  .logo-mark .red { color: var(--push); }
+  .logo-mark .green { color: var(--pull); }
+  .logo-mark .yellow { color: var(--legs); }
+  .logo-mark .dot { color: var(--text); }
+
+  .logo-claim {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 8vw, 48px);
+    letter-spacing: 0.04em;
+    line-height: 1;
+    margin-bottom: 18px;
+  }
+
+  /* Scene 3 · Feature Sweep */
+  .check-list {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 18px;
+    margin-bottom: 22px;
+  }
+
+  .check-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .check-row + .check-row { border-top: 1px solid var(--border); }
+
+  .check-mark {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--pull);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: white;
+  }
+
+  .check-mark svg { width: 12px; height: 12px; }
+
+  /* Scene 4 · Theme + Lang */
+  .device-frame {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .device-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border-radius: 10px;
+  }
+
+  .device-row-label {
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .device-row-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .toggle-mock {
+    width: 42px;
+    height: 24px;
+    background: var(--pack);
+    border: 1px solid var(--pack);
+    border-radius: 22px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .toggle-mock::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 20px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+  }
+
+  .lang-switch-mock {
+    display: flex;
+    gap: 4px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+    flex-shrink: 0;
+  }
+
+  .lang-switch-mock-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    color: var(--text-dim);
+    border-radius: 5px;
+  }
+
+  .lang-switch-mock-btn.active {
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  /* Scene 5 · Promise */
+  .promise-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .promise-row {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(34px, 9vw, 54px);
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+
+  .promise-row .neg {
+    color: var(--text-dim);
+    text-decoration: line-through;
+    text-decoration-color: var(--push);
+    text-decoration-thickness: 4px;
+  }
+
+  .promise-row .pos { color: var(--pull); }
+
+  /* Scene 6 · CTA */
+  .cta-card { text-align: center; }
+
+  .cta-mark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 22vw, 160px);
+    letter-spacing: 0.08em;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--push) 0%, var(--legs) 50%, var(--pull) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: 22px;
+  }
+
+  .cta-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 8vw, 48px);
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+
+  .cta-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    max-width: 320px;
+    margin: 0 auto 24px;
+  }
+
+  .cta-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    background: var(--text);
+    color: var(--bg);
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    animation: cta-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes cta-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(120, 120, 120, 0.5); }
+    50% { transform: scale(1.03); box-shadow: 0 0 0 14px rgba(120, 120, 120, 0); }
+  }
+
+  .brand-footer {
+    position: absolute;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+
+  /* Streak flame element used in multiple scenes */
+  .flame-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .flame-glow::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -20%;
+    width: 70%;
+    height: 70%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    filter: blur(60px);
+    background: radial-gradient(circle, rgba(255, 140, 0, 0.18) 0%, transparent 60%);
+  }
+</style>
+</head>
+<body>
+  <div class="story">
+
+    <div class="progress">
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+      <div class="progress-seg"></div>
+    </div>
+
+    <!-- SCENE 1 · Hook (Dark) -->
+    <div class="scene">
+      <div class="hook-quote">// every fitness app:</div>
+      <div class="hook-q"><span class="strike">29,99€</span> / Monat</div>
+      <div class="sub">Für 'nen Trainingsplan und 'n bisschen Tracking.<br><strong>Echt jetzt?</strong></div>
+    </div>
+
+    <!-- SCENE 2 · Pitch -->
+    <div class="scene">
+      <div class="badge">Diese hier</div>
+      <div class="logo-mark">
+        <span class="red">P</span><span class="dot">·</span><span class="green">P</span><span class="dot">·</span><span class="yellow">L</span>
+      </div>
+      <div class="logo-claim">Komplett kostenlos.</div>
+      <div class="sub">Push, Pull, Legs Trainings-App. <strong>Ohne Login. Ohne Abo. Ohne Ads.</strong></div>
+    </div>
+
+    <!-- SCENE 3 · Feature Sweep (Theme transitions during this scene) -->
+    <div class="scene">
+      <div class="badge blue">Was drin ist</div>
+      <h1 class="headline">Alles, was du<br>brauchst.</h1>
+      <div class="check-list">
+        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>3×, 6× oder eigener Plan</div>
+        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Sätze abhaken, Pausentimer läuft mit</div>
+        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Smarte Gewichts-Empfehlungen</div>
+        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Streak mit Freezes</div>
+        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Glute-Pläne für Frauen</div>
+      </div>
+      <div class="sub">Plan, Tracking, Progression. <strong>In einer Hand.</strong></div>
+    </div>
+
+    <!-- SCENE 4 · Theme + Language (Light) -->
+    <div class="scene">
+      <div class="badge green">Brandneu</div>
+      <h1 class="headline">Light Mode.<br><span class="accent">DE / EN.</span></h1>
+      <div class="device-frame">
+        <div class="device-row">
+          <div>
+            <div class="device-row-label">Light Mode</div>
+            <div class="device-row-desc">Heller Hintergrund</div>
+          </div>
+          <div class="toggle-mock"></div>
+        </div>
+        <div class="device-row">
+          <div>
+            <div class="device-row-label">Sprache</div>
+            <div class="device-row-desc">Language</div>
+          </div>
+          <div class="lang-switch-mock">
+            <div class="lang-switch-mock-btn">DE</div>
+            <div class="lang-switch-mock-btn active">EN</div>
+          </div>
+        </div>
+      </div>
+      <div class="sub">Die App passt sich an dich an. <strong>Nicht andersrum.</strong></div>
+    </div>
+
+    <!-- SCENE 5 · Promise (Light → transitions to Dark by the end) -->
+    <div class="scene">
+      <div class="badge">Versprechen</div>
+      <div class="promise-list">
+        <div class="promise-row"><span class="neg">Abo</span></div>
+        <div class="promise-row"><span class="neg">Ads</span></div>
+        <div class="promise-row"><span class="neg">Login</span></div>
+        <div class="promise-row"><span class="pos">Komplett dir.</span></div>
+      </div>
+      <div class="sub">Offline auf deinem Homebildschirm. <strong>Bleibt für immer kostenlos.</strong></div>
+    </div>
+
+    <!-- SCENE 6 · CTA (Dark) -->
+    <div class="scene">
+      <div class="flame-glow" aria-hidden="true"></div>
+      <div class="cta-card">
+        <div class="cta-mark">PPL</div>
+        <div class="cta-headline">Link in Bio.</div>
+        <div class="cta-sub">In 10 Sekunden auf dem Homebildschirm. Danach gehört sie dir.</div>
+        <div class="cta-box">Jetzt holen <span>→</span></div>
+      </div>
+    </div>
+
+    <div class="brand-footer">Push · Pull · Legs</div>
+  </div>
+</body>
+</html>
