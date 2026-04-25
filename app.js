@@ -457,6 +457,16 @@ const BASE_ITEMS = [
   'Geräte Handtuch'
 ];
 
+const BASE_ITEMS_EN = [
+  'Pants', 'Shirt', 'Underwear', 'Socks',
+  'Sneakers', 'Water Bottle', 'Card', 'Keys',
+  'Gym Towel'
+];
+
+function baseItemsForLang() {
+  return loadLang() === 'en' ? [...BASE_ITEMS_EN] : [...BASE_ITEMS];
+}
+
 const PROFILE_QUESTIONS = [
   { id: 'gender', qKey: 'profile.gender.q', hintKey: 'profile.gender.hint', options: [
     { labelKey: 'profile.gender.male', value: 'male' },
@@ -480,10 +490,20 @@ const PROFILE_QUESTIONS = [
 ];
 
 const ONBOARDING_QUESTIONS = [
-  { qKey: 'pack.q.shower.q', hintKey: 'pack.q.shower.hint', items: ['Trockenhandtuch', 'Shampoo', 'Schlappen', 'Deo'] },
-  { qKey: 'pack.q.music.q', hintKey: 'pack.q.music.hint', items: ['Kopfhörer'] },
-  { qKey: 'pack.q.after.q', hintKey: 'pack.q.after.hint', items: ['Skincare', 'Parfum'] }
+  { qKey: 'pack.q.shower.q', hintKey: 'pack.q.shower.hint',
+    items: ['Trockenhandtuch', 'Shampoo', 'Schlappen', 'Deo'],
+    itemsEn: ['Towel', 'Shampoo', 'Flip Flops', 'Deodorant'] },
+  { qKey: 'pack.q.music.q', hintKey: 'pack.q.music.hint',
+    items: ['Kopfhörer'],
+    itemsEn: ['Headphones'] },
+  { qKey: 'pack.q.after.q', hintKey: 'pack.q.after.hint',
+    items: ['Skincare', 'Parfum'],
+    itemsEn: ['Skincare', 'Perfume'] }
 ];
+
+function questionItems(q) {
+  return loadLang() === 'en' ? (q.itemsEn || q.items) : q.items;
+}
 
 const list = document.getElementById('pack-list');
 const doneEl = document.getElementById('done');
@@ -2170,11 +2190,11 @@ function startOnboarding() {
   const actions = document.getElementById('onboarding-actions');
   const progressBar = document.getElementById('onboarding-progress');
 
-  const collected = [...BASE_ITEMS];
+  let collected = baseItemsForLang();
   const profile = { ...DEFAULT_PROFILE };
   let frequency = '6';
   let planMode = 'preset';
-  const totalSteps = PROFILE_QUESTIONS.length + 1 + ONBOARDING_QUESTIONS.length; // 4 + 1 + 4
+  const totalSteps = PROFILE_QUESTIONS.length + 1 + ONBOARDING_QUESTIONS.length;
 
   function setProgress(step) {
     const pct = step === 0 ? 0 : (Math.min(step, totalSteps) / totalSteps) * 100;
@@ -2201,6 +2221,36 @@ function startOnboarding() {
     if (planMode === 'custom') openEditor();
   }
 
+  function showLanguage() {
+    setProgress(0);
+    content.innerHTML = `
+      <div>
+        <div class="onboarding-eyebrow">Sprache · Language</div>
+        <div class="onboarding-title">Welche Sprache?<br>Which language?</div>
+        <div class="onboarding-hint">Du kannst sie später jederzeit ändern. You can change it any time later.</div>
+      </div>
+    `;
+    actions.innerHTML = '';
+    const de = document.createElement('button');
+    de.className = 'onboarding-btn primary';
+    de.textContent = 'Deutsch';
+    de.addEventListener('click', () => pickLang('de'));
+    actions.appendChild(de);
+
+    const en = document.createElement('button');
+    en.className = 'onboarding-btn';
+    en.textContent = 'English';
+    en.addEventListener('click', () => pickLang('en'));
+    actions.appendChild(en);
+  }
+
+  function pickLang(l) {
+    saveLang(l);
+    applyI18n();
+    collected = baseItemsForLang();
+    showIntro();
+  }
+
   function showIntro() {
     setProgress(0);
     content.innerHTML = `
@@ -2220,7 +2270,7 @@ function startOnboarding() {
     const skip = document.createElement('button');
     skip.className = 'onboarding-skip';
     skip.textContent = t('onb.intro.skip');
-    skip.addEventListener('click', () => finish(BASE_ITEMS));
+    skip.addEventListener('click', () => finish(baseItemsForLang()));
     actions.appendChild(skip);
   }
 
@@ -2294,7 +2344,7 @@ function startOnboarding() {
     yes.className = 'onboarding-btn primary';
     yes.textContent = t('onb.yes');
     yes.addEventListener('click', () => {
-      collected.push(...q.items);
+      collected.push(...questionItems(q));
       next(i);
     });
     actions.appendChild(yes);
@@ -2333,7 +2383,7 @@ function startOnboarding() {
 
   overlay.classList.remove('hidden');
   overlay.setAttribute('aria-hidden', 'false');
-  showIntro();
+  showLanguage();
 }
 
 // Share + Streak Freeze
