@@ -130,8 +130,10 @@ const I18N = {
     'onb.intro.eyebrow': 'Einrichtung',
     'onb.intro.title': 'Kurze Einrichtung',
     'onb.intro.text': 'Ein paar Fragen zu dir, deinem Training und deiner Packliste. Damit stimmen wir Startgewichte und spätere Empfehlungen auf dich ab. Alles später anpassbar.',
+    'onb.intro.privacy.title': 'Deine Daten bleiben bei dir',
+    'onb.intro.privacy.text': 'Keine Server, keine Tracker, keine Analyse. Alle Antworten bleiben auf diesem Gerät und werden nur lokal genutzt, damit die App optimal zu dir passt. Du kannst trotzdem alles überspringen.',
     'onb.intro.start': "Los geht's",
-    'onb.intro.skip': 'Überspringen',
+    'onb.intro.skip': 'Alles überspringen',
     'onb.profile.eyebrow': 'Über dich {n} / {total}',
     'onb.training.eyebrow': 'Training',
     'onb.training.title': 'Welcher Plan passt?',
@@ -302,8 +304,10 @@ const I18N = {
     'onb.intro.eyebrow': 'Setup',
     'onb.intro.title': 'Quick setup',
     'onb.intro.text': "A few questions about you, your training and your packing list. We'll use them to set your starting weights and tailor later suggestions. Everything is editable later.",
+    'onb.intro.privacy.title': 'Your data stays with you',
+    'onb.intro.privacy.text': 'No servers, no trackers, no analytics. Every answer stays on this device and is only used locally to tune the app to you. You can still skip everything.',
     'onb.intro.start': "Let's go",
-    'onb.intro.skip': 'Skip',
+    'onb.intro.skip': 'Skip everything',
     'onb.profile.eyebrow': 'About you {n} / {total}',
     'onb.training.eyebrow': 'Training',
     'onb.training.title': 'Which plan fits?',
@@ -2258,6 +2262,15 @@ function startOnboarding() {
         <div class="onboarding-eyebrow">${escapeHtml(t('onb.intro.eyebrow'))}</div>
         <div class="onboarding-title">${escapeHtml(t('onb.intro.title'))}</div>
         <div class="onboarding-text">${escapeHtml(t('onb.intro.text'))}</div>
+        <div class="onboarding-privacy">
+          <div class="onboarding-privacy-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          </div>
+          <div>
+            <div class="onboarding-privacy-title">${escapeHtml(t('onb.intro.privacy.title'))}</div>
+            <div class="onboarding-privacy-text">${escapeHtml(t('onb.intro.privacy.text'))}</div>
+          </div>
+        </div>
       </div>
     `;
     actions.innerHTML = '';
