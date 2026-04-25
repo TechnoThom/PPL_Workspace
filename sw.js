@@ -1,4 +1,4 @@
-const CACHE = 'ppl-v28';
+const CACHE = 'ppl-v29';
 const ASSETS = [
   './',
   './index.html',

@@ -5,8 +5,355 @@ const PPL_MIGRATABLE_KEYS = [
   'ppl-profile', 'ppl-weights', 'ppl-weight-history', 'ppl-sets',
   'ppl-sessions', 'ppl-freezes', 'ppl-last-share-reward', 'ppl-rec-enabled',
   'ppl-install-dismissed', 'ppl-substitutes', 'ppl-plan-mode', 'ppl-custom-plan',
-  'ppl-theme'
+  'ppl-theme', 'ppl-lang'
 ];
+
+// i18n
+const I18N = {
+  de: {
+    'header.6.eyebrow': '6× pro Woche · A/B Split',
+    'header.6.sub': 'Jede Muskelgruppe 2× pro Woche · Tap für Details',
+    'header.3.eyebrow': '3× pro Woche · Push · Pull · Legs',
+    'header.3.sub': 'Jede Muskelgruppe 1× pro Woche · Tap für Details',
+    'header.custom.eyebrow': 'Eigener Plan',
+    'header.custom.sub': 'Selbst zusammengestellt · Tap für Details',
+    'tab.plan': 'Plan',
+    'tab.pack': 'Packliste',
+    'stat.streak': 'Streak',
+    'stat.sessions': 'Sessions',
+    'stat.freeze.one': 'Streak Freeze',
+    'stat.freeze.many': 'Streak Freezes',
+    'action.share': 'Teilen',
+    'action.install': 'Installieren',
+    'rest.title': 'Rest Day',
+    'rest.text': 'Heute ist frei. Gönn dir Regeneration oder mach leichtes Cardio.',
+    'planswitch.custom': 'Eigener',
+    'footer.title': 'Hinweise',
+    'footer.progression.label': 'Progression',
+    'footer.progression.text': 'Gewicht steigern wenn oberes Wdh-Ziel in allen Sätzen sauber geschafft',
+    'footer.pause.label': 'Pause',
+    'footer.pause.text': '2 bis 3 min bei schweren Sätzen, 60 bis 90 s bei Isolation',
+    'footer.warmup.label': 'Aufwärmen',
+    'footer.warmup.text': '2 leichte Sätze vor jeder Grundübung',
+    'footer.deload.label': 'Deload',
+    'footer.deload.text': 'Alle 6 bis 8 Wochen eine leichtere Woche einplanen',
+    'settings.rec': 'Intelligente Gewichtsvorschläge',
+    'settings.rec.desc': 'Plus/Minus-Puls zeigt, wann du hoch- oder runtergehen solltest.',
+    'settings.theme': 'Light Mode',
+    'settings.theme.desc': 'Heller Hintergrund, z. B. für draußen oder helle Räume.',
+    'settings.lang': 'Sprache',
+    'settings.lang.desc': 'Sprache der App-Texte umschalten.',
+    'pack.edit': 'Bearbeiten',
+    'pack.editing': 'Fertig',
+    'pack.clear': 'Clear',
+    'pack.add.placeholder': 'Neues Item hinzufügen...',
+    'update.text': 'Neue Version verfügbar',
+    'update.button': 'Neu laden',
+    'ig.eyebrow': 'In-App Browser',
+    'ig.title': 'In Browser öffnen',
+    'ig.text.html': 'Tippe oben rechts auf <strong>⋯</strong> und wähle <strong>"Im externen Browser öffnen"</strong>. Nur dort kannst du die App zum Home-Bildschirm hinzufügen.',
+    'ig.dismiss': 'Trotzdem fortfahren',
+    'install.title': 'Als App installieren',
+    'install.text': 'Drei-Punkt-Menü → Teilen → "Zum Home-Bildschirm"',
+    'install.dismiss': 'OK',
+    'install.toast.already': 'Läuft bereits als App.',
+    'custom.empty.title': 'Dein Plan',
+    'custom.empty.text': 'Noch keine Trainings-Tage. Leg deinen ersten Tag an und füll ihn mit Übungen.',
+    'custom.empty.button': 'Plan erstellen',
+    'custom.edit': 'Plan bearbeiten',
+    'editor.title': 'Eigener Plan',
+    'editor.cancel': 'Abbrechen',
+    'editor.template': 'Vorlage',
+    'editor.save': 'Speichern',
+    'editor.day.label': 'Tag-Label',
+    'editor.day.label.placeholder': 'z. B. Push, Pull, Oberkörper',
+    'editor.day.delete.aria': 'Tag löschen',
+    'editor.day.accent': 'Akzentfarbe',
+    'editor.day.accent.push': 'Push (rot)',
+    'editor.day.accent.pull': 'Pull (grün)',
+    'editor.day.accent.legs': 'Legs (gelb)',
+    'editor.day.weekday': 'Wochentag',
+    'editor.day.weekday.none': 'Kein Wochentag',
+    'editor.day.weekday.mon': 'Montag',
+    'editor.day.weekday.tue': 'Dienstag',
+    'editor.day.weekday.wed': 'Mittwoch',
+    'editor.day.weekday.thu': 'Donnerstag',
+    'editor.day.weekday.fri': 'Freitag',
+    'editor.day.weekday.sat': 'Samstag',
+    'editor.day.weekday.sun': 'Sonntag',
+    'editor.day.variant': 'Variante',
+    'editor.day.variant.placeholder': 'A / B',
+    'editor.day.focus': 'Fokus (optional)',
+    'editor.day.focus.placeholder': 'z. B. Schwer, Volumen, Quad-Fokus',
+    'editor.exercises': 'Übungen',
+    'editor.ex.name': 'Name',
+    'editor.ex.name.placeholder': 'z. B. Bankdrücken',
+    'editor.ex.note': 'Notiz (optional)',
+    'editor.ex.note.placeholder': 'z. B. Hauptübung Brust',
+    'editor.ex.type': 'Typ',
+    'editor.ex.type.reps': 'Wiederholungen',
+    'editor.ex.type.hold': 'Halten (Zeit)',
+    'editor.ex.sets': 'Sätze',
+    'editor.ex.range.reps': 'Wdh',
+    'editor.ex.range.hold': 'Dauer (s)',
+    'editor.ex.range.reps.placeholder': 'z. B. 6-8 oder 10-12',
+    'editor.ex.range.hold.placeholder': 'z. B. 30 oder 30-45',
+    'editor.ex.rest': 'Pause (s)',
+    'editor.ex.base': 'Startgewicht (kg, leer = Körpergewicht)',
+    'editor.ex.base.placeholder': 'leer lassen für Bodyweight',
+    'editor.ex.step': 'Schritt (kg)',
+    'editor.ex.delete.aria': 'Übung löschen',
+    'editor.add.ex': '+ Übung hinzufügen',
+    'editor.add.day': '+ Trainings-Tag hinzufügen',
+    'templates.eyebrow': 'Vorlage wählen',
+    'templates.title': 'Starte mit einem fertigen Plan',
+    'templates.close': 'Abbrechen',
+    'sets.suffix.reps': 'Wdh',
+    'sets.suffix.hold': 's',
+    'onb.intro.eyebrow': 'Einrichtung',
+    'onb.intro.title': 'Kurze Einrichtung',
+    'onb.intro.text': 'Ein paar Fragen zu dir, deinem Training und deiner Packliste. Damit stimmen wir Startgewichte und spätere Empfehlungen auf dich ab. Alles später anpassbar.',
+    'onb.intro.start': "Los geht's",
+    'onb.intro.skip': 'Überspringen',
+    'onb.profile.eyebrow': 'Über dich {n} / {total}',
+    'onb.training.eyebrow': 'Training',
+    'onb.training.title': 'Welcher Plan passt?',
+    'onb.training.hint': '3× pro Woche hat längere Sessions, 6× pro Woche ist ein A/B-Split mit kürzeren Einheiten. Oder stell dir deinen eigenen Plan zusammen.',
+    'onb.training.3': '3× pro Woche',
+    'onb.training.6': '6× pro Woche',
+    'onb.training.custom': 'Eigener Plan',
+    'onb.pack.eyebrow': 'Packliste {n} / {total}',
+    'onb.yes': 'Ja',
+    'onb.no': 'Nein',
+    'onb.done.eyebrow': 'Fertig',
+    'onb.done.title': 'Alles klar',
+    'onb.done.text': 'Plan: {freq}× pro Woche. Packliste mit {count} Items. Startgewichte stehen, feintunen geht mit +/- pro Übung.',
+    'onb.done.text.custom': 'Eigener Plan, gleich startklar. Packliste mit {count} Items. Startgewichte für deine Übungen kannst du selbst setzen.',
+    'onb.done.button': "Los geht's",
+    'profile.gender.q': 'Was ist dein Geschlecht?',
+    'profile.gender.hint': 'Bestimmt den Startpunkt deiner Trainingsgewichte.',
+    'profile.gender.male': 'Mann',
+    'profile.gender.female': 'Frau',
+    'profile.gender.diverse': 'Divers',
+    'profile.age.q': 'Wie alt bist du?',
+    'profile.age.hint': 'Alter beeinflusst Kraft und Regeneration.',
+    'profile.age.18-25': '18 bis 25',
+    'profile.age.26-35': '26 bis 35',
+    'profile.age.36-50': '36 bis 50',
+    'profile.age.50+': 'Über 50',
+    'profile.nutrition.q': 'Achtest du auf deine Ernährung?',
+    'profile.nutrition.hint': 'Bestimmt, wie häufig dir Gewichtssteigerungen empfohlen werden. Mit genug Protein gehen Fortschritte schneller.',
+    'profile.nutrition.protein': 'Ja, Protein-bewusst',
+    'profile.nutrition.casual': 'Casual, keine feste Routine',
+    'profile.commitment.q': 'Ziehst du den Plan durch?',
+    'profile.commitment.hint': 'Bestimmt, wie häufig dir Gewichtssteigerungen empfohlen werden. Voll dabei heißt häufigere Empfehlungen.',
+    'profile.commitment.full': 'Ja, voll dabei',
+    'profile.commitment.casual': 'Mal so, mal so',
+    'pack.q.shower.q': 'Duschst du im Gym?',
+    'pack.q.shower.hint': 'Wir packen Handtuch, Shampoo, Schlappen und Deo mit ein.',
+    'pack.q.music.q': 'Hörst du Musik beim Training?',
+    'pack.q.music.hint': 'Kopfhörer kommen mit auf die Liste.',
+    'pack.q.after.q': 'Hast du nach dem Training direkt was vor?',
+    'pack.q.after.hint': 'Skincare und Parfum kommen für danach mit.',
+    'toast.share.granted.share': 'Danke fürs Teilen. Streak Freeze für dich.',
+    'toast.share.granted.copy': 'Link kopiert. Streak Freeze für dich.',
+    'toast.share.capped': 'Danke! Du hast bereits das Freeze-Maximum (3) erreicht.',
+    'toast.share.thanks.share': 'Danke fürs Teilen.',
+    'toast.share.thanks.copy': 'Link kopiert.',
+    'swap.eyebrow': 'Alternative wählen',
+    'swap.close': 'Abbrechen',
+    'swap.option.original': 'Original',
+    'swap.option.alt': 'Alternative',
+  },
+  en: {
+    'header.6.eyebrow': '6× per week · A/B split',
+    'header.6.sub': 'Each muscle group twice per week · tap for details',
+    'header.3.eyebrow': '3× per week · Push · Pull · Legs',
+    'header.3.sub': 'Each muscle group once per week · tap for details',
+    'header.custom.eyebrow': 'Your own plan',
+    'header.custom.sub': 'Built by you · tap for details',
+    'tab.plan': 'Plan',
+    'tab.pack': 'Packing list',
+    'stat.streak': 'Streak',
+    'stat.sessions': 'Sessions',
+    'stat.freeze.one': 'streak freeze',
+    'stat.freeze.many': 'streak freezes',
+    'action.share': 'Share',
+    'action.install': 'Install',
+    'rest.title': 'Rest Day',
+    'rest.text': "Today is off. Treat yourself to recovery or some light cardio.",
+    'planswitch.custom': 'Custom',
+    'footer.title': 'Tips',
+    'footer.progression.label': 'Progression',
+    'footer.progression.text': 'Add weight when you hit the top of the rep range cleanly across all sets',
+    'footer.pause.label': 'Rest',
+    'footer.pause.text': '2 to 3 min on heavy sets, 60 to 90 s on isolation',
+    'footer.warmup.label': 'Warm-up',
+    'footer.warmup.text': '2 light sets before every compound lift',
+    'footer.deload.label': 'Deload',
+    'footer.deload.text': 'Plan a lighter week every 6 to 8 weeks',
+    'settings.rec': 'Smart weight suggestions',
+    'settings.rec.desc': 'A plus/minus pulse hints when to go up or back.',
+    'settings.theme': 'Light mode',
+    'settings.theme.desc': 'Light background, e.g. for outdoors or bright rooms.',
+    'settings.lang': 'Language',
+    'settings.lang.desc': 'Switch the language of all app texts.',
+    'pack.edit': 'Edit',
+    'pack.editing': 'Done',
+    'pack.clear': 'Clear',
+    'pack.add.placeholder': 'Add a new item...',
+    'update.text': 'New version available',
+    'update.button': 'Reload',
+    'ig.eyebrow': 'In-app browser',
+    'ig.title': 'Open in browser',
+    'ig.text.html': 'Tap <strong>⋯</strong> in the top right and choose <strong>"Open in external browser"</strong>. Only there can you add the app to your home screen.',
+    'ig.dismiss': 'Continue anyway',
+    'install.title': 'Install as app',
+    'install.text': 'Three-dot menu → Share → "Add to home screen"',
+    'install.dismiss': 'OK',
+    'install.toast.already': 'Already running as an app.',
+    'custom.empty.title': 'Your plan',
+    'custom.empty.text': "No training days yet. Add your first day and fill it with exercises.",
+    'custom.empty.button': 'Create plan',
+    'custom.edit': 'Edit plan',
+    'editor.title': 'Your own plan',
+    'editor.cancel': 'Cancel',
+    'editor.template': 'Template',
+    'editor.save': 'Save',
+    'editor.day.label': 'Day label',
+    'editor.day.label.placeholder': 'e.g. Push, Pull, Upper',
+    'editor.day.delete.aria': 'Delete day',
+    'editor.day.accent': 'Accent color',
+    'editor.day.accent.push': 'Push (red)',
+    'editor.day.accent.pull': 'Pull (green)',
+    'editor.day.accent.legs': 'Legs (yellow)',
+    'editor.day.weekday': 'Weekday',
+    'editor.day.weekday.none': 'No weekday',
+    'editor.day.weekday.mon': 'Monday',
+    'editor.day.weekday.tue': 'Tuesday',
+    'editor.day.weekday.wed': 'Wednesday',
+    'editor.day.weekday.thu': 'Thursday',
+    'editor.day.weekday.fri': 'Friday',
+    'editor.day.weekday.sat': 'Saturday',
+    'editor.day.weekday.sun': 'Sunday',
+    'editor.day.variant': 'Variant',
+    'editor.day.variant.placeholder': 'A / B',
+    'editor.day.focus': 'Focus (optional)',
+    'editor.day.focus.placeholder': 'e.g. Heavy, Volume, Quad-focus',
+    'editor.exercises': 'Exercises',
+    'editor.ex.name': 'Name',
+    'editor.ex.name.placeholder': 'e.g. Bench Press',
+    'editor.ex.note': 'Note (optional)',
+    'editor.ex.note.placeholder': 'e.g. Main chest lift',
+    'editor.ex.type': 'Type',
+    'editor.ex.type.reps': 'Repetitions',
+    'editor.ex.type.hold': 'Hold (time)',
+    'editor.ex.sets': 'Sets',
+    'editor.ex.range.reps': 'Reps',
+    'editor.ex.range.hold': 'Duration (s)',
+    'editor.ex.range.reps.placeholder': 'e.g. 6-8 or 10-12',
+    'editor.ex.range.hold.placeholder': 'e.g. 30 or 30-45',
+    'editor.ex.rest': 'Rest (s)',
+    'editor.ex.base': 'Starting weight (kg, leave empty = bodyweight)',
+    'editor.ex.base.placeholder': 'leave empty for bodyweight',
+    'editor.ex.step': 'Step (kg)',
+    'editor.ex.delete.aria': 'Delete exercise',
+    'editor.add.ex': '+ Add exercise',
+    'editor.add.day': '+ Add training day',
+    'templates.eyebrow': 'Pick a template',
+    'templates.title': 'Start from a ready-made plan',
+    'templates.close': 'Cancel',
+    'sets.suffix.reps': 'reps',
+    'sets.suffix.hold': 's',
+    'onb.intro.eyebrow': 'Setup',
+    'onb.intro.title': 'Quick setup',
+    'onb.intro.text': "A few questions about you, your training and your packing list. We'll use them to set your starting weights and tailor later suggestions. Everything is editable later.",
+    'onb.intro.start': "Let's go",
+    'onb.intro.skip': 'Skip',
+    'onb.profile.eyebrow': 'About you {n} / {total}',
+    'onb.training.eyebrow': 'Training',
+    'onb.training.title': 'Which plan fits?',
+    'onb.training.hint': '3× per week means longer sessions, 6× per week is an A/B split with shorter sessions. Or build your own plan.',
+    'onb.training.3': '3× per week',
+    'onb.training.6': '6× per week',
+    'onb.training.custom': 'Your own plan',
+    'onb.pack.eyebrow': 'Packing list {n} / {total}',
+    'onb.yes': 'Yes',
+    'onb.no': 'No',
+    'onb.done.eyebrow': 'Done',
+    'onb.done.title': "All set",
+    'onb.done.text': 'Plan: {freq}× per week. Packing list with {count} items. Starting weights are set; tweak with +/- per exercise.',
+    'onb.done.text.custom': 'Your own plan is ready to launch. Packing list with {count} items. Set starting weights for your own exercises yourself.',
+    'onb.done.button': "Let's go",
+    'profile.gender.q': 'What is your gender?',
+    'profile.gender.hint': 'Sets the starting point for your training weights.',
+    'profile.gender.male': 'Male',
+    'profile.gender.female': 'Female',
+    'profile.gender.diverse': 'Other',
+    'profile.age.q': 'How old are you?',
+    'profile.age.hint': 'Age affects strength and recovery.',
+    'profile.age.18-25': '18 to 25',
+    'profile.age.26-35': '26 to 35',
+    'profile.age.36-50': '36 to 50',
+    'profile.age.50+': 'Over 50',
+    'profile.nutrition.q': 'Do you watch your nutrition?',
+    'profile.nutrition.hint': 'Sets how often weight increases get suggested. Enough protein means faster progress.',
+    'profile.nutrition.protein': 'Yes, protein-aware',
+    'profile.nutrition.casual': 'Casual, no fixed routine',
+    'profile.commitment.q': 'Will you stick with the plan?',
+    'profile.commitment.hint': 'Sets how often weight increases get suggested. All-in means more frequent suggestions.',
+    'profile.commitment.full': 'Yes, all in',
+    'profile.commitment.casual': 'Sometimes, sometimes not',
+    'pack.q.shower.q': 'Do you shower at the gym?',
+    'pack.q.shower.hint': "We'll add towel, shampoo, flip-flops and deodorant.",
+    'pack.q.music.q': 'Do you listen to music while training?',
+    'pack.q.music.hint': "Headphones go on the list.",
+    'pack.q.after.q': 'Plans right after the gym?',
+    'pack.q.after.hint': 'Skincare and perfume go in for after.',
+    'toast.share.granted.share': 'Thanks for sharing. Streak freeze for you.',
+    'toast.share.granted.copy': 'Link copied. Streak freeze for you.',
+    'toast.share.capped': 'Thanks! You already hit the freeze cap (3).',
+    'toast.share.thanks.share': 'Thanks for sharing.',
+    'toast.share.thanks.copy': 'Link copied.',
+    'swap.eyebrow': 'Pick alternative',
+    'swap.close': 'Cancel',
+    'swap.option.original': 'Original',
+    'swap.option.alt': 'Alternative',
+  }
+};
+
+function loadLang() {
+  try { return localStorage.getItem('ppl-lang') === 'en' ? 'en' : 'de'; }
+  catch (e) { return 'de'; }
+}
+
+function saveLang(l) {
+  try { localStorage.setItem('ppl-lang', l); } catch (e) {}
+}
+
+function t(key, vars) {
+  const lang = loadLang();
+  let s = (I18N[lang] && I18N[lang][key]) || (I18N.de && I18N.de[key]) || key;
+  if (vars) Object.keys(vars).forEach(k => { s = s.split('{' + k + '}').join(vars[k]); });
+  return s;
+}
+
+function applyI18n() {
+  document.documentElement.lang = loadLang();
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    el.innerHTML = t(el.dataset.i18nHtml);
+  });
+  document.querySelectorAll('[data-i18n-attr]').forEach(el => {
+    const pairs = el.dataset.i18nAttr.split(',');
+    pairs.forEach(p => {
+      const [attr, key] = p.split(':');
+      if (attr && key) el.setAttribute(attr.trim(), t(key.trim()));
+    });
+  });
+}
 
 function exportStateToUrl() {
   try {
@@ -77,63 +424,31 @@ const BASE_ITEMS = [
 ];
 
 const PROFILE_QUESTIONS = [
-  {
-    id: 'gender',
-    question: 'Was ist dein Geschlecht?',
-    hint: 'Bestimmt den Startpunkt deiner Trainingsgewichte.',
-    options: [
-      { label: 'Mann', value: 'male' },
-      { label: 'Frau', value: 'female' },
-      { label: 'Divers', value: 'diverse' }
-    ]
-  },
-  {
-    id: 'age',
-    question: 'Wie alt bist du?',
-    hint: 'Alter beeinflusst Kraft und Regeneration.',
-    options: [
-      { label: '18 bis 25', value: '18-25' },
-      { label: '26 bis 35', value: '26-35' },
-      { label: '36 bis 50', value: '36-50' },
-      { label: 'Über 50', value: '50+' }
-    ]
-  },
-  {
-    id: 'nutrition',
-    question: 'Achtest du auf deine Ernährung?',
-    hint: 'Bestimmt, wie häufig dir Gewichtssteigerungen empfohlen werden. Mit genug Protein gehen Fortschritte schneller.',
-    options: [
-      { label: 'Ja, Protein-bewusst', value: 'protein' },
-      { label: 'Casual, keine feste Routine', value: 'casual' }
-    ]
-  },
-  {
-    id: 'commitment',
-    question: 'Ziehst du den Plan durch?',
-    hint: 'Bestimmt, wie häufig dir Gewichtssteigerungen empfohlen werden. Voll dabei heißt häufigere Empfehlungen.',
-    options: [
-      { label: 'Ja, voll dabei', value: 'full' },
-      { label: 'Mal so, mal so', value: 'casual' }
-    ]
-  }
+  { id: 'gender', qKey: 'profile.gender.q', hintKey: 'profile.gender.hint', options: [
+    { labelKey: 'profile.gender.male', value: 'male' },
+    { labelKey: 'profile.gender.female', value: 'female' },
+    { labelKey: 'profile.gender.diverse', value: 'diverse' }
+  ]},
+  { id: 'age', qKey: 'profile.age.q', hintKey: 'profile.age.hint', options: [
+    { labelKey: 'profile.age.18-25', value: '18-25' },
+    { labelKey: 'profile.age.26-35', value: '26-35' },
+    { labelKey: 'profile.age.36-50', value: '36-50' },
+    { labelKey: 'profile.age.50+', value: '50+' }
+  ]},
+  { id: 'nutrition', qKey: 'profile.nutrition.q', hintKey: 'profile.nutrition.hint', options: [
+    { labelKey: 'profile.nutrition.protein', value: 'protein' },
+    { labelKey: 'profile.nutrition.casual', value: 'casual' }
+  ]},
+  { id: 'commitment', qKey: 'profile.commitment.q', hintKey: 'profile.commitment.hint', options: [
+    { labelKey: 'profile.commitment.full', value: 'full' },
+    { labelKey: 'profile.commitment.casual', value: 'casual' }
+  ]}
 ];
 
 const ONBOARDING_QUESTIONS = [
-  {
-    question: 'Duschst du im Gym?',
-    hint: 'Wir packen Handtuch, Shampoo, Schlappen und Deo mit ein.',
-    items: ['Trockenhandtuch', 'Shampoo', 'Schlappen', 'Deo']
-  },
-  {
-    question: 'Hörst du Musik beim Training?',
-    hint: 'Kopfhörer kommen mit auf die Liste.',
-    items: ['Kopfhörer']
-  },
-  {
-    question: 'Hast du nach dem Training direkt was vor?',
-    hint: 'Skincare und Parfum kommen für danach mit.',
-    items: ['Skincare', 'Parfum']
-  }
+  { qKey: 'pack.q.shower.q', hintKey: 'pack.q.shower.hint', items: ['Trockenhandtuch', 'Shampoo', 'Schlappen', 'Deo'] },
+  { qKey: 'pack.q.music.q', hintKey: 'pack.q.music.hint', items: ['Kopfhörer'] },
+  { qKey: 'pack.q.after.q', hintKey: 'pack.q.after.hint', items: ['Skincare', 'Parfum'] }
 ];
 
 const list = document.getElementById('pack-list');
@@ -211,7 +526,7 @@ function render() {
     const addRow = document.createElement('div');
     addRow.className = 'pack-item add-row';
     addRow.innerHTML = `
-      <input type="text" class="pack-add-input" placeholder="Neues Item hinzufügen...">
+      <input type="text" class="pack-add-input" placeholder="${escapeAttr(t('pack.add.placeholder'))}">
       <button class="add-btn" aria-label="Hinzufügen">+</button>
     `;
     const addInput = addRow.querySelector('.pack-add-input');
@@ -277,7 +592,7 @@ clearBtn.addEventListener('click', () => {
 
 editBtn.addEventListener('click', () => {
   editMode = !editMode;
-  editBtn.textContent = editMode ? 'Fertig' : 'Bearbeiten';
+  editBtn.textContent = t(editMode ? 'pack.editing' : 'pack.edit');
   editBtn.classList.toggle('active', editMode);
   render();
 });
@@ -527,6 +842,34 @@ function applyTheme(t) {
   if (meta) meta.setAttribute('content', t === 'light' ? '#f5f5f7' : '#0a0a0a');
 }
 
+function initLangToggle() {
+  const wrap = document.getElementById('lang-switch');
+  if (!wrap) return;
+  const apply = (lang) => {
+    wrap.querySelectorAll('button').forEach(b => {
+      b.classList.toggle('active', b.dataset.lang === lang);
+    });
+  };
+  apply(loadLang());
+  wrap.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.lang === 'en' ? 'en' : 'de';
+      saveLang(lang);
+      apply(lang);
+      applyI18n();
+      // Re-render dynamic strings
+      applyFrequency();
+      renderFreezeBadge();
+      renderSets();
+      if (typeof renderCustomPlan === 'function') renderCustomPlan();
+      const editor = document.getElementById('custom-editor');
+      if (editor && !editor.classList.contains('hidden')) renderEditor();
+      const sheet = document.getElementById('template-sheet');
+      if (sheet && !sheet.classList.contains('hidden')) renderTemplateList();
+    });
+  });
+}
+
 function initThemeToggle() {
   const toggle = document.getElementById('theme-toggle');
   if (!toggle) return;
@@ -671,7 +1014,7 @@ function renderFreezeBadge() {
   if (!row) return;
   row.classList.toggle('has-freezes', f.available > 0);
   if (count) count.textContent = f.available;
-  if (label) label.textContent = f.available === 1 ? 'Streak Freeze' : 'Streak Freezes';
+  if (label) label.textContent = t(f.available === 1 ? 'stat.freeze.one' : 'stat.freeze.many');
 }
 
 function maybeConsumeFreeze() {
@@ -811,7 +1154,7 @@ function renderSets() {
       circles += `<button class="set${sets[i] ? ' done' : ''}" data-idx="${i}" aria-label="Satz ${i + 1}">${check}</button>`;
     }
     const type = repsEl.dataset.type || 'reps';
-    const label = type === 'hold' ? `${range} s` : `${range} Wdh`;
+    const label = `${range} ${t(type === 'hold' ? 'sets.suffix.hold' : 'sets.suffix.reps')}`;
     repsEl.innerHTML = `
       <div class="sets">${circles}</div>
       <div class="reps-label">${escapeHtml(label)}</div>
@@ -974,7 +1317,7 @@ function openSwapSheet(exEl) {
         <div class="swap-option-name">${escapeHtml(def.name || exId)}</div>
         <div class="swap-option-note">${escapeHtml(def.note || '')}</div>
       </div>
-      <div class="swap-option-badge">${idx === 0 ? 'Original' : 'Alternative'}</div>
+      <div class="swap-option-badge">${escapeHtml(t(idx === 0 ? 'swap.option.original' : 'swap.option.alt'))}</div>
     `;
     opt.addEventListener('click', () => {
       const current = loadSubstitutes();
@@ -1073,9 +1416,9 @@ function renderCustomPlan() {
     const empty = document.createElement('div');
     empty.className = 'custom-empty';
     empty.innerHTML = `
-      <div class="custom-empty-title">Dein Plan</div>
-      <div class="custom-empty-text">Noch keine Trainings-Tage. Leg deinen ersten Tag an und füll ihn mit Übungen.</div>
-      <button class="custom-primary-btn" id="custom-create-btn" type="button">Plan erstellen</button>
+      <div class="custom-empty-title">${escapeHtml(t('custom.empty.title'))}</div>
+      <div class="custom-empty-text">${escapeHtml(t('custom.empty.text'))}</div>
+      <button class="custom-primary-btn" id="custom-create-btn" type="button">${escapeHtml(t('custom.empty.button'))}</button>
     `;
     container.appendChild(empty);
     document.getElementById('custom-create-btn')?.addEventListener('click', openEditor);
@@ -1120,7 +1463,7 @@ function renderCustomPlan() {
   const edit = document.createElement('button');
   edit.className = 'custom-edit-btn';
   edit.type = 'button';
-  edit.textContent = 'Plan bearbeiten';
+  edit.textContent = t('custom.edit');
   edit.addEventListener('click', openEditor);
   container.appendChild(edit);
 }
@@ -1416,45 +1759,45 @@ function renderEditor() {
     card.innerHTML = `
       <div class="editor-day-head">
         <label class="editor-field">
-          <span class="editor-field-label">Tag-Label</span>
-          <input class="editor-input" value="${escapeAttr(day.label || '')}" placeholder="z. B. Push, Pull, Oberkörper" data-f="label">
+          <span class="editor-field-label">${escapeHtml(t('editor.day.label'))}</span>
+          <input class="editor-input" value="${escapeAttr(day.label || '')}" placeholder="${escapeAttr(t('editor.day.label.placeholder'))}" data-f="label">
         </label>
-        <button class="editor-icon-btn" data-a="del-day" aria-label="Tag löschen" type="button">
+        <button class="editor-icon-btn" data-a="del-day" aria-label="${escapeAttr(t('editor.day.delete.aria'))}" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <div class="editor-row-meta">
         <label class="editor-field">
-          <span class="editor-field-label">Akzentfarbe</span>
+          <span class="editor-field-label">${escapeHtml(t('editor.day.accent'))}</span>
           <select class="editor-select" data-f="accent">
-            <option value="push"${day.accent === 'push' ? ' selected' : ''}>Push (rot)</option>
-            <option value="pull"${day.accent === 'pull' ? ' selected' : ''}>Pull (grün)</option>
-            <option value="legs"${day.accent === 'legs' ? ' selected' : ''}>Legs (gelb)</option>
+            <option value="push"${day.accent === 'push' ? ' selected' : ''}>${escapeHtml(t('editor.day.accent.push'))}</option>
+            <option value="pull"${day.accent === 'pull' ? ' selected' : ''}>${escapeHtml(t('editor.day.accent.pull'))}</option>
+            <option value="legs"${day.accent === 'legs' ? ' selected' : ''}>${escapeHtml(t('editor.day.accent.legs'))}</option>
           </select>
         </label>
         <label class="editor-field">
-          <span class="editor-field-label">Wochentag</span>
+          <span class="editor-field-label">${escapeHtml(t('editor.day.weekday'))}</span>
           <select class="editor-select" data-f="weekday">
-            <option value="-1"${!(day.weekday >= 0 && day.weekday <= 6) ? ' selected' : ''}>Kein Wochentag</option>
-            <option value="0"${day.weekday === 0 ? ' selected' : ''}>Montag</option>
-            <option value="1"${day.weekday === 1 ? ' selected' : ''}>Dienstag</option>
-            <option value="2"${day.weekday === 2 ? ' selected' : ''}>Mittwoch</option>
-            <option value="3"${day.weekday === 3 ? ' selected' : ''}>Donnerstag</option>
-            <option value="4"${day.weekday === 4 ? ' selected' : ''}>Freitag</option>
-            <option value="5"${day.weekday === 5 ? ' selected' : ''}>Samstag</option>
-            <option value="6"${day.weekday === 6 ? ' selected' : ''}>Sonntag</option>
+            <option value="-1"${!(day.weekday >= 0 && day.weekday <= 6) ? ' selected' : ''}>${escapeHtml(t('editor.day.weekday.none'))}</option>
+            <option value="0"${day.weekday === 0 ? ' selected' : ''}>${escapeHtml(t('editor.day.weekday.mon'))}</option>
+            <option value="1"${day.weekday === 1 ? ' selected' : ''}>${escapeHtml(t('editor.day.weekday.tue'))}</option>
+            <option value="2"${day.weekday === 2 ? ' selected' : ''}>${escapeHtml(t('editor.day.weekday.wed'))}</option>
+            <option value="3"${day.weekday === 3 ? ' selected' : ''}>${escapeHtml(t('editor.day.weekday.thu'))}</option>
+            <option value="4"${day.weekday === 4 ? ' selected' : ''}>${escapeHtml(t('editor.day.weekday.fri'))}</option>
+            <option value="5"${day.weekday === 5 ? ' selected' : ''}>${escapeHtml(t('editor.day.weekday.sat'))}</option>
+            <option value="6"${day.weekday === 6 ? ' selected' : ''}>${escapeHtml(t('editor.day.weekday.sun'))}</option>
           </select>
         </label>
         <label class="editor-field fixed" style="flex: 0 0 80px">
-          <span class="editor-field-label">Variante</span>
-          <input class="editor-input" value="${escapeAttr(day.variant || '')}" placeholder="A / B" data-f="variant">
+          <span class="editor-field-label">${escapeHtml(t('editor.day.variant'))}</span>
+          <input class="editor-input" value="${escapeAttr(day.variant || '')}" placeholder="${escapeAttr(t('editor.day.variant.placeholder'))}" data-f="variant">
         </label>
         <label class="editor-field" style="flex: 1 1 100%">
-          <span class="editor-field-label">Fokus (optional)</span>
-          <input class="editor-input" value="${escapeAttr(day.focus || '')}" placeholder="z. B. Schwer, Volumen, Quad-Fokus" data-f="focus">
+          <span class="editor-field-label">${escapeHtml(t('editor.day.focus'))}</span>
+          <input class="editor-input" value="${escapeAttr(day.focus || '')}" placeholder="${escapeAttr(t('editor.day.focus.placeholder'))}" data-f="focus">
         </label>
       </div>
-      <div class="editor-section-title">Übungen</div>
+      <div class="editor-section-title">${escapeHtml(t('editor.exercises'))}</div>
     `;
     card.querySelectorAll('[data-f]').forEach(input => {
       const field = input.dataset.f;
@@ -1475,53 +1818,53 @@ function renderEditor() {
       const row = document.createElement('div');
       row.className = 'editor-ex-row';
       const isHold = ex.type === 'hold';
-      const rangeLabel = isHold ? 'Dauer (s)' : 'Wdh';
+      const rangeLabel = isHold ? t('editor.ex.range.hold') : t('editor.ex.range.reps');
       const rangeDefault = isHold ? '30' : '8-10';
-      const rangePlaceholder = isHold ? 'z. B. 30 oder 30-45' : 'z. B. 6-8 oder 10-12';
+      const rangePlaceholder = isHold ? t('editor.ex.range.hold.placeholder') : t('editor.ex.range.reps.placeholder');
       const baseValue = ex.bodyweight || ex.base == null || ex.base === '' ? '' : ex.base;
       row.innerHTML = `
         <div class="editor-ex-fields">
           <label class="editor-field">
-            <span class="editor-field-label">Name</span>
-            <input class="editor-input" value="${escapeAttr(ex.name || '')}" placeholder="z. B. Bankdrücken" data-f="name">
+            <span class="editor-field-label">${escapeHtml(t('editor.ex.name'))}</span>
+            <input class="editor-input" value="${escapeAttr(ex.name || '')}" placeholder="${escapeAttr(t('editor.ex.name.placeholder'))}" data-f="name">
           </label>
           <label class="editor-field">
-            <span class="editor-field-label">Notiz (optional)</span>
-            <input class="editor-input" value="${escapeAttr(ex.note || '')}" placeholder="z. B. Hauptübung Brust" data-f="note">
+            <span class="editor-field-label">${escapeHtml(t('editor.ex.note'))}</span>
+            <input class="editor-input" value="${escapeAttr(ex.note || '')}" placeholder="${escapeAttr(t('editor.ex.note.placeholder'))}" data-f="note">
           </label>
           <label class="editor-field">
-            <span class="editor-field-label">Typ</span>
+            <span class="editor-field-label">${escapeHtml(t('editor.ex.type'))}</span>
             <select class="editor-select" data-f="type">
-              <option value="reps"${!isHold ? ' selected' : ''}>Wiederholungen</option>
-              <option value="hold"${isHold ? ' selected' : ''}>Halten (Zeit)</option>
+              <option value="reps"${!isHold ? ' selected' : ''}>${escapeHtml(t('editor.ex.type.reps'))}</option>
+              <option value="hold"${isHold ? ' selected' : ''}>${escapeHtml(t('editor.ex.type.hold'))}</option>
             </select>
           </label>
           <div class="editor-ex-fields-row">
             <label class="editor-field fixed" style="flex: 0 0 70px">
-              <span class="editor-field-label">Sätze</span>
+              <span class="editor-field-label">${escapeHtml(t('editor.ex.sets'))}</span>
               <input class="editor-input" value="${escapeAttr(ex.sets || 3)}" type="number" min="1" max="10" data-f="sets">
             </label>
             <label class="editor-field">
-              <span class="editor-field-label">${rangeLabel}</span>
-              <input class="editor-input" value="${escapeAttr(ex.range || rangeDefault)}" placeholder="${rangePlaceholder}" data-f="range">
+              <span class="editor-field-label">${escapeHtml(rangeLabel)}</span>
+              <input class="editor-input" value="${escapeAttr(ex.range || rangeDefault)}" placeholder="${escapeAttr(rangePlaceholder)}" data-f="range">
             </label>
             <label class="editor-field fixed" style="flex: 0 0 90px">
-              <span class="editor-field-label">Pause (s)</span>
+              <span class="editor-field-label">${escapeHtml(t('editor.ex.rest'))}</span>
               <input class="editor-input" value="${escapeAttr(ex.rest || 90)}" type="number" min="0" max="600" step="15" data-f="rest">
             </label>
           </div>
           <div class="editor-ex-fields-row">
             <label class="editor-field">
-              <span class="editor-field-label">Startgewicht (kg, leer = Körpergewicht)</span>
-              <input class="editor-input" value="${escapeAttr(baseValue)}" type="number" min="0" step="0.5" placeholder="leer lassen für Bodyweight" data-f="base">
+              <span class="editor-field-label">${escapeHtml(t('editor.ex.base'))}</span>
+              <input class="editor-input" value="${escapeAttr(baseValue)}" type="number" min="0" step="0.5" placeholder="${escapeAttr(t('editor.ex.base.placeholder'))}" data-f="base">
             </label>
             <label class="editor-field">
-              <span class="editor-field-label">Schritte zur Gewichtssteigerung (kg)</span>
+              <span class="editor-field-label">${escapeHtml(t('editor.ex.step'))}</span>
               <input class="editor-input" value="${escapeAttr(ex.step || 2.5)}" type="number" min="0.25" step="0.25" data-f="step">
             </label>
           </div>
         </div>
-        <button class="editor-icon-btn" data-a="del-ex" aria-label="Übung löschen" type="button">
+        <button class="editor-icon-btn" data-a="del-ex" aria-label="${escapeAttr(t('editor.ex.delete.aria'))}" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       `;
@@ -1556,7 +1899,7 @@ function renderEditor() {
     const addEx = document.createElement('button');
     addEx.className = 'editor-add-ex';
     addEx.type = 'button';
-    addEx.textContent = '+ Übung hinzufügen';
+    addEx.textContent = t('editor.add.ex');
     addEx.addEventListener('click', () => {
       if (!day.exercises) day.exercises = [];
       day.exercises.push({ id: genId('ex'), name: '', note: '', sets: 3, range: '8-10', rest: 90, base: 20, step: 2.5 });
@@ -1569,7 +1912,7 @@ function renderEditor() {
   const addDay = document.createElement('button');
   addDay.className = 'editor-add-day';
   addDay.type = 'button';
-  addDay.textContent = '+ Trainings-Tag hinzufügen';
+  addDay.textContent = t('editor.add.day');
   addDay.addEventListener('click', () => {
     const accents = ['push', 'pull', 'legs'];
     editorDraft.days.push({
@@ -1667,14 +2010,14 @@ function applyFrequency() {
   const eyebrow = document.querySelector('.eyebrow');
   const sub = document.querySelector('.sub');
   if (mode === 'custom') {
-    eyebrow.textContent = 'Eigener Plan';
-    sub.textContent = 'Selbst zusammengestellt · Tap für Details';
+    eyebrow.textContent = t('header.custom.eyebrow');
+    sub.textContent = t('header.custom.sub');
   } else if (freq === '3') {
-    eyebrow.textContent = '3× pro Woche · Push · Pull · Legs';
-    sub.textContent = 'Jede Muskelgruppe 1× pro Woche · Tap für Details';
+    eyebrow.textContent = t('header.3.eyebrow');
+    sub.textContent = t('header.3.sub');
   } else {
-    eyebrow.textContent = '6× pro Woche · A/B Split';
-    sub.textContent = 'Jede Muskelgruppe 2× pro Woche · Tap für Details';
+    eyebrow.textContent = t('header.6.eyebrow');
+    sub.textContent = t('header.6.sub');
   }
 
   document.querySelectorAll('#plan-switch button').forEach(btn => {
@@ -1803,21 +2146,21 @@ function startOnboarding() {
     setProgress(0);
     content.innerHTML = `
       <div>
-        <div class="onboarding-eyebrow">Einrichtung</div>
-        <div class="onboarding-title">Kurze Einrichtung</div>
-        <div class="onboarding-text">Ein paar Fragen zu dir, deinem Training und deiner Packliste. Damit stimmen wir Startgewichte und spätere Empfehlungen auf dich ab. Alles später anpassbar.</div>
+        <div class="onboarding-eyebrow">${escapeHtml(t('onb.intro.eyebrow'))}</div>
+        <div class="onboarding-title">${escapeHtml(t('onb.intro.title'))}</div>
+        <div class="onboarding-text">${escapeHtml(t('onb.intro.text'))}</div>
       </div>
     `;
     actions.innerHTML = '';
     const start = document.createElement('button');
     start.className = 'onboarding-btn primary';
-    start.textContent = 'Los geht\'s';
+    start.textContent = t('onb.intro.start');
     start.addEventListener('click', () => showProfileQuestion(0));
     actions.appendChild(start);
 
     const skip = document.createElement('button');
     skip.className = 'onboarding-skip';
-    skip.textContent = 'Überspringen';
+    skip.textContent = t('onb.intro.skip');
     skip.addEventListener('click', () => finish(BASE_ITEMS));
     actions.appendChild(skip);
   }
@@ -1827,16 +2170,16 @@ function startOnboarding() {
     setProgress(i + 1);
     content.innerHTML = `
       <div>
-        <div class="onboarding-eyebrow">Über dich ${i + 1} / ${PROFILE_QUESTIONS.length}</div>
-        <div class="onboarding-title">${escapeHtml(q.question)}</div>
-        <div class="onboarding-hint">${escapeHtml(q.hint)}</div>
+        <div class="onboarding-eyebrow">${escapeHtml(t('onb.profile.eyebrow', { n: i + 1, total: PROFILE_QUESTIONS.length }))}</div>
+        <div class="onboarding-title">${escapeHtml(t(q.qKey))}</div>
+        <div class="onboarding-hint">${escapeHtml(t(q.hintKey))}</div>
       </div>
     `;
     actions.innerHTML = '';
     q.options.forEach((opt, idx) => {
       const btn = document.createElement('button');
       btn.className = 'onboarding-btn' + (idx === 0 ? ' primary' : '');
-      btn.textContent = opt.label;
+      btn.textContent = t(opt.labelKey);
       btn.addEventListener('click', () => {
         profile[q.id] = opt.value;
         if (i + 1 < PROFILE_QUESTIONS.length) showProfileQuestion(i + 1);
@@ -1850,28 +2193,28 @@ function startOnboarding() {
     setProgress(PROFILE_QUESTIONS.length + 1);
     content.innerHTML = `
       <div>
-        <div class="onboarding-eyebrow">Training</div>
-        <div class="onboarding-title">Welcher Plan passt?</div>
-        <div class="onboarding-hint">3× pro Woche hat längere Sessions, 6× pro Woche ist ein A/B-Split mit kürzeren Einheiten. Oder stell dir deinen eigenen Plan zusammen.</div>
+        <div class="onboarding-eyebrow">${escapeHtml(t('onb.training.eyebrow'))}</div>
+        <div class="onboarding-title">${escapeHtml(t('onb.training.title'))}</div>
+        <div class="onboarding-hint">${escapeHtml(t('onb.training.hint'))}</div>
       </div>
     `;
     actions.innerHTML = '';
 
     const btn3 = document.createElement('button');
     btn3.className = 'onboarding-btn';
-    btn3.textContent = '3× pro Woche';
+    btn3.textContent = t('onb.training.3');
     btn3.addEventListener('click', () => { frequency = '3'; planMode = 'preset'; showQuestion(0); });
     actions.appendChild(btn3);
 
     const btn6 = document.createElement('button');
     btn6.className = 'onboarding-btn primary';
-    btn6.textContent = '6× pro Woche';
+    btn6.textContent = t('onb.training.6');
     btn6.addEventListener('click', () => { frequency = '6'; planMode = 'preset'; showQuestion(0); });
     actions.appendChild(btn6);
 
     const btnCustom = document.createElement('button');
     btnCustom.className = 'onboarding-btn';
-    btnCustom.textContent = 'Eigener Plan';
+    btnCustom.textContent = t('onb.training.custom');
     btnCustom.addEventListener('click', () => { planMode = 'custom'; showQuestion(0); });
     actions.appendChild(btnCustom);
   }
@@ -1881,16 +2224,16 @@ function startOnboarding() {
     setProgress(PROFILE_QUESTIONS.length + 1 + i + 1);
     content.innerHTML = `
       <div>
-        <div class="onboarding-eyebrow">Packliste ${i + 1} / ${ONBOARDING_QUESTIONS.length}</div>
-        <div class="onboarding-title">${escapeHtml(q.question)}</div>
-        <div class="onboarding-hint">${escapeHtml(q.hint)}</div>
+        <div class="onboarding-eyebrow">${escapeHtml(t('onb.pack.eyebrow', { n: i + 1, total: ONBOARDING_QUESTIONS.length }))}</div>
+        <div class="onboarding-title">${escapeHtml(t(q.qKey))}</div>
+        <div class="onboarding-hint">${escapeHtml(t(q.hintKey))}</div>
       </div>
     `;
     actions.innerHTML = '';
 
     const yes = document.createElement('button');
     yes.className = 'onboarding-btn primary';
-    yes.textContent = 'Ja';
+    yes.textContent = t('onb.yes');
     yes.addEventListener('click', () => {
       collected.push(...q.items);
       next(i);
@@ -1899,7 +2242,7 @@ function startOnboarding() {
 
     const no = document.createElement('button');
     no.className = 'onboarding-btn';
-    no.textContent = 'Nein';
+    no.textContent = t('onb.no');
     no.addEventListener('click', () => next(i));
     actions.appendChild(no);
   }
@@ -1911,17 +2254,20 @@ function startOnboarding() {
 
   function showDone() {
     setProgress(totalSteps);
+    const doneText = planMode === 'custom'
+      ? t('onb.done.text.custom', { count: collected.length })
+      : t('onb.done.text', { freq: frequency, count: collected.length });
     content.innerHTML = `
       <div>
-        <div class="onboarding-eyebrow">Fertig</div>
-        <div class="onboarding-title">Alles klar</div>
-        <div class="onboarding-text">Plan: ${frequency}× pro Woche. Packliste mit ${collected.length} Items. Startgewichte stehen, feintunen geht mit +/- pro Übung.</div>
+        <div class="onboarding-eyebrow">${escapeHtml(t('onb.done.eyebrow'))}</div>
+        <div class="onboarding-title">${escapeHtml(t('onb.done.title'))}</div>
+        <div class="onboarding-text">${escapeHtml(doneText)}</div>
       </div>
     `;
     actions.innerHTML = '';
     const done = document.createElement('button');
     done.className = 'onboarding-btn primary';
-    done.textContent = 'Los geht\'s';
+    done.textContent = t('onb.done.button');
     done.addEventListener('click', () => finish(collected));
     actions.appendChild(done);
   }
@@ -1982,14 +2328,16 @@ async function shareApp() {
   if (!shared) { showToast(url); return; }
   const result = grantFreezeIfEligible();
   if (result === 'granted') {
-    showToast(navigator.share ? 'Danke fürs Teilen. Streak Freeze für dich.' : 'Link kopiert. Streak Freeze für dich.');
+    showToast(t(navigator.share ? 'toast.share.granted.share' : 'toast.share.granted.copy'));
   } else if (result === 'capped') {
-    showToast('Danke! Du hast bereits das Freeze-Maximum (3) erreicht.');
+    showToast(t('toast.share.capped'));
   } else {
-    showToast(navigator.share ? 'Danke fürs Teilen.' : 'Link kopiert.');
+    showToast(t(navigator.share ? 'toast.share.thanks.share' : 'toast.share.thanks.copy'));
   }
 }
 
+applyI18n();
+initLangToggle();
 initPlanSwitch();
 applyFrequency();
 ensureWeightsInitialized();
@@ -2023,7 +2371,7 @@ function showUpdateBanner(worker) {
   if (document.querySelector('.update-banner')) return;
   const banner = document.createElement('div');
   banner.className = 'update-banner';
-  banner.innerHTML = `<span>Neue Version verfügbar</span><button type="button">Neu laden</button>`;
+  banner.innerHTML = `<span>${t('update.text')}</span><button type="button">${t('update.button')}</button>`;
   banner.querySelector('button').addEventListener('click', () => {
     worker.postMessage('skipWaiting');
   });
@@ -2098,11 +2446,11 @@ function showInstallHint(options) {
   banner.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
       <div>
-        <div style="font-family: 'Bebas Neue'; font-size: 18px; letter-spacing: 0.05em; margin-bottom: 4px;">Als App installieren</div>
-        <div style="color: var(--text-dim); font-size: 11px;">Drei-Punkt-Menü → Teilen → "Zum Home-Bildschirm"</div>
+        <div style="font-family: 'Bebas Neue'; font-size: 18px; letter-spacing: 0.05em; margin-bottom: 4px;">${t('install.title')}</div>
+        <div style="color: var(--text-dim); font-size: 11px;">${t('install.text')}</div>
       </div>
       <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-        <button id="ppl-dismiss" style="background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 6px; font-family: inherit; font-size: 11px; cursor: pointer;">OK</button>
+        <button id="ppl-dismiss" style="background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 6px; font-family: inherit; font-size: 11px; cursor: pointer;">${t('install.dismiss')}</button>
         <svg class="install-hint-arrow" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="12" y1="5" x2="12" y2="19"/>
           <polyline points="6 13 12 19 18 13"/>

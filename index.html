@@ -29,8 +29,8 @@
     </header>
 
     <div class="tabs">
-      <div class="tab active" data-view="plan">Plan</div>
-      <div class="tab" data-view="pack">Packliste</div>
+      <div class="tab active" data-view="plan" data-i18n="tab.plan">Plan</div>
+      <div class="tab" data-view="pack" data-i18n="tab.pack">Packliste</div>
     </div>
 
     <!-- PLAN VIEW -->
@@ -39,17 +39,17 @@
       <div class="plan-switch" id="plan-switch" role="tablist" aria-label="Plan-Modus">
         <button type="button" data-choose="3" role="tab">3×</button>
         <button type="button" data-choose="6" role="tab">6×</button>
-        <button type="button" data-choose="custom" role="tab">Eigener</button>
+        <button type="button" data-choose="custom" role="tab" data-i18n="planswitch.custom">Eigener</button>
       </div>
 
       <div class="stats-bar">
         <div class="stat" id="streak-stat">
           <div class="flame" aria-hidden="true"></div>
-          <div class="stat-label">Streak</div>
+          <div class="stat-label" data-i18n="stat.streak">Streak</div>
           <div class="stat-value" id="stat-streak">0</div>
         </div>
         <div class="stat">
-          <div class="stat-label">Sessions</div>
+          <div class="stat-label" data-i18n="stat.sessions">Sessions</div>
           <div class="stat-value" id="stat-total">0</div>
         </div>
       </div>
@@ -62,17 +62,17 @@
         </div>
         <button class="share-btn" id="share-btn" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          Teilen
+          <span data-i18n="action.share">Teilen</span>
         </button>
         <button class="install-btn" id="install-btn" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M4 19h16"/></svg>
-          Installieren
+          <span data-i18n="action.install">Installieren</span>
         </button>
       </div>
 
       <div class="rest-banner hidden" id="rest-banner">
-        <div class="rest-banner-title">Rest Day</div>
-        <div class="rest-banner-text">Heute ist frei. Gönn dir Regeneration oder mach leichtes Cardio.</div>
+        <div class="rest-banner-title" data-i18n="rest.title">Rest Day</div>
+        <div class="rest-banner-text" data-i18n="rest.text">Heute ist frei. Gönn dir Regeneration oder mach leichtes Cardio.</div>
       </div>
 
       <div class="plan-variant" data-freq="custom" id="custom-plan-view"></div>
@@ -292,24 +292,34 @@
       </div>
 
       <div class="footer">
-        <div class="footer-title">Hinweise</div>
-        <strong>Progression:</strong> Gewicht steigern wenn oberes Wdh-Ziel in allen Sätzen sauber geschafft<br>
-        <strong>Pause:</strong> 2–3 min bei schweren Sätzen, 60–90 s bei Isolation<br>
-        <strong>Aufwärmen:</strong> 2 leichte Sätze vor jeder Grundübung<br>
-        <strong>Deload:</strong> Alle 6–8 Wochen eine leichtere Woche einplanen
+        <div class="footer-title" data-i18n="footer.title">Hinweise</div>
+        <strong data-i18n="footer.progression.label">Progression</strong>: <span data-i18n="footer.progression.text">Gewicht steigern wenn oberes Wdh-Ziel in allen Sätzen sauber geschafft</span><br>
+        <strong data-i18n="footer.pause.label">Pause</strong>: <span data-i18n="footer.pause.text">2 bis 3 min bei schweren Sätzen, 60 bis 90 s bei Isolation</span><br>
+        <strong data-i18n="footer.warmup.label">Aufwärmen</strong>: <span data-i18n="footer.warmup.text">2 leichte Sätze vor jeder Grundübung</span><br>
+        <strong data-i18n="footer.deload.label">Deload</strong>: <span data-i18n="footer.deload.text">Alle 6 bis 8 Wochen eine leichtere Woche einplanen</span>
         <div class="setting-toggle">
           <div>
-            <div class="setting-toggle-label">Intelligente Gewichtsvorschläge</div>
-            <div class="setting-toggle-desc">Plus/Minus-Puls zeigt, wann du hoch- oder runtergehen solltest.</div>
+            <div class="setting-toggle-label" data-i18n="settings.rec">Intelligente Gewichtsvorschläge</div>
+            <div class="setting-toggle-desc" data-i18n="settings.rec.desc">Plus/Minus-Puls zeigt, wann du hoch- oder runtergehen solltest.</div>
           </div>
           <div class="toggle-switch on" id="rec-toggle" role="switch" aria-checked="true" tabindex="0"></div>
         </div>
         <div class="setting-toggle">
           <div>
-            <div class="setting-toggle-label">Light Mode</div>
-            <div class="setting-toggle-desc">Heller Hintergrund, z. B. für draußen oder helle Räume.</div>
+            <div class="setting-toggle-label" data-i18n="settings.theme">Light Mode</div>
+            <div class="setting-toggle-desc" data-i18n="settings.theme.desc">Heller Hintergrund, z. B. für draußen oder helle Räume.</div>
           </div>
           <div class="toggle-switch" id="theme-toggle" role="switch" aria-checked="false" tabindex="0"></div>
+        </div>
+        <div class="setting-toggle">
+          <div>
+            <div class="setting-toggle-label" data-i18n="settings.lang">Sprache</div>
+            <div class="setting-toggle-desc" data-i18n="settings.lang.desc">Sprache der App-Texte umschalten.</div>
+          </div>
+          <div class="lang-switch" id="lang-switch">
+            <button type="button" data-lang="de">DE</button>
+            <button type="button" data-lang="en">EN</button>
+          </div>
         </div>
       </div>
 
@@ -324,8 +334,8 @@
           <div class="progress"><div class="progress-bar" id="progress"></div></div>
         </div>
         <div class="pack-bar-actions">
-          <button class="edit-btn" id="edit-btn">Bearbeiten</button>
-          <button class="clear-btn" id="clear">Clear</button>
+          <button class="edit-btn" id="edit-btn" data-i18n="pack.edit">Bearbeiten</button>
+          <button class="clear-btn" id="clear" data-i18n="pack.clear">Clear</button>
         </div>
       </div>
 
@@ -353,29 +363,29 @@
       <polyline points="6 11 12 5 18 11"/>
     </svg>
     <div class="ig-card">
-      <div class="ig-eyebrow">In-App Browser</div>
-      <div class="ig-title">In Browser öffnen</div>
-      <div class="ig-text">Tippe oben rechts auf <strong>⋯</strong> und wähle <strong>"Im externen Browser öffnen"</strong>. Nur dort kannst du die App zum Home-Bildschirm hinzufügen.</div>
-      <button class="ig-dismiss" id="ig-dismiss" type="button">Trotzdem fortfahren</button>
+      <div class="ig-eyebrow" data-i18n="ig.eyebrow">In-App Browser</div>
+      <div class="ig-title" data-i18n="ig.title">In Browser öffnen</div>
+      <div class="ig-text" data-i18n-html="ig.text.html">Tippe oben rechts auf <strong>⋯</strong> und wähle <strong>"Im externen Browser öffnen"</strong>. Nur dort kannst du die App zum Home-Bildschirm hinzufügen.</div>
+      <button class="ig-dismiss" id="ig-dismiss" type="button" data-i18n="ig.dismiss">Trotzdem fortfahren</button>
     </div>
   </div>
 
   <div class="swap-sheet hidden" id="swap-sheet" aria-hidden="true">
     <div class="swap-card">
-      <div class="swap-eyebrow">Alternative wählen</div>
+      <div class="swap-eyebrow" data-i18n="swap.eyebrow">Alternative wählen</div>
       <div class="swap-title" id="swap-title"></div>
       <div class="swap-list" id="swap-list"></div>
-      <button class="swap-close" id="swap-close" type="button">Abbrechen</button>
+      <button class="swap-close" id="swap-close" type="button" data-i18n="swap.close">Abbrechen</button>
     </div>
   </div>
 
   <div class="editor hidden" id="custom-editor" aria-hidden="true">
     <div class="editor-head">
-      <div class="editor-title">Eigener Plan</div>
+      <div class="editor-title" data-i18n="editor.title">Eigener Plan</div>
       <div class="editor-head-actions">
-        <button class="editor-btn" id="editor-cancel" type="button">Abbrechen</button>
-        <button class="editor-btn" id="editor-load" type="button">Vorlage</button>
-        <button class="editor-btn primary" id="editor-save" type="button">Speichern</button>
+        <button class="editor-btn" id="editor-cancel" type="button" data-i18n="editor.cancel">Abbrechen</button>
+        <button class="editor-btn" id="editor-load" type="button" data-i18n="editor.template">Vorlage</button>
+        <button class="editor-btn primary" id="editor-save" type="button" data-i18n="editor.save">Speichern</button>
       </div>
     </div>
     <div class="editor-body" id="editor-body"></div>
@@ -383,10 +393,10 @@
 
   <div class="template-sheet hidden" id="template-sheet" aria-hidden="true">
     <div class="template-card">
-      <div class="swap-eyebrow">Vorlage wählen</div>
-      <div class="swap-title">Starte mit einem fertigen Plan</div>
+      <div class="swap-eyebrow" data-i18n="templates.eyebrow">Vorlage wählen</div>
+      <div class="swap-title" data-i18n="templates.title">Starte mit einem fertigen Plan</div>
       <div class="template-list" id="template-list"></div>
-      <button class="swap-close" id="template-close" type="button">Abbrechen</button>
+      <button class="swap-close" id="template-close" type="button" data-i18n="templates.close">Abbrechen</button>
     </div>
   </div>
 
