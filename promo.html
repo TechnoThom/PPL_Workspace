@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -27,11 +27,11 @@
     --pull: #30d158;
     --legs: #ffcc00;
     --pack: #0a84ff;
-    animation: theme-shift 24s ease-in-out infinite;
+    animation: theme-shift 29s ease-in-out infinite;
   }
 
   @keyframes theme-shift {
-    0%, 43% {
+    0%, 35% {
       --p-bg: #0a0a0a;
       --p-surface: #151515;
       --p-surface2: #1f1f1f;
@@ -39,7 +39,7 @@
       --p-text: #f5f5f5;
       --p-dim: #8a8a8a;
     }
-    50%, 78% {
+    41%, 67% {
       --p-bg: #f5f5f7;
       --p-surface: #ffffff;
       --p-surface2: #ebebed;
@@ -47,7 +47,7 @@
       --p-text: #1d1d1f;
       --p-dim: #6e6e73;
     }
-    85%, 100% {
+    72%, 100% {
       --p-bg: #0a0a0a;
       --p-surface: #151515;
       --p-surface2: #1f1f1f;
@@ -108,7 +108,7 @@
     background: var(--text);
     transform: scaleX(0);
     transform-origin: left;
-    animation-duration: 24s;
+    animation-duration: 29s;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
   }
@@ -120,13 +120,13 @@
   .progress-seg:nth-child(5)::after { animation-name: p5; }
   .progress-seg:nth-child(6)::after { animation-name: p6; }
 
-  /* Each scene 16.66% (= 4s) */
-  @keyframes p1 { 0% { transform: scaleX(0); } 16.66% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
-  @keyframes p2 { 0%, 16.66% { transform: scaleX(0); } 33.33% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
-  @keyframes p3 { 0%, 33.33% { transform: scaleX(0); } 50% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
-  @keyframes p4 { 0%, 50% { transform: scaleX(0); } 66.66% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
-  @keyframes p5 { 0%, 66.66% { transform: scaleX(0); } 83.33% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
-  @keyframes p6 { 0%, 83.33% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+  /* Scenes 1-5: each 13.79% (= 4s); Scene 6 (CTA): 31.03% (= 9s) */
+  @keyframes p1 { 0% { transform: scaleX(0); } 13.79% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p2 { 0%, 13.79% { transform: scaleX(0); } 27.58% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p3 { 0%, 27.58% { transform: scaleX(0); } 41.37% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p4 { 0%, 41.37% { transform: scaleX(0); } 55.17% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p5 { 0%, 55.17% { transform: scaleX(0); } 68.96% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p6 { 0%, 68.96% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
 
   .scene {
     position: absolute;
@@ -140,7 +140,7 @@
     flex-direction: column;
     justify-content: center;
     opacity: 0;
-    animation-duration: 24s;
+    animation-duration: 29s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
     overflow: hidden;
@@ -153,44 +153,45 @@
   .scene:nth-child(6) { animation-name: s5; }
   .scene:nth-child(7) { animation-name: s6; }
 
+  /* Scenes 1-5: 13.79% each (4s); Scene 6 (CTA): 31.03% (9s) */
   @keyframes s1 {
     0% { opacity: 0; transform: scale(0.96); }
     2% { opacity: 1; transform: scale(1); }
-    14% { opacity: 1; }
-    17% { opacity: 0; transform: scale(1.03); }
+    11% { opacity: 1; }
+    14% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes s2 {
-    0%, 17% { opacity: 0; transform: scale(0.96); }
-    19% { opacity: 1; transform: scale(1); }
-    31% { opacity: 1; }
-    34% { opacity: 0; transform: scale(1.03); }
+    0%, 14% { opacity: 0; transform: scale(0.96); }
+    16% { opacity: 1; transform: scale(1); }
+    25% { opacity: 1; }
+    28% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes s3 {
-    0%, 34% { opacity: 0; transform: scale(0.96); }
-    36% { opacity: 1; transform: scale(1); }
-    48% { opacity: 1; }
-    51% { opacity: 0; transform: scale(1.03); }
+    0%, 28% { opacity: 0; transform: scale(0.96); }
+    30% { opacity: 1; transform: scale(1); }
+    39% { opacity: 1; }
+    42% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes s4 {
-    0%, 51% { opacity: 0; transform: scale(0.96); }
-    53% { opacity: 1; transform: scale(1); }
-    65% { opacity: 1; }
-    68% { opacity: 0; transform: scale(1.03); }
+    0%, 42% { opacity: 0; transform: scale(0.96); }
+    44% { opacity: 1; transform: scale(1); }
+    53% { opacity: 1; }
+    56% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes s5 {
-    0%, 68% { opacity: 0; transform: scale(0.96); }
-    70% { opacity: 1; transform: scale(1); }
-    82% { opacity: 1; }
-    85% { opacity: 0; transform: scale(1.03); }
+    0%, 56% { opacity: 0; transform: scale(0.96); }
+    58% { opacity: 1; transform: scale(1); }
+    67% { opacity: 1; }
+    70% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
   @keyframes s6 {
-    0%, 85% { opacity: 0; transform: scale(0.96); }
-    87% { opacity: 1; transform: scale(1); }
+    0%, 70% { opacity: 0; transform: scale(0.96); }
+    72% { opacity: 1; transform: scale(1); }
     100% { opacity: 1; transform: scale(1); }
   }
 
@@ -523,50 +524,50 @@
     <!-- SCENE 1 · Hook (Dark) -->
     <div class="scene">
       <div class="hook-quote">// every fitness app:</div>
-      <div class="hook-q"><span class="strike">29,99€</span> / Monat</div>
-      <div class="sub">Für 'nen Trainingsplan und 'n bisschen Tracking.<br><strong>Echt jetzt?</strong></div>
+      <div class="hook-q"><span class="strike">$29.99</span> / month</div>
+      <div class="sub">For a workout plan and a bit of tracking.<br><strong>Seriously?</strong></div>
     </div>
 
     <!-- SCENE 2 · Pitch -->
     <div class="scene">
-      <div class="badge">Diese hier</div>
+      <div class="badge">This one</div>
       <div class="logo-mark">
         <span class="red">P</span><span class="dot">·</span><span class="green">P</span><span class="dot">·</span><span class="yellow">L</span>
       </div>
-      <div class="logo-claim">Komplett kostenlos.</div>
-      <div class="sub">Push, Pull, Legs Trainings-App. <strong>Ohne Login. Ohne Abo. Ohne Ads.</strong></div>
+      <div class="logo-claim">Completely free.</div>
+      <div class="sub">Push, Pull, Legs gym app. <strong>No login. No subscription. No ads.</strong></div>
     </div>
 
     <!-- SCENE 3 · Feature Sweep (Theme transitions during this scene) -->
     <div class="scene">
-      <div class="badge blue">Was drin ist</div>
-      <h1 class="headline">Alles, was du<br>brauchst.</h1>
+      <div class="badge blue">What's inside</div>
+      <h1 class="headline">Everything<br>you need.</h1>
       <div class="check-list">
-        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>3×, 6× oder eigener Plan</div>
-        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Sätze abhaken, Pausentimer läuft mit</div>
-        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Smarte Gewichts-Empfehlungen</div>
-        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Streak mit Freezes</div>
-        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Glute-Pläne für Frauen</div>
+        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>3×, 6× or your own plan</div>
+        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Tick sets, rest timer runs along</div>
+        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Smart weight suggestions</div>
+        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Streak with freezes</div>
+        <div class="check-row"><div class="check-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>Glute plans for women</div>
       </div>
-      <div class="sub">Plan, Tracking, Progression. <strong>In einer Hand.</strong></div>
+      <div class="sub">Plan, tracking, progression. <strong>All in one.</strong></div>
     </div>
 
     <!-- SCENE 4 · Theme + Language (Light) -->
     <div class="scene">
-      <div class="badge green">Brandneu</div>
-      <h1 class="headline">Light Mode.<br><span class="accent">DE / EN.</span></h1>
+      <div class="badge green">Brand new</div>
+      <h1 class="headline">Light mode.<br><span class="accent">DE / EN.</span></h1>
       <div class="device-frame">
         <div class="device-row">
           <div>
-            <div class="device-row-label">Light Mode</div>
-            <div class="device-row-desc">Heller Hintergrund</div>
+            <div class="device-row-label">Light mode</div>
+            <div class="device-row-desc">Bright background</div>
           </div>
           <div class="toggle-mock"></div>
         </div>
         <div class="device-row">
           <div>
-            <div class="device-row-label">Sprache</div>
-            <div class="device-row-desc">Language</div>
+            <div class="device-row-label">Language</div>
+            <div class="device-row-desc">Sprache</div>
           </div>
           <div class="lang-switch-mock">
             <div class="lang-switch-mock-btn">DE</div>
@@ -574,29 +575,29 @@
           </div>
         </div>
       </div>
-      <div class="sub">Die App passt sich an dich an. <strong>Nicht andersrum.</strong></div>
+      <div class="sub">The app adapts to you. <strong>Not the other way around.</strong></div>
     </div>
 
     <!-- SCENE 5 · Promise (Light → transitions to Dark by the end) -->
     <div class="scene">
-      <div class="badge">Versprechen</div>
+      <div class="badge">Promise</div>
       <div class="promise-list">
-        <div class="promise-row"><span class="neg">Abo</span></div>
+        <div class="promise-row"><span class="neg">Subscription</span></div>
         <div class="promise-row"><span class="neg">Ads</span></div>
         <div class="promise-row"><span class="neg">Login</span></div>
-        <div class="promise-row"><span class="pos">Komplett dir.</span></div>
+        <div class="promise-row"><span class="pos">All yours.</span></div>
       </div>
-      <div class="sub">Offline auf deinem Homebildschirm. <strong>Bleibt für immer kostenlos.</strong></div>
+      <div class="sub">Offline on your home screen. <strong>Free forever.</strong></div>
     </div>
 
-    <!-- SCENE 6 · CTA (Dark) -->
+    <!-- SCENE 6 · CTA (Dark, 9s) -->
     <div class="scene">
       <div class="flame-glow" aria-hidden="true"></div>
       <div class="cta-card">
         <div class="cta-mark">PPL</div>
-        <div class="cta-headline">Link in Bio.</div>
-        <div class="cta-sub">In 10 Sekunden auf dem Homebildschirm. Danach gehört sie dir.</div>
-        <div class="cta-box">Jetzt holen <span>→</span></div>
+        <div class="cta-headline">Link in bio.</div>
+        <div class="cta-sub">10 seconds to your home screen. After that, it's yours.</div>
+        <div class="cta-box">Get it now <span>→</span></div>
       </div>
     </div>
 
