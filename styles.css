@@ -790,21 +790,111 @@ html.light .stat.streak-active .stat-value {
   text-transform: uppercase;
 }
 
-.timer {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 16px;
-  letter-spacing: 0.05em;
-  color: var(--pack);
-  cursor: pointer;
-  user-select: none;
+.rest-timer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-radius: 18px 18px 0 0;
+  padding: 12px 20px calc(20px + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.45);
+  transform: translateY(110%);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
 }
 
-.timer.done { color: var(--pull); animation: pulse 0.6s ease infinite alternate; }
-.timer.hidden { display: none; }
+.rest-timer.open { transform: translateY(0); }
+.rest-timer.hidden { display: none; }
 
-@keyframes pulse {
-  from { opacity: 1; }
-  to { opacity: 0.5; }
+.rest-timer-handle {
+  width: 38px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  margin: 0 auto 10px;
+}
+
+.rest-timer-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.rest-timer-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--pack);
+}
+
+.rest-timer-ex {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60%;
+}
+
+.rest-timer-time {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 64px;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+  margin: 4px 0 12px;
+}
+
+.rest-timer.done .rest-timer-time {
+  color: var(--pull);
+  animation: rest-pulse 0.6s ease infinite alternate;
+}
+
+@keyframes rest-pulse {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0.6; transform: scale(1.04); }
+}
+
+.rest-timer-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.rest-timer-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.1s, filter 0.15s;
+}
+
+.rest-timer-btn.primary {
+  background: var(--pack);
+  border-color: var(--pack);
+  color: white;
+}
+
+.rest-timer-btn:active {
+  transform: scale(0.98);
+  filter: brightness(0.92);
 }
 
 .section-title {

@@ -33,6 +33,10 @@ const I18N = {
     'footer.progression.text': 'Gewicht steigern wenn oberes Wdh-Ziel in allen Sätzen sauber geschafft',
     'footer.pause.label': 'Pause',
     'footer.pause.text': '2 bis 3 min bei schweren Sätzen, 60 bis 90 s bei Isolation',
+    'rest.timer.label': 'Pause',
+    'rest.timer.skip': 'Überspringen',
+    'rest.timer.add': '+15 s',
+    'rest.timer.done': 'Los!',
     'footer.warmup.label': 'Aufwärmen',
     'footer.warmup.text': '2 leichte Sätze vor jeder Grundübung',
     'footer.deload.label': 'Deload',
@@ -207,6 +211,10 @@ const I18N = {
     'footer.progression.text': 'Add weight when you hit the top of the rep range cleanly across all sets',
     'footer.pause.label': 'Rest',
     'footer.pause.text': '2 to 3 min on heavy sets, 60 to 90 s on isolation',
+    'rest.timer.label': 'Rest',
+    'rest.timer.skip': 'Skip',
+    'rest.timer.add': '+15 s',
+    'rest.timer.done': 'Go!',
     'footer.warmup.label': 'Warm-up',
     'footer.warmup.text': '2 light sets before every compound lift',
     'footer.deload.label': 'Deload',
@@ -1126,51 +1134,77 @@ function initExReps() {
 
 let activeTimer = null;
 
-function startTimer(timerEl, seconds) {
+function getRestPanel() {
+  return {
+    panel: document.getElementById('rest-timer'),
+    timeEl: document.getElementById('rest-timer-time'),
+    exEl: document.getElementById('rest-timer-ex')
+  };
+}
+
+function fmtSeconds(remaining) {
+  const m = Math.floor(remaining / 60);
+  const s = remaining % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
+
+function startTimer(seconds, exName) {
+  const { panel, timeEl, exEl } = getRestPanel();
+  if (!panel || !timeEl) return;
   if (activeTimer) {
     clearInterval(activeTimer.interval);
-    activeTimer.el.classList.add('hidden');
-    activeTimer.el.classList.remove('done');
-    activeTimer.el.textContent = '';
+    if (activeTimer.dismissTimeout) clearTimeout(activeTimer.dismissTimeout);
   }
   let remaining = seconds;
-  const fmt = () => {
-    const m = Math.floor(remaining / 60);
-    const s = remaining % 60;
-    timerEl.textContent = `${m}:${String(s).padStart(2, '0')}`;
-  };
-  fmt();
-  timerEl.classList.remove('hidden', 'done');
+  exEl.textContent = exName || '';
+  timeEl.textContent = fmtSeconds(remaining);
+  panel.classList.remove('hidden', 'done');
+  panel.setAttribute('aria-hidden', 'false');
+  // force reflow so the slide-in transition runs even on rapid restarts
+  void panel.offsetWidth;
+  panel.classList.add('open');
+
   const interval = setInterval(() => {
     remaining--;
     if (remaining <= 0) {
       clearInterval(interval);
-      timerEl.textContent = 'Los!';
-      timerEl.classList.add('done');
+      timeEl.textContent = t('rest.timer.done');
+      panel.classList.add('done');
       if (navigator.vibrate) try { navigator.vibrate([200, 100, 200]); } catch (e) {}
-      setTimeout(() => {
-        if (activeTimer && activeTimer.interval === interval) {
-          activeTimer.el.classList.add('hidden');
-          activeTimer.el.classList.remove('done');
-          activeTimer.el.textContent = '';
-          activeTimer = null;
-        }
+      const dismissTimeout = setTimeout(() => {
+        if (activeTimer && activeTimer.interval === interval) stopTimer();
       }, 4000);
+      if (activeTimer) activeTimer.dismissTimeout = dismissTimeout;
     } else {
-      fmt();
+      timeEl.textContent = fmtSeconds(remaining);
     }
   }, 1000);
-  activeTimer = { el: timerEl, interval };
+  activeTimer = { interval, addTime: (s) => { remaining += s; timeEl.textContent = fmtSeconds(remaining); panel.classList.remove('done'); } };
 }
 
 function stopTimer() {
-  if (!activeTimer) return;
-  clearInterval(activeTimer.interval);
-  activeTimer.el.classList.add('hidden');
-  activeTimer.el.classList.remove('done');
-  activeTimer.el.textContent = '';
-  activeTimer = null;
+  const { panel, timeEl, exEl } = getRestPanel();
+  if (activeTimer) {
+    clearInterval(activeTimer.interval);
+    if (activeTimer.dismissTimeout) clearTimeout(activeTimer.dismissTimeout);
+    activeTimer = null;
+  }
+  if (!panel) return;
+  panel.classList.remove('open', 'done');
+  panel.setAttribute('aria-hidden', 'true');
+  setTimeout(() => {
+    if (!activeTimer) {
+      panel.classList.add('hidden');
+      if (timeEl) timeEl.textContent = '0:00';
+      if (exEl) exEl.textContent = '';
+    }
+  }, 280);
 }
+
+document.getElementById('rest-timer-skip')?.addEventListener('click', stopTimer);
+document.getElementById('rest-timer-add')?.addEventListener('click', () => {
+  if (activeTimer) activeTimer.addTime(15);
+});
 
 function recordSessionIfDayComplete(dayEl, freq) {
   const exs = dayEl.querySelectorAll('.ex');
@@ -1230,11 +1264,7 @@ function renderSets() {
     repsEl.innerHTML = `
       <div class="sets">${circles}</div>
       <div class="reps-label">${escapeHtml(label)}</div>
-      <div class="timer hidden"></div>
     `;
-
-    const timerEl = repsEl.querySelector('.timer');
-    timerEl.addEventListener('click', e => { e.stopPropagation(); stopTimer(); });
 
     repsEl.querySelectorAll('.set').forEach(btn => {
       btn.addEventListener('click', e => {
@@ -1247,7 +1277,7 @@ function renderSets() {
         btn.classList.toggle('done', s.sets[key][idx]);
         if (s.sets[key][idx]) {
           const def = EXERCISES[exId] || {};
-          startTimer(timerEl, def.rest || 90);
+          startTimer(def.rest || 90, nameEl.textContent);
           recordSessionIfDayComplete(dayEl, freq);
         }
       });
