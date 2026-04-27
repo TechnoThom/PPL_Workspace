@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PPL · Feature-Poll</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #151515;
+    --surface-2: #1f1f1f;
+    --border: #2a2a2a;
+    --text: #f5f5f5;
+    --text-dim: #888;
+    --push: #ff3b30;
+    --pull: #30d158;
+    --pack: #0a84ff;
+    --legs: #ffcc00;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: #000;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    overflow: hidden;
+    height: 100%;
+    height: 100dvh;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .story {
+    position: relative;
+    background: var(--bg);
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: min(100vw, calc(100vh * 9 / 19.5));
+    overflow: hidden;
+  }
+
+  /* Subtiler animierter Background-Grid */
+  .story::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(255, 59, 48, 0.10), transparent 55%),
+      radial-gradient(ellipse at 80% 90%, rgba(48, 209, 88, 0.10), transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .progress {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    left: calc(env(safe-area-inset-left, 0px) + 16px);
+    right: calc(env(safe-area-inset-right, 0px) + 16px);
+    display: flex;
+    gap: 4px;
+    z-index: 10;
+  }
+
+  .progress-seg {
+    flex: 1;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .progress-seg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--text);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation-duration: 13s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  /* Slide 1: 0-30.77% (4s) · Slide 2: 30.77-69.23% (5s) · Slide 3: 69.23-100% (4s) */
+  .progress-seg:nth-child(1)::after { animation-name: p1; }
+  .progress-seg:nth-child(2)::after { animation-name: p2; }
+  .progress-seg:nth-child(3)::after { animation-name: p3; }
+
+  @keyframes p1 { 0% { transform: scaleX(0); } 30.77% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p2 { 0%, 30.77% { transform: scaleX(0); } 69.23% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p3 { 0%, 69.23% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 48px)
+      calc(env(safe-area-inset-right, 0px) + 24px)
+      calc(env(safe-area-inset-bottom, 0px) + 60px)
+      calc(env(safe-area-inset-left, 0px) + 24px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    animation-duration: 13s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .scene:nth-child(2) { animation-name: s1; }
+  .scene:nth-child(3) { animation-name: s2; }
+  .scene:nth-child(4) { animation-name: s3; }
+
+  /* Scene 1: Hook (0-30.77%) */
+  @keyframes s1 {
+    0% { opacity: 0; transform: scale(0.96); }
+    3% { opacity: 1; transform: scale(1); }
+    27% { opacity: 1; transform: scale(1); }
+    30.77% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  /* Scene 2: Vergleich (30.77-69.23%) */
+  @keyframes s2 {
+    0%, 30.77% { opacity: 0; transform: scale(0.96); }
+    33% { opacity: 1; transform: scale(1); }
+    66% { opacity: 1; transform: scale(1); }
+    69.23% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  /* Scene 3: CTA (69.23-100%) */
+  @keyframes s3 {
+    0%, 69.23% { opacity: 0; transform: scale(0.96); }
+    72% { opacity: 1; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* ====== Scene 1: Hook ====== */
+  .hook-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.4em;
+    color: var(--push);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    animation: blink 1.6s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+  }
+
+  .hook-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 16vw, 100px);
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+    margin-bottom: 22px;
+  }
+
+  .hook-title .punch { color: var(--push); }
+
+  .hook-sub {
+    font-size: 16px;
+    color: var(--text-dim);
+    line-height: 1.55;
+    max-width: 380px;
+    margin-bottom: 26px;
+  }
+
+  .hook-sub strong { color: var(--text); font-weight: 500; }
+
+  .hook-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .hook-brand .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--push);
+    box-shadow: 0 0 10px var(--push);
+  }
+
+  /* ====== Scene 2: Vergleich ====== */
+  .compare-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 22px;
+  }
+
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    position: relative;
+    margin-bottom: 24px;
+  }
+
+  .opt {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 16px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .opt.left {
+    border-color: var(--push);
+    box-shadow: 0 0 24px rgba(255, 59, 48, 0.18);
+  }
+  .opt.right {
+    border-color: var(--pull);
+    box-shadow: 0 0 24px rgba(48, 209, 88, 0.18);
+  }
+
+  .opt::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 60%, var(--accent-glow, transparent));
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .opt.left { --accent-glow: rgba(255, 59, 48, 0.18); }
+  .opt.right { --accent-glow: rgba(48, 209, 88, 0.18); }
+
+  .opt-icon {
+    font-size: 56px;
+    line-height: 1;
+    margin-bottom: 14px;
+    filter: drop-shadow(0 0 8px var(--icon-glow, transparent));
+  }
+  .opt.left .opt-icon { --icon-glow: rgba(255, 59, 48, 0.45); }
+  .opt.right .opt-icon { --icon-glow: rgba(48, 209, 88, 0.45); }
+
+  .opt-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .opt.left .opt-title { color: var(--push); }
+  .opt.right .opt-title { color: var(--pull); }
+
+  .opt-desc {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .opt-desc strong { color: var(--text); font-weight: 500; }
+
+  .vs-bubble {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    z-index: 2;
+    box-shadow: 0 0 0 4px var(--bg);
+  }
+
+  .compare-question {
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 8vw, 44px);
+    line-height: 1.05;
+    letter-spacing: 0.02em;
+  }
+
+  .compare-cta {
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-top: 14px;
+  }
+
+  /* ====== Scene 3: CTA / Slider Mockup ====== */
+  .cta-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+
+  .cta-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 14vw, 84px);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .cta-title .accent { color: var(--push); }
+
+  .slider-mock {
+    background: rgba(20, 20, 20, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 22px;
+    padding: 18px 18px 22px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  .slider-question {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 14px;
+  }
+
+  .slider-track {
+    position: relative;
+    height: 38px;
+    border-radius: 19px;
+    background: linear-gradient(90deg, var(--push) 0%, var(--push) 45%, var(--pull) 55%, var(--pull) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+  }
+
+  .slider-end {
+    font-size: 22px;
+    line-height: 1;
+    z-index: 2;
+  }
+
+  .slider-knob {
+    position: absolute;
+    top: 50%;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid var(--bg);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    transform: translate(-50%, -50%);
+    animation: knob-drag 4s ease-in-out infinite;
+    z-index: 3;
+  }
+
+  @keyframes knob-drag {
+    0% { left: 18%; }
+    25% { left: 72%; }
+    50% { left: 35%; }
+    75% { left: 60%; }
+    100% { left: 18%; }
+  }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.05em;
+  }
+
+  .slider-labels .left { color: var(--push); }
+  .slider-labels .right { color: var(--pull); }
+
+  .cta-foot {
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-top: 22px;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+  }
+
+  .cta-arrow {
+    text-align: center;
+    font-size: 24px;
+    margin-top: 6px;
+    animation: bob 1.2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  /* Sicherheits-Bereich: keine Inhalte hinter Insta-UI (oben/unten) */
+  @media (max-height: 700px) {
+    .hook-title { font-size: clamp(44px, 13vw, 72px); }
+    .cta-title { font-size: clamp(40px, 12vw, 64px); }
+  }
+</style>
+</head>
+<body>
+<div class="story">
+  <div class="progress">
+    <div class="progress-seg"></div>
+    <div class="progress-seg"></div>
+    <div class="progress-seg"></div>
+  </div>
+
+  <!-- Scene 1: Hook -->
+  <div class="scene">
+    <div class="hook-eyebrow">● Update Time</div>
+    <div class="hook-title">
+      Was bauen<br>
+      wir als <span class="punch">Nächstes?</span>
+    </div>
+    <div class="hook-sub">
+      Du entscheidest, welches Tool zuerst in die App kommt. <strong>Welches bringt dich eher ins Gym?</strong>
+    </div>
+    <div class="hook-brand">
+      <span class="dot"></span>
+      PPL · Push Pull Legs
+    </div>
+  </div>
+
+  <!-- Scene 2: Vergleich -->
+  <div class="scene">
+    <div class="compare-eyebrow">Option A · vs · Option B</div>
+    <div class="compare-grid">
+      <div class="opt left">
+        <div class="opt-icon">🔥</div>
+        <div class="opt-title">30-Day Challenge</div>
+        <div class="opt-desc">
+          Ein <strong>fester Plan</strong>, der dich 1 Monat lang pusht. Kein Ausreden, kein Denken. Einfach durchziehen.
+        </div>
+      </div>
+      <div class="opt right">
+        <div class="opt-icon">📈</div>
+        <div class="opt-title">Progress Bars</div>
+        <div class="opt-desc">
+          Sieh deine <strong>Kraftsteigerung</strong> Woche für Woche. Pro Übung. Schwarz auf weiß.
+        </div>
+      </div>
+      <div class="vs-bubble">VS</div>
+    </div>
+    <div class="compare-question">
+      Plan, der dich pusht.<br>
+      Oder Daten, die dich pushen?
+    </div>
+    <div class="compare-cta">→ Stimm jetzt ab</div>
+  </div>
+
+  <!-- Scene 3: Slider-Mockup + CTA -->
+  <div class="scene">
+    <div class="cta-eyebrow">● Slider unten bewegen</div>
+    <div class="cta-title">
+      Stimm <span class="accent">ab</span>
+    </div>
+    <div class="slider-mock">
+      <div class="slider-question">Welches Feature zuerst?</div>
+      <div class="slider-track">
+        <span class="slider-end">🔥</span>
+        <span class="slider-end">📈</span>
+        <div class="slider-knob">💪</div>
+      </div>
+      <div class="slider-labels">
+        <span class="left">30-Day</span>
+        <span class="right">Progress</span>
+      </div>
+    </div>
+    <div class="cta-foot">Schieb den Slider</div>
+    <div class="cta-arrow">↓</div>
+  </div>
+</div>
+</body>
+</html>
