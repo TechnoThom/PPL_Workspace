@@ -85,22 +85,22 @@
     background: var(--text);
     transform: scaleX(0);
     transform-origin: left;
-    animation-duration: 15s;
+    animation-duration: 20s;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
   }
 
-  /* 3 Slides · Total 15s
-     S1 Entry      0      → 26.67%  (4s)
-     S2 Vergleich  26.67% → 60%     (5s)
-     S3 Slider     60%    → 100%    (6s · "länger") */
+  /* 3 Slides · Total 20s · Slider dominiert für Voting-Zeit
+     S1 Entry      0    → 17.5%  (3.5s)
+     S2 Vergleich  17.5 → 42.5%  (5s)
+     S3 Slider     42.5 → 100%   (11.5s · genug Zeit zum Abstimmen) */
   .progress-seg:nth-child(1)::after { animation-name: p1; }
   .progress-seg:nth-child(2)::after { animation-name: p2; }
   .progress-seg:nth-child(3)::after { animation-name: p3; }
 
-  @keyframes p1 { 0% { transform: scaleX(0); } 26.67% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
-  @keyframes p2 { 0%, 26.67% { transform: scaleX(0); } 60% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
-  @keyframes p3 { 0%, 60% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+  @keyframes p1 { 0% { transform: scaleX(0); } 17.5% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p2 { 0%, 17.5% { transform: scaleX(0); } 42.5% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p3 { 0%, 42.5% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
 
   .scene {
     position: absolute;
@@ -114,7 +114,7 @@
     flex-direction: column;
     justify-content: center;
     opacity: 0;
-    animation-duration: 15s;
+    animation-duration: 20s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
     overflow: hidden;
@@ -125,26 +125,26 @@
   .scene:nth-child(3) { animation-name: s2; }
   .scene:nth-child(4) { animation-name: s3; }
 
-  /* Scene 1: Entry (0% → 26.67%) */
+  /* Scene 1: Entry (0% → 17.5%) */
   @keyframes s1 {
     0% { opacity: 0; transform: scale(0.96); }
-    3% { opacity: 1; transform: scale(1); }
-    23% { opacity: 1; transform: scale(1); }
-    26.67% { opacity: 0; transform: scale(1.03); }
+    2% { opacity: 1; transform: scale(1); }
+    15% { opacity: 1; transform: scale(1); }
+    17.5% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
-  /* Scene 2: Vergleich (26.67% → 60%) */
+  /* Scene 2: Vergleich (17.5% → 42.5%) */
   @keyframes s2 {
-    0%, 26.67% { opacity: 0; transform: scale(0.96); }
-    29% { opacity: 1; transform: scale(1); }
-    57% { opacity: 1; transform: scale(1); }
-    60% { opacity: 0; transform: scale(1.03); }
+    0%, 17.5% { opacity: 0; transform: scale(0.96); }
+    20% { opacity: 1; transform: scale(1); }
+    40% { opacity: 1; transform: scale(1); }
+    42.5% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
-  /* Scene 3: Slider · länger (60% → 100%) */
+  /* Scene 3: Slider · dominiert (42.5% → 100%) */
   @keyframes s3 {
-    0%, 60% { opacity: 0; transform: scale(0.96); }
-    63% { opacity: 1; transform: scale(1); }
+    0%, 42.5% { opacity: 0; transform: scale(0.96); }
+    45% { opacity: 1; transform: scale(1); }
     100% { opacity: 1; transform: scale(1); }
   }
 
@@ -424,17 +424,16 @@
     justify-content: center;
     font-size: 22px;
     transform: translate(-50%, -50%);
-    animation: knob-drag 6s ease-in-out infinite;
+    animation: knob-drag 5.5s ease-in-out infinite;
     z-index: 3;
   }
 
   @keyframes knob-drag {
     0% { left: 18%; }
-    20% { left: 78%; }
-    40% { left: 32%; }
-    60% { left: 68%; }
-    80% { left: 28%; }
-    100% { left: 78%; }
+    25% { left: 78%; }
+    50% { left: 30%; }
+    75% { left: 70%; }
+    100% { left: 18%; }
   }
 
   .slider-labels {
