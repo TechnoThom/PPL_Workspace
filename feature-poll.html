@@ -48,7 +48,6 @@
     overflow: hidden;
   }
 
-  /* Subtiler animierter Background-Grid */
   .story::before {
     content: '';
     position: absolute;
@@ -86,19 +85,25 @@
     background: var(--text);
     transform: scaleX(0);
     transform-origin: left;
-    animation-duration: 13s;
+    animation-duration: 17s;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
   }
 
-  /* Slide 1: 0-30.77% (4s) · Slide 2: 30.77-69.23% (5s) · Slide 3: 69.23-100% (4s) */
+  /* 4 Slides · Total 17s
+     S1 Entry      0      → 17.65%  (3s)
+     S2 Hook       17.65% → 35.29%  (3s)
+     S3 Vergleich  35.29% → 64.71%  (5s)
+     S4 Slider     64.71% → 100%    (6s · "länger") */
   .progress-seg:nth-child(1)::after { animation-name: p1; }
   .progress-seg:nth-child(2)::after { animation-name: p2; }
   .progress-seg:nth-child(3)::after { animation-name: p3; }
+  .progress-seg:nth-child(4)::after { animation-name: p4; }
 
-  @keyframes p1 { 0% { transform: scaleX(0); } 30.77% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
-  @keyframes p2 { 0%, 30.77% { transform: scaleX(0); } 69.23% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
-  @keyframes p3 { 0%, 69.23% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+  @keyframes p1 { 0% { transform: scaleX(0); } 17.65% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p2 { 0%, 17.65% { transform: scaleX(0); } 35.29% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p3 { 0%, 35.29% { transform: scaleX(0); } 64.71% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p4 { 0%, 64.71% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
 
   .scene {
     position: absolute;
@@ -112,7 +117,7 @@
     flex-direction: column;
     justify-content: center;
     opacity: 0;
-    animation-duration: 13s;
+    animation-duration: 17s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
     overflow: hidden;
@@ -122,32 +127,41 @@
   .scene:nth-child(2) { animation-name: s1; }
   .scene:nth-child(3) { animation-name: s2; }
   .scene:nth-child(4) { animation-name: s3; }
+  .scene:nth-child(5) { animation-name: s4; }
 
-  /* Scene 1: Hook (0-30.77%) */
+  /* Scene 1: Entry (0% – 17.65%) */
   @keyframes s1 {
     0% { opacity: 0; transform: scale(0.96); }
     3% { opacity: 1; transform: scale(1); }
-    27% { opacity: 1; transform: scale(1); }
-    30.77% { opacity: 0; transform: scale(1.03); }
+    14% { opacity: 1; transform: scale(1); }
+    17.65% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
-  /* Scene 2: Vergleich (30.77-69.23%) */
+  /* Scene 2: Hook (17.65% – 35.29%) */
   @keyframes s2 {
-    0%, 30.77% { opacity: 0; transform: scale(0.96); }
-    33% { opacity: 1; transform: scale(1); }
-    66% { opacity: 1; transform: scale(1); }
-    69.23% { opacity: 0; transform: scale(1.03); }
+    0%, 17.65% { opacity: 0; transform: scale(0.96); }
+    20% { opacity: 1; transform: scale(1); }
+    32% { opacity: 1; transform: scale(1); }
+    35.29% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
-  /* Scene 3: CTA (69.23-100%) */
+  /* Scene 3: Vergleich (35.29% – 64.71%) */
   @keyframes s3 {
-    0%, 69.23% { opacity: 0; transform: scale(0.96); }
-    72% { opacity: 1; transform: scale(1); }
+    0%, 35.29% { opacity: 0; transform: scale(0.96); }
+    37.5% { opacity: 1; transform: scale(1); }
+    62% { opacity: 1; transform: scale(1); }
+    64.71% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 0; }
+  }
+  /* Scene 4: Slider · länger (64.71% – 100%) */
+  @keyframes s4 {
+    0%, 64.71% { opacity: 0; transform: scale(0.96); }
+    67% { opacity: 1; transform: scale(1); }
     100% { opacity: 1; transform: scale(1); }
   }
 
-  /* ====== Scene 1: Hook ====== */
-  .hook-eyebrow {
+  /* ====== Scene 1: Emotional Entry ====== */
+  .entry-eyebrow {
     font-size: 12px;
     letter-spacing: 0.4em;
     color: var(--push);
@@ -161,27 +175,27 @@
     50% { opacity: 0.55; }
   }
 
-  .hook-title {
+  .entry-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(56px, 16vw, 100px);
+    font-size: clamp(60px, 17vw, 110px);
     line-height: 0.92;
     letter-spacing: 0.02em;
     margin-bottom: 22px;
   }
 
-  .hook-title .punch { color: var(--push); }
+  .entry-title .punch { color: var(--push); }
 
-  .hook-sub {
+  .entry-sub {
     font-size: 16px;
     color: var(--text-dim);
     line-height: 1.55;
     max-width: 380px;
-    margin-bottom: 26px;
+    margin-bottom: 22px;
   }
 
-  .hook-sub strong { color: var(--text); font-weight: 500; }
+  .entry-sub strong { color: var(--text); font-weight: 500; }
 
-  .hook-brand {
+  .entry-tag {
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -191,7 +205,7 @@
     text-transform: uppercase;
   }
 
-  .hook-brand .dot {
+  .entry-tag .dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
@@ -199,7 +213,35 @@
     box-shadow: 0 0 10px var(--push);
   }
 
-  /* ====== Scene 2: Vergleich ====== */
+  /* ====== Scene 2: Hook ====== */
+  .hook-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.4em;
+    color: var(--pack);
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+
+  .hook-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(54px, 16vw, 96px);
+    line-height: 0.94;
+    letter-spacing: 0.02em;
+    margin-bottom: 20px;
+  }
+
+  .hook-title .accent { color: var(--pack); }
+
+  .hook-sub {
+    font-size: 15px;
+    color: var(--text-dim);
+    line-height: 1.55;
+    max-width: 360px;
+  }
+
+  .hook-sub strong { color: var(--text); font-weight: 500; }
+
+  /* ====== Scene 3: Vergleich ====== */
   .compare-eyebrow {
     font-size: 11px;
     letter-spacing: 0.3em;
@@ -221,7 +263,7 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 22px 16px 20px;
+    padding: 22px 14px 20px;
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -248,23 +290,58 @@
   .opt.right { --accent-glow: rgba(48, 209, 88, 0.18); }
 
   .opt-icon {
-    font-size: 56px;
+    font-size: 48px;
     line-height: 1;
-    margin-bottom: 14px;
+    margin-bottom: 6px;
     filter: drop-shadow(0 0 8px var(--icon-glow, transparent));
   }
   .opt.left .opt-icon { --icon-glow: rgba(255, 59, 48, 0.45); }
   .opt.right .opt-icon { --icon-glow: rgba(48, 209, 88, 0.45); }
 
-  .opt-title {
+  .opt-icons-pair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 38px;
+    line-height: 1;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 8px rgba(255, 59, 48, 0.45));
+  }
+
+  .opt-icons-pair .plus {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 26px;
+    color: var(--push);
+    opacity: 0.8;
+  }
+
+  .opt-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
     letter-spacing: 0.04em;
     line-height: 1;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
   .opt.left .opt-title { color: var(--push); }
   .opt.right .opt-title { color: var(--pull); }
+
+  .opt-tag {
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text);
+    background: rgba(255, 59, 48, 0.18);
+    border: 1px solid var(--push);
+    padding: 3px 8px;
+    border-radius: 999px;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  .opt.right .opt-tag {
+    background: rgba(48, 209, 88, 0.18);
+    border-color: var(--pull);
+  }
 
   .opt-desc {
     font-size: 11.5px;
@@ -298,7 +375,7 @@
   .compare-question {
     text-align: center;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(28px, 8vw, 44px);
+    font-size: clamp(26px, 7.5vw, 40px);
     line-height: 1.05;
     letter-spacing: 0.02em;
   }
@@ -312,23 +389,23 @@
     margin-top: 14px;
   }
 
-  /* ====== Scene 3: CTA / Slider Mockup ====== */
+  /* ====== Scene 4: Slider · länger ====== */
   .cta-eyebrow {
     font-size: 11px;
     letter-spacing: 0.3em;
     color: var(--text-dim);
     text-transform: uppercase;
     text-align: center;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
   }
 
   .cta-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(48px, 14vw, 84px);
+    font-size: clamp(46px, 14vw, 80px);
     line-height: 0.95;
     letter-spacing: 0.02em;
     text-align: center;
-    margin-bottom: 28px;
+    margin-bottom: 26px;
   }
 
   .cta-title .accent { color: var(--push); }
@@ -338,7 +415,7 @@
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 22px;
-    padding: 18px 18px 22px;
+    padding: 20px 18px 24px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
   }
 
@@ -347,13 +424,13 @@
     font-size: 13px;
     color: var(--text);
     text-align: center;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .slider-track {
     position: relative;
-    height: 38px;
-    border-radius: 19px;
+    height: 40px;
+    border-radius: 20px;
     background: linear-gradient(90deg, var(--push) 0%, var(--push) 45%, var(--pull) 55%, var(--pull) 100%);
     display: flex;
     align-items: center;
@@ -370,8 +447,8 @@
   .slider-knob {
     position: absolute;
     top: 50%;
-    width: 46px;
-    height: 46px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     background: white;
     border: 3px solid var(--bg);
@@ -381,22 +458,24 @@
     justify-content: center;
     font-size: 22px;
     transform: translate(-50%, -50%);
-    animation: knob-drag 4s ease-in-out infinite;
+    /* Animation läuft 6s pro Cycle, Slide hält 6s sichtbar → 1 voller Pendel-Cycle */
+    animation: knob-drag 6s ease-in-out infinite;
     z-index: 3;
   }
 
   @keyframes knob-drag {
     0% { left: 18%; }
-    25% { left: 72%; }
-    50% { left: 35%; }
-    75% { left: 60%; }
-    100% { left: 18%; }
+    20% { left: 78%; }
+    40% { left: 32%; }
+    60% { left: 68%; }
+    80% { left: 28%; }
+    100% { left: 78%; }
   }
 
   .slider-labels {
     display: flex;
     justify-content: space-between;
-    margin-top: 12px;
+    margin-top: 14px;
     font-family: 'Bebas Neue', sans-serif;
     font-size: 16px;
     letter-spacing: 0.05em;
@@ -405,13 +484,23 @@
   .slider-labels .left { color: var(--push); }
   .slider-labels .right { color: var(--pull); }
 
+  .slider-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
   .cta-foot {
     text-align: center;
     font-size: 12px;
     letter-spacing: 0.25em;
     color: var(--text-dim);
     text-transform: uppercase;
-    margin-top: 22px;
+    margin-top: 26px;
     animation: pulse 1.6s ease-in-out infinite;
   }
 
@@ -432,10 +521,10 @@
     50% { transform: translateY(-6px); }
   }
 
-  /* Sicherheits-Bereich: keine Inhalte hinter Insta-UI (oben/unten) */
   @media (max-height: 700px) {
+    .entry-title { font-size: clamp(48px, 14vw, 80px); }
     .hook-title { font-size: clamp(44px, 13vw, 72px); }
-    .cta-title { font-size: clamp(40px, 12vw, 64px); }
+    .cta-title { font-size: clamp(38px, 12vw, 60px); }
   }
 </style>
 </head>
@@ -445,40 +534,59 @@
     <div class="progress-seg"></div>
     <div class="progress-seg"></div>
     <div class="progress-seg"></div>
+    <div class="progress-seg"></div>
   </div>
 
-  <!-- Scene 1: Hook -->
+  <!-- Scene 1: Emotional Entry -->
   <div class="scene">
-    <div class="hook-eyebrow">● Update Time</div>
-    <div class="hook-title">
-      Was bauen<br>
-      wir als <span class="punch">Nächstes?</span>
+    <div class="entry-eyebrow">● Hey du.</div>
+    <div class="entry-title">
+      Du machst<br>
+      das jeden Tag.<br>
+      <span class="punch">Stark.</span>
     </div>
-    <div class="hook-sub">
-      Du entscheidest, welches Tool zuerst in die App kommt. <strong>Welches bringt dich eher ins Gym?</strong>
+    <div class="entry-sub">
+      Sag mir, was die App noch besser für dich machen kann. <strong>Du entscheidest, was als Nächstes kommt.</strong>
     </div>
-    <div class="hook-brand">
+    <div class="entry-tag">
       <span class="dot"></span>
       PPL · Push Pull Legs
     </div>
   </div>
 
-  <!-- Scene 2: Vergleich -->
+  <!-- Scene 2: Hook -->
+  <div class="scene">
+    <div class="hook-eyebrow">● Update Time</div>
+    <div class="hook-title">
+      Welches Tool<br>
+      bringt dich<br>
+      eher ins <span class="accent">Gym?</span>
+    </div>
+    <div class="hook-sub">
+      Zwei Features stehen bereit. Eins davon kommt zuerst. <strong>Deine Stimme zählt.</strong>
+    </div>
+  </div>
+
+  <!-- Scene 3: Vergleich -->
   <div class="scene">
     <div class="compare-eyebrow">Option A · vs · Option B</div>
     <div class="compare-grid">
       <div class="opt left">
-        <div class="opt-icon">🔥</div>
+        <div class="opt-icons-pair">
+          <span>🚺</span><span class="plus">+</span><span>🚹</span>
+        </div>
         <div class="opt-title">30-Day Challenge</div>
+        <div class="opt-tag">Frauen + Männer Plan</div>
         <div class="opt-desc">
-          Ein <strong>fester Plan</strong>, der dich 1 Monat lang pusht. Kein Ausreden, kein Denken. Einfach durchziehen.
+          Zwei <strong>geführte Pläne</strong>, je 30 Tage. Frauen: Glutes und Core. Männer: Kraft und Volumen. Du wählst, durchziehen.
         </div>
       </div>
       <div class="opt right">
         <div class="opt-icon">📈</div>
         <div class="opt-title">Progress Bars</div>
+        <div class="opt-tag">Daten und Wachstum</div>
         <div class="opt-desc">
-          Sieh deine <strong>Kraftsteigerung</strong> Woche für Woche. Pro Übung. Schwarz auf weiß.
+          Sieh deine <strong>Kraftsteigerung</strong> Woche für Woche. Pro Übung, schwarz auf weiß. Beweis, dass du stärker wirst.
         </div>
       </div>
       <div class="vs-bubble">VS</div>
@@ -490,7 +598,7 @@
     <div class="compare-cta">→ Stimm jetzt ab</div>
   </div>
 
-  <!-- Scene 3: Slider-Mockup + CTA -->
+  <!-- Scene 4: Slider · länger -->
   <div class="scene">
     <div class="cta-eyebrow">● Slider unten bewegen</div>
     <div class="cta-title">
@@ -506,6 +614,10 @@
       <div class="slider-labels">
         <span class="left">30-Day</span>
         <span class="right">Progress</span>
+      </div>
+      <div class="slider-meta">
+        <span>Frauen + Männer</span>
+        <span>Kraft-Tracking</span>
       </div>
     </div>
     <div class="cta-foot">Schieb den Slider</div>
