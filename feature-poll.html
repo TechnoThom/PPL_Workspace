@@ -85,25 +85,22 @@
     background: var(--text);
     transform: scaleX(0);
     transform-origin: left;
-    animation-duration: 17s;
+    animation-duration: 15s;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
   }
 
-  /* 4 Slides · Total 17s
-     S1 Entry      0      → 17.65%  (3s)
-     S2 Hook       17.65% → 35.29%  (3s)
-     S3 Vergleich  35.29% → 64.71%  (5s)
-     S4 Slider     64.71% → 100%    (6s · "länger") */
+  /* 3 Slides · Total 15s
+     S1 Entry      0      → 26.67%  (4s)
+     S2 Vergleich  26.67% → 60%     (5s)
+     S3 Slider     60%    → 100%    (6s · "länger") */
   .progress-seg:nth-child(1)::after { animation-name: p1; }
   .progress-seg:nth-child(2)::after { animation-name: p2; }
   .progress-seg:nth-child(3)::after { animation-name: p3; }
-  .progress-seg:nth-child(4)::after { animation-name: p4; }
 
-  @keyframes p1 { 0% { transform: scaleX(0); } 17.65% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
-  @keyframes p2 { 0%, 17.65% { transform: scaleX(0); } 35.29% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
-  @keyframes p3 { 0%, 35.29% { transform: scaleX(0); } 64.71% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
-  @keyframes p4 { 0%, 64.71% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+  @keyframes p1 { 0% { transform: scaleX(0); } 26.67% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p2 { 0%, 26.67% { transform: scaleX(0); } 60% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes p3 { 0%, 60% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
 
   .scene {
     position: absolute;
@@ -111,13 +108,13 @@
     padding:
       calc(env(safe-area-inset-top, 0px) + 48px)
       calc(env(safe-area-inset-right, 0px) + 24px)
-      calc(env(safe-area-inset-bottom, 0px) + 60px)
+      calc(env(safe-area-inset-bottom, 0px) + 80px)
       calc(env(safe-area-inset-left, 0px) + 24px);
     display: flex;
     flex-direction: column;
     justify-content: center;
     opacity: 0;
-    animation-duration: 17s;
+    animation-duration: 15s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
     overflow: hidden;
@@ -127,36 +124,27 @@
   .scene:nth-child(2) { animation-name: s1; }
   .scene:nth-child(3) { animation-name: s2; }
   .scene:nth-child(4) { animation-name: s3; }
-  .scene:nth-child(5) { animation-name: s4; }
 
-  /* Scene 1: Entry (0% – 17.65%) */
+  /* Scene 1: Entry (0% → 26.67%) */
   @keyframes s1 {
     0% { opacity: 0; transform: scale(0.96); }
     3% { opacity: 1; transform: scale(1); }
-    14% { opacity: 1; transform: scale(1); }
-    17.65% { opacity: 0; transform: scale(1.03); }
+    23% { opacity: 1; transform: scale(1); }
+    26.67% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
-  /* Scene 2: Hook (17.65% – 35.29%) */
+  /* Scene 2: Vergleich (26.67% → 60%) */
   @keyframes s2 {
-    0%, 17.65% { opacity: 0; transform: scale(0.96); }
-    20% { opacity: 1; transform: scale(1); }
-    32% { opacity: 1; transform: scale(1); }
-    35.29% { opacity: 0; transform: scale(1.03); }
+    0%, 26.67% { opacity: 0; transform: scale(0.96); }
+    29% { opacity: 1; transform: scale(1); }
+    57% { opacity: 1; transform: scale(1); }
+    60% { opacity: 0; transform: scale(1.03); }
     100% { opacity: 0; }
   }
-  /* Scene 3: Vergleich (35.29% – 64.71%) */
+  /* Scene 3: Slider · länger (60% → 100%) */
   @keyframes s3 {
-    0%, 35.29% { opacity: 0; transform: scale(0.96); }
-    37.5% { opacity: 1; transform: scale(1); }
-    62% { opacity: 1; transform: scale(1); }
-    64.71% { opacity: 0; transform: scale(1.03); }
-    100% { opacity: 0; }
-  }
-  /* Scene 4: Slider · länger (64.71% – 100%) */
-  @keyframes s4 {
-    0%, 64.71% { opacity: 0; transform: scale(0.96); }
-    67% { opacity: 1; transform: scale(1); }
+    0%, 60% { opacity: 0; transform: scale(0.96); }
+    63% { opacity: 1; transform: scale(1); }
     100% { opacity: 1; transform: scale(1); }
   }
 
@@ -167,12 +155,6 @@
     color: var(--push);
     text-transform: uppercase;
     margin-bottom: 24px;
-    animation: blink 1.6s ease-in-out infinite;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.55; }
   }
 
   .entry-title {
@@ -190,58 +172,22 @@
     color: var(--text-dim);
     line-height: 1.55;
     max-width: 380px;
-    margin-bottom: 22px;
+    margin-bottom: 26px;
   }
 
   .entry-sub strong { color: var(--text); font-weight: 500; }
 
   .entry-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 11px;
-    letter-spacing: 0.3em;
-    color: var(--text-dim);
-    text-transform: uppercase;
-  }
-
-  .entry-tag .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--push);
-    box-shadow: 0 0 10px var(--push);
-  }
-
-  /* ====== Scene 2: Hook ====== */
-  .hook-eyebrow {
-    font-size: 12px;
-    letter-spacing: 0.4em;
-    color: var(--pack);
-    text-transform: uppercase;
-    margin-bottom: 22px;
-  }
-
-  .hook-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(54px, 16vw, 96px);
-    line-height: 0.94;
-    letter-spacing: 0.02em;
-    margin-bottom: 20px;
-  }
-
-  .hook-title .accent { color: var(--pack); }
-
-  .hook-sub {
-    font-size: 15px;
+    font-size: 18px;
+    letter-spacing: 0.18em;
     color: var(--text-dim);
-    line-height: 1.55;
-    max-width: 360px;
+    text-transform: uppercase;
   }
 
-  .hook-sub strong { color: var(--text); font-weight: 500; }
+  .entry-tag .brand { color: var(--text); }
 
-  /* ====== Scene 3: Vergleich ====== */
+  /* ====== Scene 2: Vergleich ====== */
   .compare-eyebrow {
     font-size: 11px;
     letter-spacing: 0.3em;
@@ -389,7 +335,14 @@
     margin-top: 14px;
   }
 
-  /* ====== Scene 4: Slider · länger ====== */
+  /* ====== Scene 3: Slider · länger ======
+     Inhalt nach oben gerückt, untere Hälfte bleibt frei für den
+     IG-Slider-Sticker, damit nichts überlappt. */
+  .scene.slider-scene {
+    justify-content: flex-start;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 80px);
+  }
+
   .cta-eyebrow {
     font-size: 11px;
     letter-spacing: 0.3em;
@@ -405,10 +358,23 @@
     line-height: 0.95;
     letter-spacing: 0.02em;
     text-align: center;
-    margin-bottom: 26px;
+    margin-bottom: 8px;
   }
 
   .cta-title .accent { color: var(--push); }
+
+  .cta-motivator {
+    font-size: 13px;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 26px;
+    font-weight: 500;
+  }
+
+  .cta-motivator strong {
+    color: var(--push);
+    font-weight: 700;
+  }
 
   .slider-mock {
     background: rgba(20, 20, 20, 0.85);
@@ -458,7 +424,6 @@
     justify-content: center;
     font-size: 22px;
     transform: translate(-50%, -50%);
-    /* Animation läuft 6s pro Cycle, Slide hält 6s sichtbar → 1 voller Pendel-Cycle */
     animation: knob-drag 6s ease-in-out infinite;
     z-index: 3;
   }
@@ -494,36 +459,8 @@
     color: var(--text-dim);
   }
 
-  .cta-foot {
-    text-align: center;
-    font-size: 12px;
-    letter-spacing: 0.25em;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    margin-top: 26px;
-    animation: pulse 1.6s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 0.55; }
-    50% { opacity: 1; }
-  }
-
-  .cta-arrow {
-    text-align: center;
-    font-size: 24px;
-    margin-top: 6px;
-    animation: bob 1.2s ease-in-out infinite;
-  }
-
-  @keyframes bob {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-  }
-
   @media (max-height: 700px) {
     .entry-title { font-size: clamp(48px, 14vw, 80px); }
-    .hook-title { font-size: clamp(44px, 13vw, 72px); }
     .cta-title { font-size: clamp(38px, 12vw, 60px); }
   }
 </style>
@@ -534,12 +471,11 @@
     <div class="progress-seg"></div>
     <div class="progress-seg"></div>
     <div class="progress-seg"></div>
-    <div class="progress-seg"></div>
   </div>
 
   <!-- Scene 1: Emotional Entry -->
   <div class="scene">
-    <div class="entry-eyebrow">● Hey du.</div>
+    <div class="entry-eyebrow">Hey du.</div>
     <div class="entry-title">
       Du machst<br>
       das jeden Tag.<br>
@@ -549,25 +485,11 @@
       Sag mir, was die App noch besser für dich machen kann. <strong>Du entscheidest, was als Nächstes kommt.</strong>
     </div>
     <div class="entry-tag">
-      <span class="dot"></span>
-      PPL · Push Pull Legs
+      <span class="brand">PPL</span> · Push Pull Legs
     </div>
   </div>
 
-  <!-- Scene 2: Hook -->
-  <div class="scene">
-    <div class="hook-eyebrow">● Update Time</div>
-    <div class="hook-title">
-      Welches Tool<br>
-      bringt dich<br>
-      eher ins <span class="accent">Gym?</span>
-    </div>
-    <div class="hook-sub">
-      Zwei Features stehen bereit. Eins davon kommt zuerst. <strong>Deine Stimme zählt.</strong>
-    </div>
-  </div>
-
-  <!-- Scene 3: Vergleich -->
+  <!-- Scene 2: Vergleich -->
   <div class="scene">
     <div class="compare-eyebrow">Option A · vs · Option B</div>
     <div class="compare-grid">
@@ -578,7 +500,7 @@
         <div class="opt-title">30-Day Challenge</div>
         <div class="opt-tag">Frauen + Männer Plan</div>
         <div class="opt-desc">
-          Zwei <strong>geführte Pläne</strong>, je 30 Tage. Frauen: Glutes und Core. Männer: Kraft und Volumen. Du wählst, durchziehen.
+          Geführter <strong>30-Tage-Plan</strong>, der zu dir passt. Du wählst, wir pushen dich durch.
         </div>
       </div>
       <div class="opt right">
@@ -586,7 +508,7 @@
         <div class="opt-title">Progress Bars</div>
         <div class="opt-tag">Daten und Wachstum</div>
         <div class="opt-desc">
-          Sieh deine <strong>Kraftsteigerung</strong> Woche für Woche. Pro Übung, schwarz auf weiß. Beweis, dass du stärker wirst.
+          Deine <strong>Steigerung direkt sichtbar</strong>. Woche für Woche stärker. Pro Übung, schwarz auf weiß.
         </div>
       </div>
       <div class="vs-bubble">VS</div>
@@ -598,11 +520,14 @@
     <div class="compare-cta">→ Stimm jetzt ab</div>
   </div>
 
-  <!-- Scene 4: Slider · länger -->
-  <div class="scene">
-    <div class="cta-eyebrow">● Slider unten bewegen</div>
+  <!-- Scene 3: Slider · länger -->
+  <div class="scene slider-scene">
+    <div class="cta-eyebrow">Tippe den Slider unten</div>
     <div class="cta-title">
       Stimm <span class="accent">ab</span>
+    </div>
+    <div class="cta-motivator">
+      Du entscheidest über das <strong>nächste Update.</strong>
     </div>
     <div class="slider-mock">
       <div class="slider-question">Welches Feature zuerst?</div>
@@ -613,15 +538,13 @@
       </div>
       <div class="slider-labels">
         <span class="left">30-Day</span>
-        <span class="right">Progress</span>
+        <span class="right">Progress Bars</span>
       </div>
       <div class="slider-meta">
         <span>Frauen + Männer</span>
-        <span>Kraft-Tracking</span>
+        <span>Daten + Wachstum</span>
       </div>
     </div>
-    <div class="cta-foot">Schieb den Slider</div>
-    <div class="cta-arrow">↓</div>
   </div>
 </div>
 </body>
