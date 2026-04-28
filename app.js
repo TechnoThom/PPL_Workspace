@@ -5,7 +5,7 @@ const PPL_MIGRATABLE_KEYS = [
   'ppl-profile', 'ppl-weights', 'ppl-weight-history', 'ppl-sets',
   'ppl-sessions', 'ppl-freezes', 'ppl-last-share-reward', 'ppl-rec-enabled',
   'ppl-install-dismissed', 'ppl-substitutes', 'ppl-plan-mode', 'ppl-custom-plan',
-  'ppl-theme', 'ppl-lang'
+  'ppl-theme', 'ppl-lang', 'ppl-prs'
 ];
 
 // i18n
@@ -18,7 +18,23 @@ const I18N = {
     'header.custom.eyebrow': 'Eigener Plan',
     'header.custom.sub': 'Selbst zusammengestellt · Tap für Details',
     'tab.plan': 'Plan',
+    'tab.progress': 'Progress',
     'tab.pack': 'Packliste',
+    'progress.eyebrow': 'Deine Steigerung',
+    'progress.title': 'Progress',
+    'progress.sub': 'Größter Sprung zuerst. Tipp eine Übung für Details.',
+    'progress.empty.title': 'Noch keine Daten',
+    'progress.empty.text': 'Sobald du Gewichte änderst oder trainierst, siehst du hier deine Steigerung pro Übung.',
+    'progress.delta.up': '+{kg} kg seit Start',
+    'progress.delta.same': 'Noch keine Steigerung',
+    'progress.delta.bw': '{n} Sessions',
+    'progress.pr.toast': '🏆 Neuer Bestwert',
+    'progress.detail.start': 'Start',
+    'progress.detail.now': 'Aktuell',
+    'progress.detail.peak': 'Bestwert',
+    'progress.detail.sessions': 'Sessions',
+    'progress.inline.start': 'Start',
+    'progress.inline.now': 'Jetzt',
     'stat.streak': 'Streak',
     'stat.sessions': 'Sessions',
     'stat.freeze.one': 'Streak Freeze',
@@ -196,7 +212,23 @@ const I18N = {
     'header.custom.eyebrow': 'Your own plan',
     'header.custom.sub': 'Built by you · tap for details',
     'tab.plan': 'Plan',
+    'tab.progress': 'Progress',
     'tab.pack': 'Packing list',
+    'progress.eyebrow': 'Your progression',
+    'progress.title': 'Progress',
+    'progress.sub': 'Biggest jump first. Tap an exercise for details.',
+    'progress.empty.title': 'No data yet',
+    'progress.empty.text': 'Once you adjust weights or train, your per-exercise progression shows up here.',
+    'progress.delta.up': '+{kg} kg since start',
+    'progress.delta.same': 'No progression yet',
+    'progress.delta.bw': '{n} sessions',
+    'progress.pr.toast': '🏆 New personal best',
+    'progress.detail.start': 'Start',
+    'progress.detail.now': 'Current',
+    'progress.detail.peak': 'Peak',
+    'progress.detail.sessions': 'Sessions',
+    'progress.inline.start': 'Start',
+    'progress.inline.now': 'Now',
     'stat.streak': 'Streak',
     'stat.sessions': 'Sessions',
     'stat.freeze.one': 'streak freeze',
@@ -774,6 +806,234 @@ function appendWeightHistory(id, weight) {
   saveWeightHistory(h);
 }
 
+function loadPRs() {
+  try {
+    const saved = localStorage.getItem('ppl-prs');
+    if (saved) return JSON.parse(saved) || {};
+  } catch (e) {}
+  return {};
+}
+
+function savePRs(p) {
+  try { localStorage.setItem('ppl-prs', JSON.stringify(p)); } catch (e) {}
+}
+
+function checkAndRecordPR(id, weight) {
+  const history = loadWeightHistory()[id] || [];
+  const previousMax = history.slice(0, -1).reduce((m, e) => Math.max(m, e.weight || 0), 0);
+  if (weight <= previousMax || previousMax === 0) return false;
+  const prs = loadPRs();
+  prs[id] = { date: todayIso(), weight };
+  savePRs(prs);
+  return true;
+}
+
+function isFreshPR(id) {
+  const pr = loadPRs()[id];
+  if (!pr) return false;
+  return daysBetween(pr.date, todayIso()) <= 7;
+}
+
+function progressForExercise(id) {
+  const def = EXERCISES[id];
+  if (!def) return null;
+  if (def.bodyweight) {
+    const sessionsCount = loadSessions().filter(s => (s.exercises || []).includes(id)).length;
+    return { bodyweight: true, sessions: sessionsCount, def };
+  }
+  const history = loadWeightHistory()[id] || [];
+  if (!history.length) return null;
+  const start = history[0].weight;
+  const current = history[history.length - 1].weight;
+  const peak = history.reduce((m, e) => Math.max(m, e.weight), 0);
+  const deltaKg = Math.round((current - start) * 10) / 10;
+  const deltaPct = start > 0 ? Math.round(((current - start) / start) * 100) : 0;
+  return { bodyweight: false, history, start, current, peak, deltaKg, deltaPct, def };
+}
+
+function sparklineSvg(history, opts) {
+  if (!history || history.length < 2) {
+    return `<svg viewBox="0 0 100 32" preserveAspectRatio="none"></svg>`;
+  }
+  const o = opts || {};
+  const stroke = o.stroke || 'var(--pull)';
+  const fill = o.fill || 'rgba(48, 209, 88, 0.15)';
+  const strokeWidth = o.strokeWidth ?? 1.6;
+  const w = 100, h = 32, padY = 3;
+  const values = history.map(e => e.weight);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = Math.max(1, max - min);
+  const step = w / Math.max(1, values.length - 1);
+  const points = values.map((v, i) => {
+    const x = i * step;
+    const y = h - padY - ((v - min) / range) * (h - padY * 2);
+    return [x, y];
+  });
+  const lineD = points.map((p, i) => (i === 0 ? `M${p[0]},${p[1]}` : `L${p[0]},${p[1]}`)).join(' ');
+  const fillD = `${lineD} L${points[points.length - 1][0]},${h} L${points[0][0]},${h} Z`;
+  const last = points[points.length - 1];
+  return `
+    <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+      <path d="${fillD}" fill="${fill}" />
+      <path d="${lineD}" fill="none" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+      <circle cx="${last[0]}" cy="${last[1]}" r="2.2" fill="${stroke}" />
+    </svg>
+  `;
+}
+
+function renderProgress() {
+  const list = document.getElementById('progress-list');
+  if (!list) return;
+  const ids = Object.keys(EXERCISES);
+  const items = ids.map(id => ({ id, p: progressForExercise(id) })).filter(x => x.p);
+
+  if (!items.length) {
+    list.innerHTML = `
+      <div class="progress-empty">
+        <div class="e-title">${escapeHtml(t('progress.empty.title'))}</div>
+        <div class="e-text">${escapeHtml(t('progress.empty.text'))}</div>
+      </div>
+    `;
+    return;
+  }
+
+  // Score: weighted exercises by absolute kg gain; bodyweight by sessions
+  const scored = items.map(x => ({
+    ...x,
+    score: x.p.bodyweight ? (x.p.sessions || 0) * 0.5 : (x.p.deltaKg || 0)
+  })).sort((a, b) => b.score - a.score);
+
+  list.innerHTML = scored.map((x, idx) => {
+    const id = x.id;
+    const p = x.p;
+    const name = exDisplay(p.def, 'name') || id;
+    const isTop = idx === 0 && (p.bodyweight ? p.sessions > 0 : p.deltaKg > 0);
+    const fresh = isFreshPR(id);
+
+    if (p.bodyweight) {
+      const txt = t('progress.delta.bw', { n: p.sessions });
+      return `
+        <div class="progress-row${isTop ? ' top' : ''}" data-ex-id="${escapeAttr(id)}">
+          <div class="progress-row-name"><span class="name-text">${escapeHtml(name)}</span>${fresh ? '<span class="pr-badge" title="PR">🏆</span>' : ''}</div>
+          <div class="progress-row-delta same">${escapeHtml(txt)}<span class="delta-pct">BODYWEIGHT</span></div>
+          <div class="progress-row-spark"></div>
+        </div>
+      `;
+    }
+
+    const deltaKgDisplay = p.deltaKg > 0 ? `+${p.deltaKg}` : `${p.deltaKg}`;
+    const deltaCls = p.deltaKg > 0 ? 'up' : 'same';
+    const deltaTxt = p.deltaKg > 0 ? `${deltaKgDisplay} kg` : t('progress.delta.same');
+    const pctTxt = p.deltaKg > 0 ? `${p.deltaPct >= 0 ? '+' : ''}${p.deltaPct}%` : '';
+    return `
+      <div class="progress-row${isTop ? ' top' : ''}" data-ex-id="${escapeAttr(id)}">
+        <div class="progress-row-name"><span class="name-text">${escapeHtml(name)}</span>${fresh ? '<span class="pr-badge" title="PR">🏆</span>' : ''}</div>
+        <div class="progress-row-delta ${deltaCls}">${escapeHtml(deltaTxt)}${pctTxt ? `<span class="delta-pct">${escapeHtml(pctTxt)}</span>` : ''}</div>
+        <div class="progress-row-spark">${sparklineSvg(p.history)}</div>
+      </div>
+    `;
+  }).join('');
+
+  list.querySelectorAll('.progress-row').forEach(row => {
+    row.addEventListener('click', () => openProgressDetail(row.dataset.exId));
+  });
+}
+
+function openProgressDetail(id) {
+  const overlay = document.getElementById('progress-detail');
+  const nameEl = document.getElementById('progress-detail-name');
+  const metaEl = document.getElementById('progress-detail-meta');
+  const chartEl = document.getElementById('progress-detail-chart');
+  const statsEl = document.getElementById('progress-detail-stats');
+  if (!overlay) return;
+  const p = progressForExercise(id);
+  if (!p) return;
+  const name = exDisplay(p.def, 'name') || id;
+  nameEl.textContent = name;
+  if (p.bodyweight) {
+    metaEl.textContent = 'BODYWEIGHT';
+    chartEl.innerHTML = '';
+    statsEl.innerHTML = `
+      <div class="progress-stat">
+        <div class="progress-stat-label">${escapeHtml(t('progress.detail.sessions'))}</div>
+        <div class="progress-stat-value accent">${p.sessions}</div>
+      </div>
+    `;
+  } else {
+    const totalSessions = loadSessions().filter(s => (s.exercises || []).includes(id)).length;
+    metaEl.textContent = `${p.history.length} Datenpunkte · ${totalSessions} Sessions`;
+    chartEl.innerHTML = sparklineSvg(p.history, { strokeWidth: 2 });
+    const deltaKgDisplay = p.deltaKg > 0 ? `+${p.deltaKg}` : `${p.deltaKg}`;
+    statsEl.innerHTML = `
+      <div class="progress-stat">
+        <div class="progress-stat-label">${escapeHtml(t('progress.detail.start'))}</div>
+        <div class="progress-stat-value">${p.start} kg</div>
+      </div>
+      <div class="progress-stat">
+        <div class="progress-stat-label">${escapeHtml(t('progress.detail.now'))}</div>
+        <div class="progress-stat-value accent">${p.current} kg</div>
+      </div>
+      <div class="progress-stat">
+        <div class="progress-stat-label">${escapeHtml(t('progress.detail.peak'))}</div>
+        <div class="progress-stat-value">${p.peak} kg</div>
+      </div>
+    `;
+  }
+  overlay.classList.remove('hidden');
+  overlay.setAttribute('aria-hidden', 'false');
+}
+
+function closeProgressDetail() {
+  const overlay = document.getElementById('progress-detail');
+  if (!overlay) return;
+  overlay.classList.add('hidden');
+  overlay.setAttribute('aria-hidden', 'true');
+}
+
+document.getElementById('progress-detail-close')?.addEventListener('click', closeProgressDetail);
+document.getElementById('progress-detail')?.addEventListener('click', e => {
+  if (e.target.id === 'progress-detail') closeProgressDetail();
+});
+
+function renderInlineProgressBars() {
+  document.querySelectorAll('.ex').forEach(ex => {
+    const nameEl = ex.querySelector('.ex-name');
+    if (!nameEl) return;
+    const id = ex.dataset.exId || exerciseId(nameEl.textContent);
+    const def = EXERCISES[id];
+    if (!def || def.bodyweight) {
+      const existing = ex.querySelector('.ex-progress');
+      if (existing) existing.remove();
+      return;
+    }
+    const p = progressForExercise(id);
+    if (!p || p.history.length < 2) {
+      const existing = ex.querySelector('.ex-progress');
+      if (existing) existing.remove();
+      return;
+    }
+    const fresh = isFreshPR(id);
+    const same = p.deltaKg <= 0;
+    const fillPct = p.deltaPct > 0 ? Math.min(100, Math.max(8, p.deltaPct * 2)) : 0;
+    const deltaTxt = same ? t('progress.delta.same') : `+${p.deltaKg} kg`;
+
+    let bar = ex.querySelector('.ex-progress');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.className = 'ex-progress';
+      const body = ex.children[1];
+      body.appendChild(bar);
+    }
+    bar.className = 'ex-progress' + (same ? ' same' : '');
+    bar.innerHTML = `
+      <div class="bar"><div class="fill" style="width: ${fillPct}%"></div></div>
+      <span class="delta">${escapeHtml(deltaTxt)}</span>
+      ${fresh ? '<span class="pr-icon" title="PR">🏆</span>' : ''}
+    `;
+  });
+}
+
 function calculateStartWeight(base, profile) {
   const genderMod = ({ male: 1.0, female: 0.55, diverse: 0.8 })[profile.gender] ?? 1.0;
   const ageMod = ({ '18-25': 1.0, '26-35': 0.95, '36-50': 0.85, '50+': 0.7 })[profile.age] ?? 1.0;
@@ -946,6 +1206,7 @@ function initLangToggle() {
       if (editor && !editor.classList.contains('hidden')) renderEditor();
       const sheet = document.getElementById('template-sheet');
       if (sheet && !sheet.classList.contains('hidden')) renderTemplateList();
+      renderProgress();
     });
   });
 }
@@ -1008,6 +1269,7 @@ function renderWeights() {
         if (current[id] === prev) return;
         saveWeights(current);
         appendWeightHistory(id, current[id]);
+        const isPR = checkAndRecordPR(id, current[id]);
         document.querySelectorAll('.ex').forEach(other => {
           const n = other.querySelector('.ex-name');
           if (!n) return;
@@ -1018,12 +1280,16 @@ function renderWeights() {
           }
         });
         refreshRecommendations();
+        renderInlineProgressBars();
+        renderProgress();
+        if (isPR) showToast(t('progress.pr.toast'));
       });
     });
 
     const body = ex.children[1];
     body.appendChild(widget);
   });
+  renderInlineProgressBars();
 }
 
 // Satz-Tracking + Pausentimer + Session-Streak
@@ -1235,6 +1501,7 @@ function recordSessionIfDayComplete(dayEl, freq) {
   renderStats();
   renderFreezeBadge();
   refreshRecommendations();
+  renderProgress();
 }
 
 function renderSets() {
@@ -2502,6 +2769,8 @@ renderSets();
 renderStats();
 renderFreezeBadge();
 refreshRecommendations();
+renderInlineProgressBars();
+renderProgress();
 initRecToggle();
 initThemeToggle();
 document.getElementById('share-btn')?.addEventListener('click', shareApp);

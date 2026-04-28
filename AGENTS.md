@@ -95,6 +95,13 @@ einfügen.
   sobald an einem Tag alle Sätze eines Day-Cards abgehakt sind (deduped
   pro `date+day`). Basis für Streak und Sessions-Total.
 
+## Progress / PRs
+- `ppl-prs`: Map `{ exerciseId: { date: 'YYYY-MM-DD', weight: number } }`.
+  Wird in `checkAndRecordPR` gesetzt, sobald ein neues Höchstgewicht
+  erreicht wird. `isFreshPR(id)` liefert `true`, wenn der PR jünger als
+  7 Tage ist, und triggert das 🏆-Badge auf den Übungs-Cards und in der
+  Progress-Liste.
+
 ## Streak-Freezes
 - `ppl-freezes`: `{ available: number, used: string[] }`. Werden über den
   "Teilen"-Button verdient (+1 pro Share, max. 3 gleichzeitig).

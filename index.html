@@ -30,6 +30,7 @@
 
     <div class="tabs">
       <div class="tab active" data-view="plan" data-i18n="tab.plan">Plan</div>
+      <div class="tab" data-view="progress" data-i18n="tab.progress">Progress</div>
       <div class="tab" data-view="pack" data-i18n="tab.pack">Packliste</div>
     </div>
 
@@ -323,6 +324,26 @@
         </div>
       </div>
 
+    </div>
+
+    <!-- PROGRESS VIEW -->
+    <div class="view" id="view-progress">
+      <header class="progress-header">
+        <div class="progress-eyebrow" data-i18n="progress.eyebrow">Deine Steigerung</div>
+        <h2 class="progress-title" data-i18n="progress.title">Progress</h2>
+        <div class="progress-sub" data-i18n="progress.sub">Größter Sprung zuerst. Tipp eine Übung für Details.</div>
+      </header>
+      <div class="progress-list" id="progress-list"></div>
+    </div>
+
+    <div class="progress-detail hidden" id="progress-detail" aria-hidden="true">
+      <div class="progress-detail-card">
+        <button class="progress-detail-close" id="progress-detail-close" type="button" aria-label="Schließen">×</button>
+        <div class="progress-detail-name" id="progress-detail-name"></div>
+        <div class="progress-detail-meta" id="progress-detail-meta"></div>
+        <div class="progress-detail-chart" id="progress-detail-chart"></div>
+        <div class="progress-detail-stats" id="progress-detail-stats"></div>
+      </div>
     </div>
 
     <!-- PACKLISTE VIEW -->
