@@ -72,6 +72,7 @@ const I18N = {
     'rest.timer.skip': 'Überspringen',
     'rest.timer.add': '+15 s',
     'rest.timer.done': 'Los!',
+    'rest.timer.hint': 'Display bleibt aktiv. Sound und Vibration am Ende.',
     'footer.warmup.label': 'Aufwärmen',
     'footer.warmup.text': '2 leichte Sätze vor jeder Grundübung',
     'footer.deload.label': 'Deload',
@@ -285,6 +286,7 @@ const I18N = {
     'rest.timer.skip': 'Skip',
     'rest.timer.add': '+15 s',
     'rest.timer.done': 'Go!',
+    'rest.timer.hint': 'Screen stays awake. Sound and vibration at the end.',
     'footer.warmup.label': 'Warm-up',
     'footer.warmup.text': '2 light sets before every compound lift',
     'footer.deload.label': 'Deload',
@@ -1475,6 +1477,8 @@ function initExReps() {
 }
 
 let activeTimer = null;
+let audioCtx = null;
+let wakeLock = null;
 
 function getRestPanel() {
   return {
@@ -1490,6 +1494,79 @@ function fmtSeconds(remaining) {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
+// AudioContext muss innerhalb einer User-Gesture initialisiert werden, damit iOS
+// Sound zulässt. Wird beim Set-Klick oder Skip-Klick aufgewärmt.
+function ensureAudioContext() {
+  if (!audioCtx) {
+    const AC = window.AudioContext || window['webkitAudioContext'];
+    if (!AC) return;
+    try { audioCtx = new AC(); } catch (e) { audioCtx = null; }
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume().catch(() => {});
+  }
+}
+
+function playRestBeep() {
+  if (!audioCtx) return;
+  const now = audioCtx.currentTime;
+  const tones = [
+    { freq: 880,  start: 0,    dur: 0.18 },
+    { freq: 1320, start: 0.22, dur: 0.34 }
+  ];
+  tones.forEach(({ freq, start, dur }) => {
+    try {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, now + start);
+      gain.gain.exponentialRampToValueAtTime(0.45, now + start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + start + dur);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(now + start);
+      osc.stop(now + start + dur + 0.05);
+    } catch (e) {}
+  });
+}
+
+async function acquireWakeLock() {
+  if (!('wakeLock' in navigator)) return;
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+    wakeLock.addEventListener('release', () => { wakeLock = null; });
+  } catch (e) { wakeLock = null; }
+}
+
+function releaseWakeLock() {
+  if (!wakeLock) return;
+  try { wakeLock.release(); } catch (e) {}
+  wakeLock = null;
+}
+
+function tickRestTimer() {
+  if (!activeTimer) return;
+  const { panel, timeEl } = getRestPanel();
+  if (!panel || !timeEl) return;
+  const ms = activeTimer.endAt - Date.now();
+  if (ms <= 0) {
+    timeEl.textContent = t('rest.timer.done');
+    if (!panel.classList.contains('done')) panel.classList.add('done');
+    if (!activeTimer.fired) {
+      activeTimer.fired = true;
+      if (navigator.vibrate) try { navigator.vibrate([200, 100, 200]); } catch (e) {}
+      playRestBeep();
+      activeTimer.dismissTimeout = setTimeout(() => {
+        if (activeTimer && activeTimer.fired) stopTimer();
+      }, 4000);
+    }
+    return;
+  }
+  const remaining = Math.ceil(ms / 1000);
+  timeEl.textContent = fmtSeconds(remaining);
+  if (panel.classList.contains('done')) panel.classList.remove('done');
+}
+
 function startTimer(seconds, exName) {
   const { panel, timeEl, exEl } = getRestPanel();
   if (!panel || !timeEl) return;
@@ -1497,31 +1574,35 @@ function startTimer(seconds, exName) {
     clearInterval(activeTimer.interval);
     if (activeTimer.dismissTimeout) clearTimeout(activeTimer.dismissTimeout);
   }
-  let remaining = seconds;
+
+  ensureAudioContext();
+  acquireWakeLock();
+
   exEl.textContent = exName || '';
-  timeEl.textContent = fmtSeconds(remaining);
   panel.classList.remove('hidden', 'done');
   panel.setAttribute('aria-hidden', 'false');
-  // force reflow so the slide-in transition runs even on rapid restarts
   void panel.offsetWidth;
   panel.classList.add('open');
 
-  const interval = setInterval(() => {
-    remaining--;
-    if (remaining <= 0) {
-      clearInterval(interval);
-      timeEl.textContent = t('rest.timer.done');
-      panel.classList.add('done');
-      if (navigator.vibrate) try { navigator.vibrate([200, 100, 200]); } catch (e) {}
-      const dismissTimeout = setTimeout(() => {
-        if (activeTimer && activeTimer.interval === interval) stopTimer();
-      }, 4000);
-      if (activeTimer) activeTimer.dismissTimeout = dismissTimeout;
-    } else {
-      timeEl.textContent = fmtSeconds(remaining);
+  activeTimer = {
+    endAt: Date.now() + seconds * 1000,
+    fired: false,
+    dismissTimeout: null,
+    interval: null,
+    addTime: (s) => {
+      activeTimer.endAt += s * 1000;
+      activeTimer.fired = false;
+      if (activeTimer.dismissTimeout) {
+        clearTimeout(activeTimer.dismissTimeout);
+        activeTimer.dismissTimeout = null;
+      }
+      panel.classList.remove('done');
+      tickRestTimer();
     }
-  }, 1000);
-  activeTimer = { interval, addTime: (s) => { remaining += s; timeEl.textContent = fmtSeconds(remaining); panel.classList.remove('done'); } };
+  };
+
+  tickRestTimer();
+  activeTimer.interval = setInterval(tickRestTimer, 250);
 }
 
 function stopTimer() {
@@ -1531,6 +1612,7 @@ function stopTimer() {
     if (activeTimer.dismissTimeout) clearTimeout(activeTimer.dismissTimeout);
     activeTimer = null;
   }
+  releaseWakeLock();
   if (!panel) return;
   panel.classList.remove('open', 'done');
   panel.setAttribute('aria-hidden', 'true');
@@ -1543,9 +1625,22 @@ function stopTimer() {
   }, 280);
 }
 
-document.getElementById('rest-timer-skip')?.addEventListener('click', stopTimer);
+document.getElementById('rest-timer-skip')?.addEventListener('click', () => {
+  ensureAudioContext();
+  stopTimer();
+});
 document.getElementById('rest-timer-add')?.addEventListener('click', () => {
+  ensureAudioContext();
   if (activeTimer) activeTimer.addTime(15);
+});
+
+// Wake Lock wird von iOS bei Hintergrund freigegeben. Beim Zurückkommen
+// sofort neu anfordern und Display refreshen, damit auch verpasste
+// End-Cues nachfeuern können.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible' || !activeTimer) return;
+  if (!wakeLock) acquireWakeLock();
+  tickRestTimer();
 });
 
 function recordSessionIfDayComplete(dayEl, freq) {

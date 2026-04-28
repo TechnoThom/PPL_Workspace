@@ -1181,6 +1181,16 @@ html.light .stat.streak-active .stat-value {
   gap: 10px;
 }
 
+.rest-timer-hint {
+  margin-top: 10px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
 .rest-timer-btn {
   flex: 1;
   font-family: 'JetBrains Mono', monospace;
