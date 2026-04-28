@@ -106,6 +106,54 @@ h1 .legs-t { color: var(--legs); }
   color: var(--text);
 }
 
+/* "Bald"-Tab mit Shimmer */
+.tab-soon {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.18), rgba(48, 209, 88, 0.14));
+  border: 1px solid rgba(10, 132, 255, 0.45);
+  color: var(--text);
+}
+
+.tab-soon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  animation: tab-shimmer 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes tab-shimmer {
+  0% { left: -60%; }
+  60% { left: 130%; }
+  100% { left: 130%; }
+}
+
+.tab-soon-lock {
+  font-size: 12px;
+  line-height: 1;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 4px rgba(10, 132, 255, 0.5));
+}
+
+.tab-soon-label { letter-spacing: 0.12em; }
+
+.tab-soon:active { transform: scale(0.98); }
+
 .view { display: none; }
 .view.active { display: block; }
 
@@ -2187,4 +2235,137 @@ html.light .stat.streak-active .stat-value {
 .template-item-tag.highlight {
   background: var(--pack);
   color: white;
+}
+
+/* ==== Roadmap Sheet ==== */
+.roadmap-card { padding-top: 26px; }
+
+.roadmap-intro {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+.roadmap-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.roadmap-item {
+  position: relative;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px 14px 18px;
+  overflow: hidden;
+}
+
+.roadmap-item.building {
+  border-color: var(--pull);
+  box-shadow: 0 0 0 1px rgba(48, 209, 88, 0.25), 0 0 24px rgba(48, 209, 88, 0.12);
+}
+
+.roadmap-item.building::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--pull);
+}
+
+.roadmap-item-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.roadmap-item-status .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.roadmap-item.building .roadmap-item-status { color: var(--pull); }
+.roadmap-item.building .roadmap-item-status .dot { background: var(--pull); }
+
+.roadmap-item-status .dot.pulse {
+  box-shadow: 0 0 0 0 currentColor;
+  animation: roadmap-pulse 1.6s ease-out infinite;
+}
+
+@keyframes roadmap-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.6); }
+  70% { box-shadow: 0 0 0 8px rgba(48, 209, 88, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(48, 209, 88, 0); }
+}
+
+.roadmap-item-icon {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 28px;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.roadmap-item-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  margin-bottom: 6px;
+  padding-right: 38px;
+}
+
+.roadmap-item-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.55;
+  padding-right: 38px;
+}
+
+.roadmap-item-vote {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 4px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.roadmap-item-vote .vote-pct {
+  color: var(--pull);
+  font-weight: 700;
+}
+
+.roadmap-item-vote .vote-label { color: var(--text-dim); }
+
+.roadmap-item.building .roadmap-item-vote { border-color: var(--pull); }
+
+.roadmap-foot {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  padding: 10px 4px 18px;
+  line-height: 1.5;
 }

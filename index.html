@@ -32,6 +32,10 @@
       <div class="tab active" data-view="plan" data-i18n="tab.plan">Plan</div>
       <div class="tab" data-view="progress" data-i18n="tab.progress">Progress</div>
       <div class="tab" data-view="pack" data-i18n="tab.pack">Packliste</div>
+      <div class="tab tab-soon" data-action="roadmap" aria-haspopup="dialog">
+        <span class="tab-soon-lock" aria-hidden="true">🔒</span>
+        <span class="tab-soon-label" data-i18n="tab.soon">Bald</span>
+      </div>
     </div>
 
     <!-- PLAN VIEW -->
@@ -418,6 +422,62 @@
       <div class="swap-title" data-i18n="templates.title">Starte mit einem fertigen Plan</div>
       <div class="template-list" id="template-list"></div>
       <button class="swap-close" id="template-close" type="button" data-i18n="templates.close">Abbrechen</button>
+    </div>
+  </div>
+
+  <div class="swap-sheet hidden" id="roadmap-sheet" aria-hidden="true">
+    <div class="swap-card roadmap-card">
+      <div class="swap-eyebrow" data-i18n="roadmap.eyebrow">Was als Nächstes kommt</div>
+      <div class="swap-title" data-i18n="roadmap.title">Roadmap</div>
+      <div class="roadmap-intro" data-i18n="roadmap.intro">Die Community hat abgestimmt. Hier ist, woran ich arbeite.</div>
+      <div class="roadmap-list">
+        <div class="roadmap-item building">
+          <div class="roadmap-item-status">
+            <span class="dot pulse"></span>
+            <span data-i18n="roadmap.status.building">In Arbeit</span>
+          </div>
+          <div class="roadmap-item-icon">📈</div>
+          <div class="roadmap-item-title" data-i18n="roadmap.item.progress.title">Progress Bars</div>
+          <div class="roadmap-item-desc" data-i18n="roadmap.item.progress.desc">Sparklines pro Übung, PR-Detection. Fast fertig, du nutzt sie schon.</div>
+          <div class="roadmap-item-vote">
+            <span class="vote-pct">85%</span>
+            <span class="vote-label" data-i18n="roadmap.vote.winner">Poll-Sieger</span>
+          </div>
+        </div>
+        <div class="roadmap-item">
+          <div class="roadmap-item-status">
+            <span class="dot"></span>
+            <span data-i18n="roadmap.status.next">Als Nächstes</span>
+          </div>
+          <div class="roadmap-item-icon">🔥</div>
+          <div class="roadmap-item-title" data-i18n="roadmap.item.challenge.title">30-Day Challenge</div>
+          <div class="roadmap-item-desc" data-i18n="roadmap.item.challenge.desc">Geführter Plan über 30 Tage, getrennt für Frauen und Männer. Strukturiertes Programm mit Progressionslogik.</div>
+          <div class="roadmap-item-vote">
+            <span class="vote-pct">15%</span>
+            <span class="vote-label" data-i18n="roadmap.vote.runnerup">Platz 2 im Poll</span>
+          </div>
+        </div>
+        <div class="roadmap-item">
+          <div class="roadmap-item-status">
+            <span class="dot"></span>
+            <span data-i18n="roadmap.status.planned">Geplant</span>
+          </div>
+          <div class="roadmap-item-icon">🗓</div>
+          <div class="roadmap-item-title" data-i18n="roadmap.item.heatmap.title">Streak-Heatmap</div>
+          <div class="roadmap-item-desc" data-i18n="roadmap.item.heatmap.desc">Kalenderansicht à la GitHub für deine Trainings-Konsistenz auf einen Blick.</div>
+        </div>
+        <div class="roadmap-item">
+          <div class="roadmap-item-status">
+            <span class="dot"></span>
+            <span data-i18n="roadmap.status.planned">Geplant</span>
+          </div>
+          <div class="roadmap-item-icon">🔗</div>
+          <div class="roadmap-item-title" data-i18n="roadmap.item.share.title">Plan teilen via QR</div>
+          <div class="roadmap-item-desc" data-i18n="roadmap.item.share.desc">Eigenen Plan in 2 Sekunden an Trainingspartner schicken. Komplett offline, ohne Server.</div>
+        </div>
+      </div>
+      <div class="roadmap-foot" data-i18n="roadmap.foot">Du hast ne Idee? Melde dich auf Insta @ppl.app</div>
+      <button class="swap-close" id="roadmap-close" type="button" data-i18n="roadmap.close">Schließen</button>
     </div>
   </div>
 

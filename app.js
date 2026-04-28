@@ -20,6 +20,25 @@ const I18N = {
     'tab.plan': 'Plan',
     'tab.progress': 'Progress',
     'tab.pack': 'Packliste',
+    'tab.soon': 'Bald',
+    'roadmap.eyebrow': 'Was als Nächstes kommt',
+    'roadmap.title': 'Roadmap',
+    'roadmap.intro': 'Die Community hat abgestimmt. Hier ist, woran ich arbeite.',
+    'roadmap.status.building': 'In Arbeit',
+    'roadmap.status.next': 'Als Nächstes',
+    'roadmap.status.planned': 'Geplant',
+    'roadmap.vote.winner': 'Poll-Sieger',
+    'roadmap.vote.runnerup': 'Platz 2 im Poll',
+    'roadmap.item.progress.title': 'Progress Bars',
+    'roadmap.item.progress.desc': 'Sparklines pro Übung, PR-Detection. Fast fertig, du nutzt sie schon.',
+    'roadmap.item.challenge.title': '30-Day Challenge',
+    'roadmap.item.challenge.desc': 'Geführter Plan über 30 Tage, getrennt für Frauen und Männer. Strukturiertes Programm mit Progressionslogik.',
+    'roadmap.item.heatmap.title': 'Streak-Heatmap',
+    'roadmap.item.heatmap.desc': 'Kalenderansicht à la GitHub für deine Trainings-Konsistenz auf einen Blick.',
+    'roadmap.item.share.title': 'Plan teilen via QR',
+    'roadmap.item.share.desc': 'Eigenen Plan in 2 Sekunden an Trainingspartner schicken. Komplett offline, ohne Server.',
+    'roadmap.foot': 'Du hast ne Idee? Melde dich auf Insta @ppl.app',
+    'roadmap.close': 'Schließen',
     'progress.eyebrow': 'Deine Steigerung',
     'progress.title': 'Progress',
     'progress.sub': 'Größter Sprung zuerst. Tipp eine Übung für Details.',
@@ -214,6 +233,25 @@ const I18N = {
     'tab.plan': 'Plan',
     'tab.progress': 'Progress',
     'tab.pack': 'Packing list',
+    'tab.soon': 'Soon',
+    'roadmap.eyebrow': 'What is coming next',
+    'roadmap.title': 'Roadmap',
+    'roadmap.intro': 'The community voted. Here is what I am working on.',
+    'roadmap.status.building': 'Building',
+    'roadmap.status.next': 'Up next',
+    'roadmap.status.planned': 'Planned',
+    'roadmap.vote.winner': 'Poll winner',
+    'roadmap.vote.runnerup': 'Runner-up in poll',
+    'roadmap.item.progress.title': 'Progress Bars',
+    'roadmap.item.progress.desc': 'Sparklines per exercise, PR detection. Almost done, you are already using it.',
+    'roadmap.item.challenge.title': '30-Day Challenge',
+    'roadmap.item.challenge.desc': 'Guided 30-day program, separate plans for women and men. Structured progression built in.',
+    'roadmap.item.heatmap.title': 'Streak heatmap',
+    'roadmap.item.heatmap.desc': 'GitHub-style calendar so you can see your training consistency at a glance.',
+    'roadmap.item.share.title': 'Share plan via QR',
+    'roadmap.item.share.desc': 'Send your custom plan to a training partner in 2 seconds. Fully offline, no server.',
+    'roadmap.foot': 'Got an idea? Hit me up on Insta @ppl.app',
+    'roadmap.close': 'Close',
     'progress.eyebrow': 'Your progression',
     'progress.title': 'Progress',
     'progress.sub': 'Biggest jump first. Tap an exercise for details.',
@@ -472,11 +510,34 @@ importStateFromUrl();
 // Tab switching
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
+    if (tab.dataset.action === 'roadmap') {
+      openRoadmap();
+      return;
+    }
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('view-' + tab.dataset.view).classList.add('active');
   });
+});
+
+function openRoadmap() {
+  const sheet = document.getElementById('roadmap-sheet');
+  if (!sheet) return;
+  sheet.classList.remove('hidden');
+  sheet.setAttribute('aria-hidden', 'false');
+}
+
+function closeRoadmap() {
+  const sheet = document.getElementById('roadmap-sheet');
+  if (!sheet) return;
+  sheet.classList.add('hidden');
+  sheet.setAttribute('aria-hidden', 'true');
+}
+
+document.getElementById('roadmap-close')?.addEventListener('click', closeRoadmap);
+document.getElementById('roadmap-sheet')?.addEventListener('click', e => {
+  if (e.target.id === 'roadmap-sheet') closeRoadmap();
 });
 
 // Day toggle
