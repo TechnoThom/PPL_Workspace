@@ -304,8 +304,9 @@ h1 .legs-t { color: var(--legs); }
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 10px 8px;
+  padding: 10px 6px;
   text-align: center;
+  min-width: 0;
 }
 .progress-stat-label {
   font-family: 'JetBrains Mono', monospace;
@@ -317,11 +318,19 @@ h1 .legs-t { color: var(--legs); }
 }
 .progress-stat-value {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px;
+  font-size: clamp(18px, 5.6vw, 22px);
   letter-spacing: 0.04em;
   color: var(--text);
+  white-space: nowrap;
+}
+.progress-stat-value .unit {
+  font-size: 0.7em;
+  margin-left: 2px;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
 }
 .progress-stat-value.accent { color: var(--pull); }
+.progress-stat-value.accent .unit { color: rgba(48, 209, 88, 0.65); }
 
 /* ==== Inline Mini-Bar in Plan View ==== */
 .ex-progress {

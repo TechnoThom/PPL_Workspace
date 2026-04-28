@@ -882,10 +882,26 @@ function sparklineSvg(history, opts) {
   `;
 }
 
+function getCurrentPlanExerciseIds() {
+  const ids = new Set();
+  const mode = getPlanMode();
+  const freq = mode === 'custom' ? 'custom' : (localStorage.getItem('ppl-frequency') || '6');
+  const variant = document.querySelector(`.plan-variant[data-freq="${freq}"]`);
+  if (!variant) return ids;
+  variant.querySelectorAll('.ex').forEach(ex => {
+    const nameEl = ex.querySelector('.ex-name');
+    if (!nameEl) return;
+    const id = ex.dataset.exId || exerciseId(nameEl.textContent);
+    if (id) ids.add(id);
+  });
+  return ids;
+}
+
 function renderProgress() {
   const list = document.getElementById('progress-list');
   if (!list) return;
-  const ids = Object.keys(EXERCISES);
+  const planIds = getCurrentPlanExerciseIds();
+  const ids = planIds.size ? Array.from(planIds) : Object.keys(EXERCISES);
   const items = ids.map(id => ({ id, p: progressForExercise(id) })).filter(x => x.p);
 
   if (!items.length) {
@@ -964,19 +980,18 @@ function openProgressDetail(id) {
     const totalSessions = loadSessions().filter(s => (s.exercises || []).includes(id)).length;
     metaEl.textContent = `${p.history.length} Datenpunkte · ${totalSessions} Sessions`;
     chartEl.innerHTML = sparklineSvg(p.history, { strokeWidth: 2 });
-    const deltaKgDisplay = p.deltaKg > 0 ? `+${p.deltaKg}` : `${p.deltaKg}`;
     statsEl.innerHTML = `
       <div class="progress-stat">
         <div class="progress-stat-label">${escapeHtml(t('progress.detail.start'))}</div>
-        <div class="progress-stat-value">${p.start} kg</div>
+        <div class="progress-stat-value">${p.start}<span class="unit">kg</span></div>
       </div>
       <div class="progress-stat">
         <div class="progress-stat-label">${escapeHtml(t('progress.detail.now'))}</div>
-        <div class="progress-stat-value accent">${p.current} kg</div>
+        <div class="progress-stat-value accent">${p.current}<span class="unit">kg</span></div>
       </div>
       <div class="progress-stat">
         <div class="progress-stat-label">${escapeHtml(t('progress.detail.peak'))}</div>
-        <div class="progress-stat-value">${p.peak} kg</div>
+        <div class="progress-stat-value">${p.peak}<span class="unit">kg</span></div>
       </div>
     `;
   }
@@ -2405,6 +2420,7 @@ function applyFrequency() {
   });
 
   applyCalendar(activeVariant);
+  if (typeof renderProgress === 'function') renderProgress();
 }
 
 function initPlanSwitch() {
