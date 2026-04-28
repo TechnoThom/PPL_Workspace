@@ -1477,6 +1477,7 @@ function initExReps() {
 let activeTimer = null;
 let audioCtx = null;
 let wakeLock = null;
+let silentLoop = null;
 
 function getRestPanel() {
   return {
@@ -1503,6 +1504,32 @@ function ensureAudioContext() {
   if (audioCtx && audioCtx.state === 'suspended') {
     audioCtx.resume().catch(() => {});
   }
+}
+
+// Hält die iOS-Audio-Session während der Pause aktiv, damit der End-Beep
+// auch dann feuert, wenn das Display dunkel ist oder der Tab kurz im
+// Hintergrund liegt. 40 Hz Sub-Bass mit verschwindend kleinem Gain ist
+// unhörbar und blockt keinen anderen Audio-Output.
+function startSilentLoop() {
+  if (!audioCtx || silentLoop) return;
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 40;
+    gain.gain.value = 0.00001;
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start();
+    silentLoop = { osc, gain };
+  } catch (e) {}
+}
+
+function stopSilentLoop() {
+  if (!silentLoop) return;
+  try { silentLoop.osc.stop(); } catch (e) {}
+  try { silentLoop.osc.disconnect(); } catch (e) {}
+  try { silentLoop.gain.disconnect(); } catch (e) {}
+  silentLoop = null;
 }
 
 function playRestBeep() {
@@ -1574,6 +1601,7 @@ function startTimer(seconds, exName) {
   }
 
   ensureAudioContext();
+  startSilentLoop();
   acquireWakeLock();
 
   exEl.textContent = exName || '';
@@ -1611,6 +1639,7 @@ function stopTimer() {
     activeTimer = null;
   }
   releaseWakeLock();
+  stopSilentLoop();
   if (!panel) return;
   panel.classList.remove('open', 'done');
   panel.setAttribute('aria-hidden', 'true');
