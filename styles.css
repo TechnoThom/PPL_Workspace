@@ -106,6 +106,68 @@ h1 .legs-t { color: var(--legs); }
   color: var(--text);
 }
 
+.challenge-tab {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.challenge-tab::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, rgba(255, 59, 48, 0.16), rgba(10, 132, 255, 0.16), rgba(48, 209, 88, 0.12));
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.challenge-tab.active::before,
+.challenge-tab:hover::before {
+  opacity: 1;
+}
+
+.challenge-tab-icon {
+  position: relative;
+  z-index: 1;
+  min-width: 28px;
+  height: 18px;
+  display: inline-grid;
+  place-items: center;
+  color: var(--pack);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  border: 1px solid currentColor;
+  border-radius: 5px;
+  background: rgba(10, 132, 255, 0.1);
+  filter: drop-shadow(0 0 7px rgba(10, 132, 255, 0.65));
+  animation: challenge-icon-pulse 2.2s ease-in-out infinite;
+}
+
+.challenge-tab span:last-child {
+  position: relative;
+  z-index: 1;
+}
+
+.challenge-tab.active .challenge-tab-icon {
+  color: var(--legs);
+  background: rgba(255, 204, 0, 0.12);
+  filter: drop-shadow(0 0 8px rgba(255, 204, 0, 0.7));
+}
+
+@keyframes challenge-icon-pulse {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.86; }
+  45% { transform: scale(1.12) rotate(-6deg); opacity: 1; }
+  70% { transform: scale(1.02) rotate(4deg); opacity: 0.95; }
+}
+
 /* "Bald"-Tab mit Shimmer */
 .tab-soon {
   position: relative;

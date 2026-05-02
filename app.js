@@ -61,6 +61,9 @@ const I18N = {
     'challenge.rest': 'Regeneration',
     'challenge.mobility': 'Mobility',
     'challenge.work': 'Workout',
+    'challenge.workout.fullbodyA': 'Ganzkörper A',
+    'challenge.workout.fullbodyB': 'Ganzkörper B',
+    'challenge.workout.conditioning': 'Kondition + Core',
     'challenge.meta.minutes': '{n} min',
     'challenge.meta.rounds': '{n} Runden',
     'challenge.profile.auto.male': 'Aus deinem Profil: Männer-Plan',
@@ -300,6 +303,9 @@ const I18N = {
     'challenge.rest': 'Recovery',
     'challenge.mobility': 'Mobility',
     'challenge.work': 'Workout',
+    'challenge.workout.fullbodyA': 'Full Body A',
+    'challenge.workout.fullbodyB': 'Full Body B',
+    'challenge.workout.conditioning': 'Conditioning + Core',
     'challenge.meta.minutes': '{n} min',
     'challenge.meta.rounds': '{n} rounds',
     'challenge.profile.auto.male': 'From your profile: men plan',
@@ -2959,65 +2965,73 @@ let challengeHoldFrame = null;
 const CHALLENGE_LIBRARY = {
   male: {
     strengthA: [
-      ['Liegestütze', '8 bis 15 Wdh'],
-      ['Kniebeugen', '15 bis 20 Wdh'],
-      ['Rudern am Kabel oder Tisch', '10 bis 12 Wdh'],
-      ['Ausfallschritte', '10 je Seite'],
-      ['Plank', '30 bis 45 s']
+      [{ de: 'Liegestütze', en: 'Push-ups' }, { de: '8 bis 15 Wdh', en: '8 to 15 reps' }],
+      [{ de: 'Kniebeugen', en: 'Squats' }, { de: '15 bis 20 Wdh', en: '15 to 20 reps' }],
+      [{ de: 'Rudern am Kabel oder Tisch', en: 'Cable or table rows' }, { de: '10 bis 12 Wdh', en: '10 to 12 reps' }],
+      [{ de: 'Ausfallschritte', en: 'Lunges' }, { de: '10 je Seite', en: '10 each side' }],
+      [{ de: 'Plank', en: 'Plank' }, { de: '30 bis 45 s', en: '30 to 45 s' }]
     ],
     strengthB: [
-      ['Schulterdrücken Kurzhantel', '10 bis 12 Wdh'],
-      ['Rumänisches Kreuzheben', '10 bis 12 Wdh'],
-      ['Klimmzug oder Latzug', '6 bis 10 Wdh'],
-      ['Glute Bridge', '15 bis 20 Wdh'],
-      ['Dead Bug', '10 je Seite']
+      [{ de: 'Schulterdrücken Kurzhantel', en: 'Dumbbell shoulder press' }, { de: '10 bis 12 Wdh', en: '10 to 12 reps' }],
+      [{ de: 'Rumänisches Kreuzheben', en: 'Romanian deadlift' }, { de: '10 bis 12 Wdh', en: '10 to 12 reps' }],
+      [{ de: 'Klimmzug oder Latzug', en: 'Pull-up or lat pulldown' }, { de: '6 bis 10 Wdh', en: '6 to 10 reps' }],
+      [{ de: 'Glute Bridge', en: 'Glute bridge' }, { de: '15 bis 20 Wdh', en: '15 to 20 reps' }],
+      [{ de: 'Dead Bug', en: 'Dead bug' }, { de: '10 je Seite', en: '10 each side' }]
     ],
     conditioning: [
-      ['Goblet Squat', '12 bis 15 Wdh'],
-      ['Incline Push-ups', '10 bis 15 Wdh'],
-      ['Mountain Climbers', '30 s'],
-      ['Farmer Carry', '40 s'],
-      ['Side Plank', '25 s je Seite']
+      [{ de: 'Goblet Squat', en: 'Goblet squat' }, { de: '12 bis 15 Wdh', en: '12 to 15 reps' }],
+      [{ de: 'Erhöhte Liegestütze', en: 'Incline push-ups' }, { de: '10 bis 15 Wdh', en: '10 to 15 reps' }],
+      [{ de: 'Mountain Climbers', en: 'Mountain climbers' }, { de: '30 s', en: '30 s' }],
+      [{ de: 'Farmer Carry', en: 'Farmer carry' }, { de: '40 s', en: '40 s' }],
+      [{ de: 'Side Plank', en: 'Side plank' }, { de: '25 s je Seite', en: '25 s each side' }]
     ],
     mobility: [
-      ['Hüftöffner', '60 s je Seite'],
-      ['Brustwirbelsäule Rotation', '10 je Seite'],
-      ['Hamstring Stretch', '60 s je Seite'],
-      ['Tiefe Kniebeuge halten', '60 s'],
-      ['Ruhige Atmung', '2 min']
+      [{ de: 'Hüftöffner', en: 'Hip opener' }, { de: '60 s je Seite', en: '60 s each side' }],
+      [{ de: 'Brustwirbelsäule Rotation', en: 'Thoracic rotation' }, { de: '10 je Seite', en: '10 each side' }],
+      [{ de: 'Hamstring Stretch', en: 'Hamstring stretch' }, { de: '60 s je Seite', en: '60 s each side' }],
+      [{ de: 'Tiefe Kniebeuge halten', en: 'Deep squat hold' }, { de: '60 s', en: '60 s' }],
+      [{ de: 'Ruhige Atmung', en: 'Calm breathing' }, { de: '2 min', en: '2 min' }]
     ]
   },
   female: {
     strengthA: [
-      ['Hip Thrust', '10 bis 15 Wdh'],
-      ['Goblet Squat', '12 bis 15 Wdh'],
-      ['Rudern am Kabel oder Band', '10 bis 12 Wdh'],
-      ['Liegestütze erhöht', '8 bis 12 Wdh'],
-      ['Plank', '30 bis 45 s']
+      [{ de: 'Hip Thrust', en: 'Hip thrust' }, { de: '10 bis 15 Wdh', en: '10 to 15 reps' }],
+      [{ de: 'Goblet Squat', en: 'Goblet squat' }, { de: '12 bis 15 Wdh', en: '12 to 15 reps' }],
+      [{ de: 'Rudern am Kabel oder Band', en: 'Cable or band rows' }, { de: '10 bis 12 Wdh', en: '10 to 12 reps' }],
+      [{ de: 'Erhöhte Liegestütze', en: 'Incline push-ups' }, { de: '8 bis 12 Wdh', en: '8 to 12 reps' }],
+      [{ de: 'Plank', en: 'Plank' }, { de: '30 bis 45 s', en: '30 to 45 s' }]
     ],
     strengthB: [
-      ['Rumänisches Kreuzheben', '10 bis 12 Wdh'],
-      ['Bulgarian Split Squats', '8 bis 10 je Seite'],
-      ['Schulterdrücken Kurzhantel', '10 bis 12 Wdh'],
-      ['Abduktoren oder Side Walks', '15 bis 20 Wdh'],
-      ['Dead Bug', '10 je Seite']
+      [{ de: 'Rumänisches Kreuzheben', en: 'Romanian deadlift' }, { de: '10 bis 12 Wdh', en: '10 to 12 reps' }],
+      [{ de: 'Bulgarian Split Squats', en: 'Bulgarian split squats' }, { de: '8 bis 10 je Seite', en: '8 to 10 each side' }],
+      [{ de: 'Schulterdrücken Kurzhantel', en: 'Dumbbell shoulder press' }, { de: '10 bis 12 Wdh', en: '10 to 12 reps' }],
+      [{ de: 'Abduktoren oder Side Walks', en: 'Abductors or side walks' }, { de: '15 bis 20 Wdh', en: '15 to 20 reps' }],
+      [{ de: 'Dead Bug', en: 'Dead bug' }, { de: '10 je Seite', en: '10 each side' }]
     ],
     conditioning: [
-      ['Step-ups', '10 je Seite'],
-      ['Glute Bridge March', '12 je Seite'],
-      ['Latzug oder Band Pull-aparts', '12 bis 15 Wdh'],
-      ['Kettlebell Deadlift', '12 bis 15 Wdh'],
-      ['Side Plank', '25 s je Seite']
+      [{ de: 'Step-ups', en: 'Step-ups' }, { de: '10 je Seite', en: '10 each side' }],
+      [{ de: 'Glute Bridge March', en: 'Glute bridge march' }, { de: '12 je Seite', en: '12 each side' }],
+      [{ de: 'Latzug oder Band Pull-aparts', en: 'Lat pulldown or band pull-aparts' }, { de: '12 bis 15 Wdh', en: '12 to 15 reps' }],
+      [{ de: 'Kettlebell Deadlift', en: 'Kettlebell deadlift' }, { de: '12 bis 15 Wdh', en: '12 to 15 reps' }],
+      [{ de: 'Side Plank', en: 'Side plank' }, { de: '25 s je Seite', en: '25 s each side' }]
     ],
     mobility: [
-      ['Hüftbeuger Stretch', '60 s je Seite'],
-      ['Figure Four Stretch', '60 s je Seite'],
-      ['Brustwirbelsäule Rotation', '10 je Seite'],
-      ['Tiefe Kniebeuge halten', '60 s'],
-      ['Ruhige Atmung', '2 min']
+      [{ de: 'Hüftbeuger Stretch', en: 'Hip flexor stretch' }, { de: '60 s je Seite', en: '60 s each side' }],
+      [{ de: 'Figure Four Stretch', en: 'Figure four stretch' }, { de: '60 s je Seite', en: '60 s each side' }],
+      [{ de: 'Brustwirbelsäule Rotation', en: 'Thoracic rotation' }, { de: '10 je Seite', en: '10 each side' }],
+      [{ de: 'Tiefe Kniebeuge halten', en: 'Deep squat hold' }, { de: '60 s', en: '60 s' }],
+      [{ de: 'Ruhige Atmung', en: 'Calm breathing' }, { de: '2 min', en: '2 min' }]
     ]
   }
 };
+
+function challengeText(value) {
+  if (value && typeof value === 'object') {
+    const lang = loadLang();
+    return value[lang] || value.de || value.en || '';
+  }
+  return String(value || '');
+}
 
 function loadChallenge() {
   try {
@@ -3061,9 +3075,9 @@ function challengeWorkout(day, gender) {
     return { type: 'mobility', title: t('challenge.mobility'), minutes: 12, rounds: 1, exercises: lib.mobility };
   }
   const cycle = (day - 1) % 6;
-  if (cycle === 0 || cycle === 3) return { type: 'work', title: 'Ganzkörper A', minutes: 28, rounds: 3, exercises: lib.strengthA };
-  if (cycle === 1 || cycle === 4) return { type: 'work', title: 'Ganzkörper B', minutes: 30, rounds: 3, exercises: lib.strengthB };
-  return { type: 'work', title: 'Kondition + Core', minutes: 22, rounds: 4, exercises: lib.conditioning };
+  if (cycle === 0 || cycle === 3) return { type: 'work', title: t('challenge.workout.fullbodyA'), minutes: 28, rounds: 3, exercises: lib.strengthA };
+  if (cycle === 1 || cycle === 4) return { type: 'work', title: t('challenge.workout.fullbodyB'), minutes: 30, rounds: 3, exercises: lib.strengthB };
+  return { type: 'work', title: t('challenge.workout.conditioning'), minutes: 22, rounds: 4, exercises: lib.conditioning };
 }
 
 function renderChallenge() {
@@ -3135,8 +3149,8 @@ function renderChallenge() {
         <div class="challenge-ex">
           <div class="challenge-ex-num">${String(idx + 1).padStart(2, '0')}</div>
           <div>
-            <div class="challenge-ex-name">${escapeHtml(ex[0])}</div>
-            <div class="challenge-ex-note">${escapeHtml(ex[1])}</div>
+            <div class="challenge-ex-name">${escapeHtml(challengeText(ex[0]))}</div>
+            <div class="challenge-ex-note">${escapeHtml(challengeText(ex[1]))}</div>
           </div>
         </div>
       `).join('')}
