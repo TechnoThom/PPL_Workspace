@@ -30,12 +30,9 @@
 
     <div class="tabs">
       <div class="tab active" data-view="plan" data-i18n="tab.plan">Plan</div>
+      <div class="tab" data-view="challenge" data-i18n="tab.challenge">Challenge</div>
       <div class="tab" data-view="progress" data-i18n="tab.progress">Progress</div>
       <div class="tab" data-view="pack" data-i18n="tab.pack">Packliste</div>
-      <div class="tab tab-soon" data-action="roadmap" aria-haspopup="dialog">
-        <span class="tab-soon-lock" aria-hidden="true">🔒</span>
-        <span class="tab-soon-label" data-i18n="tab.soon">Bald</span>
-      </div>
     </div>
 
     <!-- PLAN VIEW -->
@@ -328,6 +325,11 @@
         </div>
       </div>
 
+    </div>
+
+    <!-- CHALLENGE VIEW -->
+    <div class="view" id="view-challenge">
+      <div class="challenge-shell" id="challenge-shell"></div>
     </div>
 
     <!-- PROGRESS VIEW -->

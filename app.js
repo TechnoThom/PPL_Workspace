@@ -5,7 +5,7 @@ const PPL_MIGRATABLE_KEYS = [
   'ppl-profile', 'ppl-weights', 'ppl-weight-history', 'ppl-sets',
   'ppl-sessions', 'ppl-freezes', 'ppl-last-share-reward', 'ppl-rec-enabled',
   'ppl-install-dismissed', 'ppl-substitutes', 'ppl-plan-mode', 'ppl-custom-plan',
-  'ppl-theme', 'ppl-lang', 'ppl-prs'
+  'ppl-theme', 'ppl-lang', 'ppl-prs', 'ppl-challenge'
 ];
 
 // i18n
@@ -18,6 +18,7 @@ const I18N = {
     'header.custom.eyebrow': 'Eigener Plan',
     'header.custom.sub': 'Selbst zusammengestellt · Tap für Details',
     'tab.plan': 'Plan',
+    'tab.challenge': 'Challenge',
     'tab.progress': 'Progress',
     'tab.pack': 'Packliste',
     'tab.soon': 'Bald',
@@ -39,6 +40,31 @@ const I18N = {
     'roadmap.item.share.desc': 'Eigenen Plan in 2 Sekunden an Trainingspartner schicken. Komplett offline, ohne Server.',
     'roadmap.foot': 'Du hast ne Idee? Melde dich auf Insta @jakobtxm',
     'roadmap.close': 'Schließen',
+    'challenge.eyebrow': '30 Tage',
+    'challenge.title': 'Challenge',
+    'challenge.intro': 'Ein kompakter Ganzkörper-Plan für 30 Tage. Kurz genug für Alltag, klar genug zum Durchziehen.',
+    'challenge.gender.title': 'Für welchen Plan commitest du dich?',
+    'challenge.gender.text': 'Wenn du dein Profil im Onboarding gesetzt hast, wählen wir automatisch. Sonst suchst du hier deine Variante aus.',
+    'challenge.gender.male': 'Männer',
+    'challenge.gender.female': 'Frauen',
+    'challenge.commit.title': 'Commitment zählt',
+    'challenge.commit.text': 'Halte den Button gedrückt, bis der Ring voll ist. Danach startet Tag 1 automatisch.',
+    'challenge.commit.button': 'Gedrückt halten',
+    'challenge.commit.ready': 'Loslassen zählt nicht',
+    'challenge.day': 'Tag {day} von 30',
+    'challenge.today': 'Heute',
+    'challenge.complete': 'Check-in erledigen',
+    'challenge.done': 'Heute erledigt',
+    'challenge.finished.title': 'Challenge geschafft',
+    'challenge.finished.text': '30 Tage durchgezogen. Starkes Ding.',
+    'challenge.progress': '{done} von 30 erledigt',
+    'challenge.rest': 'Regeneration',
+    'challenge.mobility': 'Mobility',
+    'challenge.work': 'Workout',
+    'challenge.meta.minutes': '{n} min',
+    'challenge.meta.rounds': '{n} Runden',
+    'challenge.profile.auto.male': 'Aus deinem Profil: Männer-Plan',
+    'challenge.profile.auto.female': 'Aus deinem Profil: Frauen-Plan',
     'progress.eyebrow': 'Deine Steigerung',
     'progress.title': 'Progress',
     'progress.sub': 'Größter Sprung zuerst. Tipp eine Übung für Details.',
@@ -231,6 +257,7 @@ const I18N = {
     'header.custom.eyebrow': 'Your own plan',
     'header.custom.sub': 'Built by you · tap for details',
     'tab.plan': 'Plan',
+    'tab.challenge': 'Challenge',
     'tab.progress': 'Progress',
     'tab.pack': 'Packing list',
     'tab.soon': 'Soon',
@@ -252,6 +279,31 @@ const I18N = {
     'roadmap.item.share.desc': 'Send your custom plan to a training partner in 2 seconds. Fully offline, no server.',
     'roadmap.foot': 'Got an idea? Hit me up on Insta @jakobtxm',
     'roadmap.close': 'Close',
+    'challenge.eyebrow': '30 days',
+    'challenge.title': 'Challenge',
+    'challenge.intro': 'A compact full-body plan for 30 days. Short enough for daily life, clear enough to follow through.',
+    'challenge.gender.title': 'Which plan are you committing to?',
+    'challenge.gender.text': 'If your onboarding profile has a gender set, we pick it automatically. Otherwise choose your variant here.',
+    'challenge.gender.male': 'Men',
+    'challenge.gender.female': 'Women',
+    'challenge.commit.title': 'Commitment counts',
+    'challenge.commit.text': 'Hold the button until the ring is full. Day 1 starts automatically after that.',
+    'challenge.commit.button': 'Hold to start',
+    'challenge.commit.ready': 'Releasing does not count',
+    'challenge.day': 'Day {day} of 30',
+    'challenge.today': 'Today',
+    'challenge.complete': 'Check in',
+    'challenge.done': 'Done today',
+    'challenge.finished.title': 'Challenge complete',
+    'challenge.finished.text': '30 days followed through. Strong work.',
+    'challenge.progress': '{done} of 30 done',
+    'challenge.rest': 'Recovery',
+    'challenge.mobility': 'Mobility',
+    'challenge.work': 'Workout',
+    'challenge.meta.minutes': '{n} min',
+    'challenge.meta.rounds': '{n} rounds',
+    'challenge.profile.auto.male': 'From your profile: men plan',
+    'challenge.profile.auto.female': 'From your profile: women plan',
     'progress.eyebrow': 'Your progression',
     'progress.title': 'Progress',
     'progress.sub': 'Biggest jump first. Tap an exercise for details.',
@@ -1278,6 +1330,7 @@ function initLangToggle() {
       if (typeof applySubstitutes === 'function') applySubstitutes();
       renderSets();
       if (typeof renderCustomPlan === 'function') renderCustomPlan();
+      if (typeof renderChallenge === 'function') renderChallenge();
       const editor = document.getElementById('custom-editor');
       if (editor && !editor.classList.contains('hidden')) renderEditor();
       const sheet = document.getElementById('template-sheet');
@@ -2895,6 +2948,248 @@ function startOnboarding() {
   showLanguage();
 }
 
+// 30 Tage Challenge, getrennt vom PPL-Tracking
+const CHALLENGE_DAYS = 30;
+const CHALLENGE_KEY = 'ppl-challenge';
+let challengeDraftGender = null;
+let challengeHoldTimer = null;
+let challengeHoldStartedAt = 0;
+let challengeHoldFrame = null;
+
+const CHALLENGE_LIBRARY = {
+  male: {
+    strengthA: [
+      ['Liegestütze', '8 bis 15 Wdh'],
+      ['Kniebeugen', '15 bis 20 Wdh'],
+      ['Rudern am Kabel oder Tisch', '10 bis 12 Wdh'],
+      ['Ausfallschritte', '10 je Seite'],
+      ['Plank', '30 bis 45 s']
+    ],
+    strengthB: [
+      ['Schulterdrücken Kurzhantel', '10 bis 12 Wdh'],
+      ['Rumänisches Kreuzheben', '10 bis 12 Wdh'],
+      ['Klimmzug oder Latzug', '6 bis 10 Wdh'],
+      ['Glute Bridge', '15 bis 20 Wdh'],
+      ['Dead Bug', '10 je Seite']
+    ],
+    conditioning: [
+      ['Goblet Squat', '12 bis 15 Wdh'],
+      ['Incline Push-ups', '10 bis 15 Wdh'],
+      ['Mountain Climbers', '30 s'],
+      ['Farmer Carry', '40 s'],
+      ['Side Plank', '25 s je Seite']
+    ],
+    mobility: [
+      ['Hüftöffner', '60 s je Seite'],
+      ['Brustwirbelsäule Rotation', '10 je Seite'],
+      ['Hamstring Stretch', '60 s je Seite'],
+      ['Tiefe Kniebeuge halten', '60 s'],
+      ['Ruhige Atmung', '2 min']
+    ]
+  },
+  female: {
+    strengthA: [
+      ['Hip Thrust', '10 bis 15 Wdh'],
+      ['Goblet Squat', '12 bis 15 Wdh'],
+      ['Rudern am Kabel oder Band', '10 bis 12 Wdh'],
+      ['Liegestütze erhöht', '8 bis 12 Wdh'],
+      ['Plank', '30 bis 45 s']
+    ],
+    strengthB: [
+      ['Rumänisches Kreuzheben', '10 bis 12 Wdh'],
+      ['Bulgarian Split Squats', '8 bis 10 je Seite'],
+      ['Schulterdrücken Kurzhantel', '10 bis 12 Wdh'],
+      ['Abduktoren oder Side Walks', '15 bis 20 Wdh'],
+      ['Dead Bug', '10 je Seite']
+    ],
+    conditioning: [
+      ['Step-ups', '10 je Seite'],
+      ['Glute Bridge March', '12 je Seite'],
+      ['Latzug oder Band Pull-aparts', '12 bis 15 Wdh'],
+      ['Kettlebell Deadlift', '12 bis 15 Wdh'],
+      ['Side Plank', '25 s je Seite']
+    ],
+    mobility: [
+      ['Hüftbeuger Stretch', '60 s je Seite'],
+      ['Figure Four Stretch', '60 s je Seite'],
+      ['Brustwirbelsäule Rotation', '10 je Seite'],
+      ['Tiefe Kniebeuge halten', '60 s'],
+      ['Ruhige Atmung', '2 min']
+    ]
+  }
+};
+
+function loadChallenge() {
+  try {
+    const saved = localStorage.getItem(CHALLENGE_KEY);
+    if (saved) {
+      const c = JSON.parse(saved);
+      if (c && typeof c === 'object') {
+        return {
+          active: !!c.active,
+          gender: c.gender === 'female' ? 'female' : c.gender === 'male' ? 'male' : null,
+          startDate: c.startDate || null,
+          completed: Array.isArray(c.completed) ? c.completed.filter(n => n >= 1 && n <= CHALLENGE_DAYS) : []
+        };
+      }
+    }
+  } catch (e) {}
+  return { active: false, gender: null, startDate: null, completed: [] };
+}
+
+function saveChallenge(c) {
+  try { localStorage.setItem(CHALLENGE_KEY, JSON.stringify(c)); } catch (e) {}
+}
+
+function challengeProfileGender() {
+  try {
+    const saved = localStorage.getItem('ppl-profile');
+    if (!saved) return null;
+    const profile = JSON.parse(saved);
+    return profile.gender === 'male' || profile.gender === 'female' ? profile.gender : null;
+  } catch (e) { return null; }
+}
+
+function challengeDayNumber(challenge) {
+  if (!challenge.active || !challenge.startDate) return 1;
+  return Math.min(CHALLENGE_DAYS, Math.max(1, daysBetween(challenge.startDate, todayIso()) + 1));
+}
+
+function challengeWorkout(day, gender) {
+  const lib = CHALLENGE_LIBRARY[gender === 'female' ? 'female' : 'male'];
+  if (day % 7 === 0) {
+    return { type: 'mobility', title: t('challenge.mobility'), minutes: 12, rounds: 1, exercises: lib.mobility };
+  }
+  const cycle = (day - 1) % 6;
+  if (cycle === 0 || cycle === 3) return { type: 'work', title: 'Ganzkörper A', minutes: 28, rounds: 3, exercises: lib.strengthA };
+  if (cycle === 1 || cycle === 4) return { type: 'work', title: 'Ganzkörper B', minutes: 30, rounds: 3, exercises: lib.strengthB };
+  return { type: 'work', title: 'Kondition + Core', minutes: 22, rounds: 4, exercises: lib.conditioning };
+}
+
+function renderChallenge() {
+  const shell = document.getElementById('challenge-shell');
+  if (!shell) return;
+  const challenge = loadChallenge();
+  const profileGender = challengeProfileGender();
+  if (!challengeDraftGender) challengeDraftGender = profileGender || 'male';
+
+  if (!challenge.active) {
+    const lockedGender = profileGender;
+    const selected = lockedGender || challengeDraftGender;
+    const autoText = lockedGender ? t(`challenge.profile.auto.${lockedGender}`) : '';
+    shell.innerHTML = `
+      <div class="challenge-hero">
+        <div class="challenge-eyebrow">${escapeHtml(t('challenge.eyebrow'))}</div>
+        <div class="challenge-title">${escapeHtml(t('challenge.title'))}</div>
+        <div class="challenge-intro">${escapeHtml(t('challenge.intro'))}</div>
+      </div>
+      <div class="challenge-card">
+        <div class="challenge-card-title">${escapeHtml(t('challenge.gender.title'))}</div>
+        <div class="challenge-card-text">${escapeHtml(t('challenge.gender.text'))}</div>
+        ${autoText ? `<div class="challenge-auto">${escapeHtml(autoText)}</div>` : ''}
+        <div class="challenge-gender-row">
+          <button type="button" data-gender="male" class="${selected === 'male' ? 'active' : ''}" ${lockedGender ? 'disabled' : ''}>${escapeHtml(t('challenge.gender.male'))}</button>
+          <button type="button" data-gender="female" class="${selected === 'female' ? 'active' : ''}" ${lockedGender ? 'disabled' : ''}>${escapeHtml(t('challenge.gender.female'))}</button>
+        </div>
+      </div>
+      <div class="challenge-card commit">
+        <div class="challenge-card-title">${escapeHtml(t('challenge.commit.title'))}</div>
+        <div class="challenge-card-text">${escapeHtml(t('challenge.commit.text'))}</div>
+        <button type="button" class="challenge-hold" id="challenge-hold" style="--hold: 0">
+          <span>${escapeHtml(t('challenge.commit.button'))}</span>
+        </button>
+        <div class="challenge-hold-hint">${escapeHtml(t('challenge.commit.ready'))}</div>
+      </div>
+    `;
+    if (!lockedGender) {
+      shell.querySelectorAll('[data-gender]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          challengeDraftGender = btn.dataset.gender === 'female' ? 'female' : 'male';
+          renderChallenge();
+        });
+      });
+    }
+    initChallengeHold(lockedGender || selected);
+    return;
+  }
+
+  const day = challengeDayNumber(challenge);
+  const done = new Set(challenge.completed || []);
+  const todayDone = done.has(day);
+  const workout = challengeWorkout(day, challenge.gender);
+  const finished = done.size >= CHALLENGE_DAYS;
+  const pct = Math.round((done.size / CHALLENGE_DAYS) * 100);
+  shell.innerHTML = `
+    <div class="challenge-hero active">
+      <div class="challenge-eyebrow">${escapeHtml(t('challenge.day', { day }))}</div>
+      <div class="challenge-title">${escapeHtml(finished ? t('challenge.finished.title') : workout.title)}</div>
+      <div class="challenge-intro">${escapeHtml(finished ? t('challenge.finished.text') : t('challenge.progress', { done: done.size }))}</div>
+      <div class="challenge-progress"><div style="width: ${pct}%"></div></div>
+    </div>
+    <div class="challenge-meta">
+      <div><span>${escapeHtml(t('challenge.today'))}</span><strong>${escapeHtml(workout.type === 'mobility' ? t('challenge.mobility') : t('challenge.work'))}</strong></div>
+      <div><span>${escapeHtml(t('challenge.meta.minutes', { n: workout.minutes }))}</span><strong>${escapeHtml(t('challenge.meta.rounds', { n: workout.rounds }))}</strong></div>
+    </div>
+    <div class="challenge-list">
+      ${workout.exercises.map((ex, idx) => `
+        <div class="challenge-ex">
+          <div class="challenge-ex-num">${String(idx + 1).padStart(2, '0')}</div>
+          <div>
+            <div class="challenge-ex-name">${escapeHtml(ex[0])}</div>
+            <div class="challenge-ex-note">${escapeHtml(ex[1])}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <button type="button" class="challenge-check ${todayDone ? 'done' : ''}" id="challenge-check" ${todayDone || finished ? 'disabled' : ''}>
+      ${escapeHtml(todayDone ? t('challenge.done') : t('challenge.complete'))}
+    </button>
+  `;
+  document.getElementById('challenge-check')?.addEventListener('click', () => {
+    const current = loadChallenge();
+    const currentDay = challengeDayNumber(current);
+    if (!current.completed.includes(currentDay)) current.completed.push(currentDay);
+    current.completed = current.completed.slice().sort((a, b) => a - b);
+    saveChallenge(current);
+    renderChallenge();
+  });
+}
+
+function initChallengeHold(gender) {
+  const btn = document.getElementById('challenge-hold');
+  if (!btn) return;
+  const duration = 1400;
+  const stop = () => {
+    if (challengeHoldTimer) clearTimeout(challengeHoldTimer);
+    if (challengeHoldFrame) cancelAnimationFrame(challengeHoldFrame);
+    challengeHoldTimer = null;
+    challengeHoldFrame = null;
+    btn.classList.remove('holding');
+    btn.style.setProperty('--hold', '0');
+  };
+  const tick = () => {
+    const progress = Math.min(1, (Date.now() - challengeHoldStartedAt) / duration);
+    btn.style.setProperty('--hold', String(progress));
+    if (progress < 1) challengeHoldFrame = requestAnimationFrame(tick);
+  };
+  const start = e => {
+    e.preventDefault();
+    stop();
+    btn.classList.add('holding');
+    challengeHoldStartedAt = Date.now();
+    tick();
+    challengeHoldTimer = setTimeout(() => {
+      saveChallenge({ active: true, gender, startDate: todayIso(), completed: [] });
+      stop();
+      renderChallenge();
+    }, duration);
+  };
+  btn.addEventListener('pointerdown', start);
+  btn.addEventListener('pointerup', stop);
+  btn.addEventListener('pointercancel', stop);
+  btn.addEventListener('pointerleave', stop);
+}
+
 // Share + Streak Freeze
 function showToast(msg) {
   const existing = document.querySelector('.toast');
@@ -2970,6 +3265,7 @@ renderFreezeBadge();
 refreshRecommendations();
 renderInlineProgressBars();
 renderProgress();
+renderChallenge();
 initRecToggle();
 initThemeToggle();
 document.getElementById('share-btn')?.addEventListener('click', shareApp);
