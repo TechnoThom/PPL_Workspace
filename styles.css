@@ -1145,19 +1145,6 @@ html.light .stat.streak-active .stat-value {
 .install-btn:active { transform: scale(0.97); }
 .install-btn svg { width: 13px; height: 13px; }
 
-.install-hint-arrow {
-  display: block;
-  margin: 14px auto 0;
-  color: var(--pack);
-  animation: arrow-point 1.2s ease-in-out infinite;
-  transform-origin: center;
-}
-
-@keyframes arrow-point {
-  0%, 100% { transform: translateY(0); opacity: 0.85; }
-  50% { transform: translateY(10px); opacity: 1; }
-}
-
 .ig-overlay {
   position: fixed;
   inset: 0;
@@ -1170,20 +1157,6 @@ html.light .stat.streak-active .stat-value {
 }
 
 .ig-overlay.hidden { display: none; }
-
-.ig-arrow-up {
-  position: absolute;
-  top: calc(env(safe-area-inset-top, 0px) + 16px);
-  right: 24px;
-  color: var(--pack);
-  animation: arrow-up-bounce 1.2s ease-in-out infinite;
-  filter: drop-shadow(0 0 10px rgba(10, 132, 255, 0.6));
-}
-
-@keyframes arrow-up-bounce {
-  0%, 100% { transform: translateY(0); opacity: 0.9; }
-  50% { transform: translateY(-10px); opacity: 1; }
-}
 
 .ig-card {
   max-width: 420px;

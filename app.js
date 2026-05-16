@@ -3689,7 +3689,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Install-Hinweis (Banner mit Pfeil Richtung Browser-Menü)
+// Install-Hinweis
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 const isStandalone = window.navigator.standalone === true ||
                      window.matchMedia('(display-mode: standalone)').matches;
@@ -3730,10 +3730,6 @@ function showInstallHint(options) {
       </div>
       <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
         <button id="ppl-dismiss" style="background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 6px; font-family: inherit; font-size: 11px; cursor: pointer;">${t('install.dismiss')}</button>
-        <svg class="install-hint-arrow" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="12" y1="5" x2="12" y2="19"/>
-          <polyline points="6 13 12 19 18 13"/>
-        </svg>
       </div>
     </div>
   `;

@@ -232,23 +232,67 @@
 
   .phone {
     position: relative;
-    margin: 14px auto 0;
-    width: min(74%, 300px);
+    margin: 10px auto 0;
+    width: min(86%, 380px);
     aspect-ratio: 9 / 16;
     border: 1px solid rgba(255,255,255,0.18);
     border-radius: 34px;
-    padding: 12px;
-    background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-    box-shadow: 0 24px 70px rgba(0,0,0,0.46);
+    padding: 10px;
+    background:
+      linear-gradient(145deg, rgba(255,255,255,0.13), rgba(255,255,255,0.02)),
+      #070707;
+    box-shadow:
+      0 26px 80px rgba(0,0,0,0.56),
+      0 0 46px rgba(48, 209, 88, 0.18);
   }
 
   .phone-screen {
+    position: relative;
     height: 100%;
     border-radius: 24px;
     border: 1px solid var(--border);
     background: #0a0a0a;
-    padding: 18px 14px;
+    padding: 14px 12px 64px;
     overflow: hidden;
+  }
+
+  .phone-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, rgba(255, 59, 48, 0.14), transparent 38%),
+      linear-gradient(315deg, rgba(48, 209, 88, 0.16), transparent 44%);
+    pointer-events: none;
+  }
+
+  .phone-screen > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .mini-header {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .mini-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 30px;
+    line-height: 0.9;
+    letter-spacing: 0.08em;
+  }
+
+  .mini-brand span:nth-child(1) { color: var(--push); }
+  .mini-brand span:nth-child(2) { color: var(--pull); }
+  .mini-brand span:nth-child(3) { color: var(--legs); }
+
+  .mini-sub {
+    margin-top: 5px;
+    color: var(--text-dim);
+    font-size: 7px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
 
   .mini-tabs {
@@ -277,12 +321,60 @@
     color: #fff;
   }
 
+  .mini-hero {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: var(--surface);
+    padding: 15px 14px 13px;
+    margin-bottom: 8px;
+  }
+
+  .mini-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, rgba(48, 209, 88, 0.18), transparent 44%),
+      linear-gradient(315deg, rgba(10, 132, 255, 0.16), transparent 48%);
+  }
+
+  .mini-hero > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .mini-eyebrow {
+    color: var(--pack);
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+  }
+
   .mini-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 34px;
+    font-size: 38px;
     line-height: 0.9;
     letter-spacing: 0.04em;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
+  }
+
+  .mini-progress {
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.11);
+    overflow: hidden;
+  }
+
+  .mini-progress span {
+    display: block;
+    width: 18%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--push), var(--pull), var(--legs));
   }
 
   .mini-meta {
@@ -295,12 +387,12 @@
   .mini-meta div,
   .mini-ex {
     border: 1px solid var(--border);
-    border-radius: 9px;
+    border-radius: 10px;
     background: var(--surface);
   }
 
   .mini-meta div {
-    padding: 9px 8px;
+    padding: 8px;
     font-size: 8px;
     color: var(--text-dim);
     text-transform: uppercase;
@@ -321,8 +413,12 @@
     grid-template-columns: auto 1fr auto;
     align-items: center;
     gap: 8px;
-    padding: 9px 8px;
+    padding: 8px;
     margin-bottom: 6px;
+  }
+
+  .mini-ex.done {
+    color: var(--text-dim);
   }
 
   .mini-num {
@@ -349,9 +445,77 @@
     display: grid;
     place-items: center;
     color: #061106;
-    background: var(--pull);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
     font-weight: 700;
-    font-size: 12px;
+    font-size: 0;
+  }
+
+  .mini-check.done {
+    background: var(--pull);
+    border-color: var(--pull);
+  }
+
+  .phone-screen .mini-ex:nth-of-type(6),
+  .phone-screen .mini-ex:nth-of-type(7) {
+    color: var(--text-dim);
+  }
+
+  .phone-screen .mini-ex:nth-of-type(6) .mini-check,
+  .phone-screen .mini-ex:nth-of-type(7) .mini-check {
+    background: var(--pull);
+    border-color: var(--pull);
+  }
+
+  .mini-check.done::before,
+  .phone-screen .mini-ex:nth-of-type(6) .mini-check::before,
+  .phone-screen .mini-ex:nth-of-type(7) .mini-check::before {
+    content: '';
+    width: 9px;
+    height: 5px;
+    border-left: 2px solid #061106;
+    border-bottom: 2px solid #061106;
+    transform: rotate(-45deg) translate(1px, -1px);
+  }
+
+  .mini-rest {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 10px;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(48, 209, 88, 0.34);
+    border-radius: 16px;
+    background: rgba(21,21,21,0.94);
+    padding: 12px 13px;
+    box-shadow: 0 -14px 36px rgba(0,0,0,0.35), 0 0 28px rgba(48, 209, 88, 0.14);
+  }
+
+  .mini-rest span {
+    display: block;
+    color: var(--text-dim);
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .mini-rest strong {
+    display: block;
+    margin-top: 3px;
+    color: var(--text);
+    font-size: 9px;
+  }
+
+  .mini-rest-time {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--pull);
+    font-size: 38px;
+    line-height: 0.9;
+    text-shadow: 0 0 16px rgba(48, 209, 88, 0.32);
   }
 
   .timer {
@@ -595,15 +759,28 @@
       <div class="kicker">So sieht es aus</div>
       <div class="phone">
         <div class="phone-screen">
+          <div class="mini-header">
+            <div class="mini-brand"><span>PUSH</span> <span>PULL</span> <span>LEGS</span></div>
+            <div class="mini-sub">Offline App, direkt auf dem Homescreen</div>
+          </div>
           <div class="mini-tabs"><span>Gym</span><span class="active">Zuhause</span></div>
-          <div class="mini-title">Beine + Core</div>
+          <div class="mini-hero">
+            <div class="mini-eyebrow">Tag 1 von 30</div>
+            <div class="mini-title">Beine + Core</div>
+            <div class="mini-progress"><span></span></div>
+          </div>
           <div class="mini-meta">
             <div>Heute<strong>Workout</strong></div>
             <div>24 min<strong>Runde 1 von 3</strong></div>
           </div>
+          <div class="mini-rest">
+            <div><span>Pause</span><strong>Reverse Lunges</strong></div>
+            <div class="mini-rest-time">0:45</div>
+          </div>
           <div class="mini-ex"><span class="mini-num">01</span><div><div class="mini-name">Kniebeugen</div><div class="mini-note">15 bis 25 Wdh</div></div><span class="mini-check">✓</span></div>
           <div class="mini-ex"><span class="mini-num">02</span><div><div class="mini-name">Reverse Lunges</div><div class="mini-note">10 bis 14 je Seite</div></div><span class="mini-check">✓</span></div>
           <div class="mini-ex"><span class="mini-num">03</span><div><div class="mini-name">Glute Bridges</div><div class="mini-note">15 bis 25 Wdh</div></div><span class="mini-check">✓</span></div>
+          <div class="mini-ex"><span class="mini-num">04</span><div><div class="mini-name">Plank</div><div class="mini-note">30 bis 60 s</div></div><span class="mini-check"></span></div>
         </div>
       </div>
     </div>
