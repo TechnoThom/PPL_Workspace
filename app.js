@@ -5,7 +5,7 @@ const PPL_MIGRATABLE_KEYS = [
   'ppl-profile', 'ppl-weights', 'ppl-weight-history', 'ppl-sets',
   'ppl-sessions', 'ppl-freezes', 'ppl-last-share-reward', 'ppl-rec-enabled',
   'ppl-install-dismissed', 'ppl-substitutes', 'ppl-plan-mode', 'ppl-custom-plan',
-  'ppl-theme', 'ppl-lang', 'ppl-prs', 'ppl-challenge'
+  'ppl-theme', 'ppl-lang', 'ppl-prs', 'ppl-challenge', 'ppl-home-challenge', 'ppl-challenge-mode'
 ];
 
 // i18n
@@ -54,10 +54,23 @@ const I18N = {
     'challenge.day': 'Tag {day} von 30',
     'challenge.today': 'Heute',
     'challenge.complete': 'Check-in erledigen',
+    'challenge.complete.hint': 'Alle Übungen abhaken',
+    'challenge.nextRound': 'Runde {round} starten',
+    'challenge.round': 'Runde {round} von {rounds}',
     'challenge.done': 'Heute erledigt',
     'challenge.finished.title': 'Challenge geschafft',
     'challenge.finished.text': '30 Tage durchgezogen. Starkes Ding.',
     'challenge.progress': '{done} von 30 erledigt',
+    'challenge.home.eyebrow': '30 Tage Zuhause',
+    'challenge.home.title': 'Zuhause',
+    'challenge.home.intro': 'Ein kompakter Plan ohne Geräte. Du brauchst nur etwas Platz und ein paar Minuten Fokus.',
+    'challenge.home.commit.title': 'Zuhause starten',
+    'challenge.home.commit.text': 'Halte den Button gedrückt, bis der Ring voll ist. Danach startet Tag 1 automatisch.',
+    'challenge.home.workout.lower': 'Beine + Core',
+    'challenge.home.workout.upper': 'Push + Rücken',
+    'challenge.home.workout.fullbody': 'Full Body',
+    'challenge.mode.gym': 'Gym',
+    'challenge.mode.home': 'Zuhause',
     'challenge.rest': 'Regeneration',
     'challenge.mobility': 'Mobility',
     'challenge.work': 'Workout',
@@ -296,10 +309,23 @@ const I18N = {
     'challenge.day': 'Day {day} of 30',
     'challenge.today': 'Today',
     'challenge.complete': 'Check in',
+    'challenge.complete.hint': 'Check all exercises',
+    'challenge.nextRound': 'Start round {round}',
+    'challenge.round': 'Round {round} of {rounds}',
     'challenge.done': 'Done today',
     'challenge.finished.title': 'Challenge complete',
     'challenge.finished.text': '30 days followed through. Strong work.',
     'challenge.progress': '{done} of 30 done',
+    'challenge.home.eyebrow': '30 days at home',
+    'challenge.home.title': 'Home',
+    'challenge.home.intro': 'A compact plan without equipment. You only need a little room and a few focused minutes.',
+    'challenge.home.commit.title': 'Start at home',
+    'challenge.home.commit.text': 'Hold the button until the ring is full. Day 1 starts automatically after that.',
+    'challenge.home.workout.lower': 'Legs + Core',
+    'challenge.home.workout.upper': 'Push + Back',
+    'challenge.home.workout.fullbody': 'Full Body',
+    'challenge.mode.gym': 'Gym',
+    'challenge.mode.home': 'Home',
     'challenge.rest': 'Recovery',
     'challenge.mobility': 'Mobility',
     'challenge.work': 'Workout',
@@ -1337,6 +1363,7 @@ function initLangToggle() {
       renderSets();
       if (typeof renderCustomPlan === 'function') renderCustomPlan();
       if (typeof renderChallenge === 'function') renderChallenge();
+      if (typeof renderHomeChallenge === 'function') renderHomeChallenge();
       const editor = document.getElementById('custom-editor');
       if (editor && !editor.classList.contains('hidden')) renderEditor();
       const sheet = document.getElementById('template-sheet');
@@ -2957,6 +2984,7 @@ function startOnboarding() {
 // 30 Tage Challenge, getrennt vom PPL-Tracking
 const CHALLENGE_DAYS = 30;
 const CHALLENGE_KEY = 'ppl-challenge';
+const HOME_CHALLENGE_KEY = 'ppl-home-challenge';
 let challengeDraftGender = null;
 let challengeHoldTimer = null;
 let challengeHoldStartedAt = 0;
@@ -3025,6 +3053,37 @@ const CHALLENGE_LIBRARY = {
   }
 };
 
+const HOME_CHALLENGE_LIBRARY = {
+  lower: [
+    [{ de: 'Kniebeugen', en: 'Squats' }, { de: '15 bis 25 Wdh', en: '15 to 25 reps' }, 45],
+    [{ de: 'Reverse Lunges', en: 'Reverse lunges' }, { de: '10 bis 14 je Seite', en: '10 to 14 each side' }, 45],
+    [{ de: 'Glute Bridges', en: 'Glute bridges' }, { de: '15 bis 25 Wdh', en: '15 to 25 reps' }, 45],
+    [{ de: 'Wadenheben', en: 'Calf raises' }, { de: '20 bis 30 Wdh', en: '20 to 30 reps' }, 30],
+    [{ de: 'Plank', en: 'Plank' }, { de: '30 bis 60 s', en: '30 to 60 s' }, 45]
+  ],
+  upper: [
+    [{ de: 'Liegest\u00fctze', en: 'Push-ups' }, { de: '6 bis 15 Wdh', en: '6 to 15 reps' }, 60],
+    [{ de: 'Superman Pulls', en: 'Superman pulls' }, { de: '12 bis 18 Wdh', en: '12 to 18 reps' }, 45],
+    [{ de: 'Pike Push-ups', en: 'Pike push-ups' }, { de: '6 bis 12 Wdh', en: '6 to 12 reps' }, 60],
+    [{ de: 'Reverse Snow Angels', en: 'Reverse snow angels' }, { de: '10 bis 15 Wdh', en: '10 to 15 reps' }, 45],
+    [{ de: 'Dead Bug', en: 'Dead bug' }, { de: '10 bis 14 je Seite', en: '10 to 14 each side' }, 45]
+  ],
+  fullbody: [
+    [{ de: 'Squat to Reach', en: 'Squat to reach' }, { de: '12 bis 18 Wdh', en: '12 to 18 reps' }, 45],
+    [{ de: 'Mountain Climbers', en: 'Mountain climbers' }, { de: '30 bis 45 s', en: '30 to 45 s' }, 45],
+    [{ de: 'Ausfallschritt Pulses', en: 'Lunge pulses' }, { de: '12 je Seite', en: '12 each side' }, 45],
+    [{ de: 'Hand Release Push-ups', en: 'Hand release push-ups' }, { de: '6 bis 12 Wdh', en: '6 to 12 reps' }, 60],
+    [{ de: 'Side Plank', en: 'Side plank' }, { de: '25 bis 45 s je Seite', en: '25 to 45 s each side' }, 45]
+  ],
+  mobility: [
+    [{ de: 'Cat Cow', en: 'Cat cow' }, { de: '10 ruhige Wdh', en: '10 calm reps' }, 20],
+    [{ de: 'H\u00fcftbeuger Stretch', en: 'Hip flexor stretch' }, { de: '60 s je Seite', en: '60 s each side' }, 20],
+    [{ de: 'Brustwirbels\u00e4ule Rotation', en: 'Thoracic rotation' }, { de: '10 je Seite', en: '10 each side' }, 20],
+    [{ de: 'Tiefe Kniebeuge halten', en: 'Deep squat hold' }, { de: '60 s', en: '60 s' }, 20],
+    [{ de: 'Ruhige Atmung', en: 'Calm breathing' }, { de: '2 min', en: '2 min' }, 20]
+  ]
+};
+
 function challengeText(value) {
   if (value && typeof value === 'object') {
     const lang = loadLang();
@@ -3043,16 +3102,89 @@ function loadChallenge() {
           active: !!c.active,
           gender: c.gender === 'female' ? 'female' : c.gender === 'male' ? 'male' : null,
           startDate: c.startDate || null,
-          completed: Array.isArray(c.completed) ? c.completed.filter(n => n >= 1 && n <= CHALLENGE_DAYS) : []
+          completed: Array.isArray(c.completed) ? c.completed.filter(n => n >= 1 && n <= CHALLENGE_DAYS) : [],
+          exerciseDone: c.exerciseDone && typeof c.exerciseDone === 'object' ? c.exerciseDone : {},
+          roundsDone: c.roundsDone && typeof c.roundsDone === 'object' ? c.roundsDone : {}
         };
       }
     }
   } catch (e) {}
-  return { active: false, gender: null, startDate: null, completed: [] };
+  return { active: false, gender: null, startDate: null, completed: [], exerciseDone: {}, roundsDone: {} };
 }
 
 function saveChallenge(c) {
   try { localStorage.setItem(CHALLENGE_KEY, JSON.stringify(c)); } catch (e) {}
+}
+
+function challengeExerciseDone(challenge, day) {
+  const list = challenge.exerciseDone && Array.isArray(challenge.exerciseDone[day]) ? challenge.exerciseDone[day] : [];
+  return new Set(list.filter(n => Number.isInteger(n) && n >= 0));
+}
+
+function setChallengeExerciseDone(challenge, day, doneSet) {
+  if (!challenge.exerciseDone || typeof challenge.exerciseDone !== 'object') challenge.exerciseDone = {};
+  challenge.exerciseDone[day] = Array.from(doneSet).sort((a, b) => a - b);
+}
+
+function completeChallengeDayIfReady(challenge, day, totalExercises) {
+  const doneSet = challengeExerciseDone(challenge, day);
+  if (totalExercises > 0 && doneSet.size >= totalExercises && !challenge.completed.includes(day)) {
+    challenge.completed.push(day);
+    challenge.completed = challenge.completed.slice().sort((a, b) => a - b);
+  }
+}
+
+function challengeRoundsDone(challenge, day) {
+  const value = challenge.roundsDone && Number(challenge.roundsDone[day]);
+  return Number.isFinite(value) ? Math.max(0, value) : 0;
+}
+
+function setChallengeRoundsDone(challenge, day, rounds) {
+  if (!challenge.roundsDone || typeof challenge.roundsDone !== 'object') challenge.roundsDone = {};
+  challenge.roundsDone[day] = Math.max(0, rounds);
+}
+
+function challengeRest(ex, workout) {
+  return Number.isFinite(ex?.[2]) ? ex[2] : workout.type === 'mobility' ? 20 : 60;
+}
+
+function challengeCheckSvg() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+}
+
+function getChallengeMode() {
+  try {
+    return localStorage.getItem('ppl-challenge-mode') === 'home' ? 'home' : 'gym';
+  } catch (e) {
+    return 'gym';
+  }
+}
+
+function setChallengeMode(mode) {
+  try { localStorage.setItem('ppl-challenge-mode', mode === 'home' ? 'home' : 'gym'); } catch (e) {}
+}
+
+function applyChallengeMode() {
+  const mode = getChallengeMode();
+  const gymShell = document.getElementById('challenge-shell');
+  const homeShell = document.getElementById('home-challenge-shell');
+  if (gymShell) gymShell.classList.toggle('hidden', mode !== 'gym');
+  if (homeShell) homeShell.classList.toggle('hidden', mode !== 'home');
+  document.querySelectorAll('[data-challenge-mode]').forEach(btn => {
+    const active = btn.dataset.challengeMode === mode;
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+}
+
+function initChallengeModeSwitch() {
+  document.querySelectorAll('[data-challenge-mode]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setChallengeMode(btn.dataset.challengeMode);
+      applyChallengeMode();
+    });
+  });
+  applyChallengeMode();
 }
 
 function challengeProfileGender() {
@@ -3131,6 +3263,12 @@ function renderChallenge() {
   const done = new Set(challenge.completed || []);
   const todayDone = done.has(day);
   const workout = challengeWorkout(day, challenge.gender);
+  const exerciseDone = challengeExerciseDone(challenge, day);
+  const allExercisesDone = exerciseDone.size >= workout.exercises.length;
+  const roundsDone = challengeRoundsDone(challenge, day);
+  const currentRound = Math.min(workout.rounds, roundsDone + 1);
+  const nextRound = currentRound + 1;
+  const finalRoundDone = allExercisesDone && currentRound >= workout.rounds;
   const finished = done.size >= CHALLENGE_DAYS;
   const pct = Math.round((done.size / CHALLENGE_DAYS) * 100);
   shell.innerHTML = `
@@ -3142,31 +3280,240 @@ function renderChallenge() {
     </div>
     <div class="challenge-meta">
       <div><span>${escapeHtml(t('challenge.today'))}</span><strong>${escapeHtml(workout.type === 'mobility' ? t('challenge.mobility') : t('challenge.work'))}</strong></div>
-      <div><span>${escapeHtml(t('challenge.meta.minutes', { n: workout.minutes }))}</span><strong>${escapeHtml(t('challenge.meta.rounds', { n: workout.rounds }))}</strong></div>
+      <div><span>${escapeHtml(t('challenge.meta.minutes', { n: workout.minutes }))}</span><strong>${escapeHtml(t('challenge.round', { round: currentRound, rounds: workout.rounds }))}</strong></div>
     </div>
     <div class="challenge-list">
       ${workout.exercises.map((ex, idx) => `
-        <div class="challenge-ex">
+        <div class="challenge-ex ${exerciseDone.has(idx) ? 'done' : ''}">
           <div class="challenge-ex-num">${String(idx + 1).padStart(2, '0')}</div>
           <div>
             <div class="challenge-ex-name">${escapeHtml(challengeText(ex[0]))}</div>
             <div class="challenge-ex-note">${escapeHtml(challengeText(ex[1]))}</div>
           </div>
+          <button type="button" class="challenge-ex-check ${exerciseDone.has(idx) ? 'done' : ''}" data-challenge-ex="${idx}" aria-label="\u00dcbung ${idx + 1} abhaken">
+            ${challengeCheckSvg()}
+          </button>
         </div>
       `).join('')}
     </div>
-    <button type="button" class="challenge-check ${todayDone ? 'done' : ''}" id="challenge-check" ${todayDone || finished ? 'disabled' : ''}>
-      ${escapeHtml(todayDone ? t('challenge.done') : t('challenge.complete'))}
+    <button type="button" class="challenge-check ${todayDone ? 'done' : ''}" id="challenge-check" ${todayDone || finished || !allExercisesDone ? 'disabled' : ''}>
+      ${escapeHtml(todayDone ? t('challenge.done') : allExercisesDone ? finalRoundDone ? t('challenge.complete') : t('challenge.nextRound', { round: nextRound }) : t('challenge.complete.hint'))}
     </button>
   `;
+  shell.querySelectorAll('[data-challenge-ex]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.challengeEx, 10);
+      const current = loadChallenge();
+      const currentDay = challengeDayNumber(current);
+      const currentWorkout = challengeWorkout(currentDay, current.gender);
+      const doneSet = challengeExerciseDone(current, currentDay);
+      if (doneSet.has(idx)) {
+        doneSet.delete(idx);
+        current.completed = (current.completed || []).filter(n => n !== currentDay);
+      } else {
+        doneSet.add(idx);
+        ensureAudioContext();
+        startTimer(challengeRest(currentWorkout.exercises[idx], currentWorkout), challengeText(currentWorkout.exercises[idx]?.[0]));
+      }
+      setChallengeExerciseDone(current, currentDay, doneSet);
+      if (challengeRoundsDone(current, currentDay) + 1 >= currentWorkout.rounds) {
+        completeChallengeDayIfReady(current, currentDay, currentWorkout.exercises.length);
+      }
+      saveChallenge(current);
+      renderChallenge();
+    });
+  });
   document.getElementById('challenge-check')?.addEventListener('click', () => {
     const current = loadChallenge();
     const currentDay = challengeDayNumber(current);
-    if (!current.completed.includes(currentDay)) current.completed.push(currentDay);
-    current.completed = current.completed.slice().sort((a, b) => a - b);
+    const currentWorkout = challengeWorkout(currentDay, current.gender);
+    const currentRound = challengeRoundsDone(current, currentDay) + 1;
+    if (currentRound < currentWorkout.rounds) {
+      setChallengeRoundsDone(current, currentDay, currentRound);
+      setChallengeExerciseDone(current, currentDay, new Set());
+    } else {
+      if (!current.completed.includes(currentDay)) current.completed.push(currentDay);
+      current.completed = current.completed.slice().sort((a, b) => a - b);
+    }
     saveChallenge(current);
     renderChallenge();
   });
+  applyChallengeMode();
+}
+
+function loadHomeChallenge() {
+  try {
+    const saved = localStorage.getItem(HOME_CHALLENGE_KEY);
+    if (saved) {
+      const c = JSON.parse(saved);
+      if (c && typeof c === 'object') {
+        return {
+          active: !!c.active,
+          startDate: c.startDate || null,
+          completed: Array.isArray(c.completed) ? c.completed.filter(n => n >= 1 && n <= CHALLENGE_DAYS) : [],
+          exerciseDone: c.exerciseDone && typeof c.exerciseDone === 'object' ? c.exerciseDone : {},
+          roundsDone: c.roundsDone && typeof c.roundsDone === 'object' ? c.roundsDone : {}
+        };
+      }
+    }
+  } catch (e) {}
+  return { active: false, startDate: null, completed: [], exerciseDone: {}, roundsDone: {} };
+}
+
+function saveHomeChallenge(c) {
+  try { localStorage.setItem(HOME_CHALLENGE_KEY, JSON.stringify(c)); } catch (e) {}
+}
+
+function homeChallengeWorkout(day) {
+  if (day % 7 === 0) {
+    return { type: 'mobility', title: t('challenge.mobility'), minutes: 12, rounds: 1, exercises: HOME_CHALLENGE_LIBRARY.mobility };
+  }
+  const cycle = (day - 1) % 6;
+  if (cycle === 0 || cycle === 3) return { type: 'work', title: t('challenge.home.workout.lower'), minutes: 24, rounds: 3, exercises: HOME_CHALLENGE_LIBRARY.lower };
+  if (cycle === 1 || cycle === 4) return { type: 'work', title: t('challenge.home.workout.upper'), minutes: 24, rounds: 3, exercises: HOME_CHALLENGE_LIBRARY.upper };
+  return { type: 'work', title: t('challenge.home.workout.fullbody'), minutes: 20, rounds: 4, exercises: HOME_CHALLENGE_LIBRARY.fullbody };
+}
+
+function renderHomeChallenge() {
+  const shell = document.getElementById('home-challenge-shell');
+  if (!shell) return;
+  const challenge = loadHomeChallenge();
+
+  if (!challenge.active) {
+    shell.innerHTML = `
+      <div class="challenge-hero">
+        <div class="challenge-eyebrow">${escapeHtml(t('challenge.home.eyebrow'))}</div>
+        <div class="challenge-title">${escapeHtml(t('challenge.home.title'))}</div>
+        <div class="challenge-intro">${escapeHtml(t('challenge.home.intro'))}</div>
+      </div>
+      <div class="challenge-card commit">
+        <div class="challenge-card-title">${escapeHtml(t('challenge.home.commit.title'))}</div>
+        <div class="challenge-card-text">${escapeHtml(t('challenge.home.commit.text'))}</div>
+        <button type="button" class="challenge-hold" id="home-challenge-hold" style="--hold: 0">
+          <span>${escapeHtml(t('challenge.commit.button'))}</span>
+        </button>
+        <div class="challenge-hold-hint">${escapeHtml(t('challenge.commit.ready'))}</div>
+      </div>
+    `;
+    initHomeChallengeHold();
+    return;
+  }
+
+  const day = challengeDayNumber(challenge);
+  const done = new Set(challenge.completed || []);
+  const todayDone = done.has(day);
+  const workout = homeChallengeWorkout(day);
+  const exerciseDone = challengeExerciseDone(challenge, day);
+  const allExercisesDone = exerciseDone.size >= workout.exercises.length;
+  const roundsDone = challengeRoundsDone(challenge, day);
+  const currentRound = Math.min(workout.rounds, roundsDone + 1);
+  const nextRound = currentRound + 1;
+  const finalRoundDone = allExercisesDone && currentRound >= workout.rounds;
+  const finished = done.size >= CHALLENGE_DAYS;
+  const pct = Math.round((done.size / CHALLENGE_DAYS) * 100);
+  shell.innerHTML = `
+    <div class="challenge-hero active">
+      <div class="challenge-eyebrow">${escapeHtml(t('challenge.day', { day }))}</div>
+      <div class="challenge-title">${escapeHtml(finished ? t('challenge.finished.title') : workout.title)}</div>
+      <div class="challenge-intro">${escapeHtml(finished ? t('challenge.finished.text') : t('challenge.progress', { done: done.size }))}</div>
+      <div class="challenge-progress"><div style="width: ${pct}%"></div></div>
+    </div>
+    <div class="challenge-meta">
+      <div><span>${escapeHtml(t('challenge.today'))}</span><strong>${escapeHtml(workout.type === 'mobility' ? t('challenge.mobility') : t('challenge.work'))}</strong></div>
+      <div><span>${escapeHtml(t('challenge.meta.minutes', { n: workout.minutes }))}</span><strong>${escapeHtml(t('challenge.round', { round: currentRound, rounds: workout.rounds }))}</strong></div>
+    </div>
+    <div class="challenge-list">
+      ${workout.exercises.map((ex, idx) => `
+        <div class="challenge-ex ${exerciseDone.has(idx) ? 'done' : ''}">
+          <div class="challenge-ex-num">${String(idx + 1).padStart(2, '0')}</div>
+          <div>
+            <div class="challenge-ex-name">${escapeHtml(challengeText(ex[0]))}</div>
+            <div class="challenge-ex-note">${escapeHtml(challengeText(ex[1]))}</div>
+          </div>
+          <button type="button" class="challenge-ex-check ${exerciseDone.has(idx) ? 'done' : ''}" data-home-challenge-ex="${idx}" aria-label="\u00dcbung ${idx + 1} abhaken">
+            ${challengeCheckSvg()}
+          </button>
+        </div>
+      `).join('')}
+    </div>
+    <button type="button" class="challenge-check ${todayDone ? 'done' : ''}" id="home-challenge-check" ${todayDone || finished || !allExercisesDone ? 'disabled' : ''}>
+      ${escapeHtml(todayDone ? t('challenge.done') : allExercisesDone ? finalRoundDone ? t('challenge.complete') : t('challenge.nextRound', { round: nextRound }) : t('challenge.complete.hint'))}
+    </button>
+  `;
+  shell.querySelectorAll('[data-home-challenge-ex]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.homeChallengeEx, 10);
+      const current = loadHomeChallenge();
+      const currentDay = challengeDayNumber(current);
+      const currentWorkout = homeChallengeWorkout(currentDay);
+      const doneSet = challengeExerciseDone(current, currentDay);
+      if (doneSet.has(idx)) {
+        doneSet.delete(idx);
+        current.completed = (current.completed || []).filter(n => n !== currentDay);
+      } else {
+        doneSet.add(idx);
+        ensureAudioContext();
+        startTimer(challengeRest(currentWorkout.exercises[idx], currentWorkout), challengeText(currentWorkout.exercises[idx]?.[0]));
+      }
+      setChallengeExerciseDone(current, currentDay, doneSet);
+      if (challengeRoundsDone(current, currentDay) + 1 >= currentWorkout.rounds) {
+        completeChallengeDayIfReady(current, currentDay, currentWorkout.exercises.length);
+      }
+      saveHomeChallenge(current);
+      renderHomeChallenge();
+    });
+  });
+  document.getElementById('home-challenge-check')?.addEventListener('click', () => {
+    const current = loadHomeChallenge();
+    const currentDay = challengeDayNumber(current);
+    const currentWorkout = homeChallengeWorkout(currentDay);
+    const currentRound = challengeRoundsDone(current, currentDay) + 1;
+    if (currentRound < currentWorkout.rounds) {
+      setChallengeRoundsDone(current, currentDay, currentRound);
+      setChallengeExerciseDone(current, currentDay, new Set());
+    } else {
+      if (!current.completed.includes(currentDay)) current.completed.push(currentDay);
+      current.completed = current.completed.slice().sort((a, b) => a - b);
+    }
+    saveHomeChallenge(current);
+    renderHomeChallenge();
+  });
+  applyChallengeMode();
+}
+
+function initHomeChallengeHold() {
+  const btn = document.getElementById('home-challenge-hold');
+  if (!btn) return;
+  const duration = 1400;
+  const stop = () => {
+    if (challengeHoldTimer) clearTimeout(challengeHoldTimer);
+    if (challengeHoldFrame) cancelAnimationFrame(challengeHoldFrame);
+    challengeHoldTimer = null;
+    challengeHoldFrame = null;
+    btn.classList.remove('holding');
+    btn.style.setProperty('--hold', '0');
+  };
+  const tick = () => {
+    const progress = Math.min(1, (Date.now() - challengeHoldStartedAt) / duration);
+    btn.style.setProperty('--hold', String(progress));
+    if (progress < 1) challengeHoldFrame = requestAnimationFrame(tick);
+  };
+  const start = e => {
+    e.preventDefault();
+    stop();
+    btn.classList.add('holding');
+    challengeHoldStartedAt = Date.now();
+    tick();
+    challengeHoldTimer = setTimeout(() => {
+      saveHomeChallenge({ active: true, startDate: todayIso(), completed: [], exerciseDone: {}, roundsDone: {} });
+      stop();
+      renderHomeChallenge();
+    }, duration);
+  };
+  btn.addEventListener('pointerdown', start);
+  btn.addEventListener('pointerup', stop);
+  btn.addEventListener('pointercancel', stop);
+  btn.addEventListener('pointerleave', stop);
 }
 
 function initChallengeHold(gender) {
@@ -3193,7 +3540,7 @@ function initChallengeHold(gender) {
     challengeHoldStartedAt = Date.now();
     tick();
     challengeHoldTimer = setTimeout(() => {
-      saveChallenge({ active: true, gender, startDate: todayIso(), completed: [] });
+      saveChallenge({ active: true, gender, startDate: todayIso(), completed: [], exerciseDone: {}, roundsDone: {} });
       stop();
       renderChallenge();
     }, duration);
@@ -3280,6 +3627,8 @@ refreshRecommendations();
 renderInlineProgressBars();
 renderProgress();
 renderChallenge();
+renderHomeChallenge();
+initChallengeModeSwitch();
 initRecToggle();
 initThemeToggle();
 document.getElementById('share-btn')?.addEventListener('click', shareApp);

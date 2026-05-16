@@ -220,10 +220,44 @@ h1 .legs-t { color: var(--legs); }
 .view.active { display: block; }
 
 /* ==== Challenge View ==== */
+.challenge-mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 14px;
+}
+
+.challenge-mode-switch button {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 8px;
+  cursor: pointer;
+}
+
+.challenge-mode-switch button.active {
+  color: white;
+  background: var(--pack);
+}
+
 .challenge-shell {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.challenge-shell.hidden {
+  display: none;
 }
 
 .challenge-hero {
@@ -446,7 +480,8 @@ html.light .challenge-progress { background: rgba(0, 0, 0, 0.08); }
 
 .challenge-ex {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
   gap: 14px;
   padding: 15px 18px;
   border-top: 1px solid var(--border);
@@ -471,6 +506,40 @@ html.light .challenge-progress { background: rgba(0, 0, 0, 0.08); }
   font-size: 11px;
   color: var(--text-dim);
   margin-top: 3px;
+}
+
+.challenge-ex.done .challenge-ex-name,
+.challenge-ex.done .challenge-ex-note,
+.challenge-ex.done .challenge-ex-num {
+  color: var(--text-dim);
+}
+
+.challenge-ex-check {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: transparent;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.challenge-ex-check svg {
+  width: 17px;
+  height: 17px;
+}
+
+.challenge-ex-check.done {
+  background: var(--pull);
+  border-color: var(--pull);
+  color: #071107;
+}
+
+.challenge-ex-check:active {
+  transform: scale(0.94);
 }
 
 .challenge-check {

@@ -1,10 +1,11 @@
-const CACHE = 'ppl-v43';
+const CACHE = 'ppl-v48';
 const ASSETS = [
   './',
   './index.html',
   './styles.css',
   './app.js',
   './manifest.json',
+  './home-challenge-slideshow.html',
   './icon-192.png',
   './icon-512.png',
   './icon-180.png',

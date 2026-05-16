@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PPL · Zuhause Challenge Carousel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070707;
+    --surface: #151515;
+    --surface-2: #1f1f1f;
+    --border: #2a2a2a;
+    --text: #f5f5f5;
+    --text-dim: #949494;
+    --push: #ff3b30;
+    --pull: #30d158;
+    --legs: #ffcc00;
+    --pack: #0a84ff;
+  }
+
+  * { box-sizing: border-box; }
+
+  html,
+  body {
+    margin: 0;
+    min-height: 100%;
+    height: 100dvh;
+    background: #000;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    overflow: hidden;
+  }
+
+  body {
+    display: grid;
+    place-items: center;
+  }
+
+  button {
+    font: inherit;
+  }
+
+  .stage {
+    position: relative;
+    width: min(100vw, calc(100dvh * 4 / 5));
+    height: min(100dvh, calc(100vw * 5 / 4));
+    max-width: 680px;
+    background: var(--bg);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 16%, rgba(48, 209, 88, 0.28), transparent 32%),
+      radial-gradient(circle at 82% 28%, rgba(255, 204, 0, 0.2), transparent 30%),
+      radial-gradient(circle at 56% 84%, rgba(10, 132, 255, 0.22), transparent 32%),
+      linear-gradient(155deg, rgba(255, 59, 48, 0.14), transparent 36%);
+    z-index: 0;
+  }
+
+  .stage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 24px 24px;
+    opacity: 0.22;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .progress {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 14px);
+    left: 16px;
+    right: 16px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    z-index: 30;
+  }
+
+  .bar {
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.22);
+    overflow: hidden;
+  }
+
+  .bar span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    background: var(--text);
+  }
+
+  .bar.done span,
+  .bar.active span {
+    transform: scaleX(1);
+  }
+
+  .bar.active span {
+    animation: fill 4.2s linear forwards;
+  }
+
+  @keyframes fill {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 58px)
+      34px
+      calc(env(safe-area-inset-bottom, 0px) + 70px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    opacity: 0;
+    transform: translateX(18px) scale(0.98);
+    transition: opacity 0.32s ease, transform 0.32s ease;
+    pointer-events: none;
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    pointer-events: auto;
+  }
+
+  .kicker {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    gap: 8px;
+    color: var(--pull);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .kicker::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 18px currentColor;
+  }
+
+  h1,
+  h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: 400;
+    line-height: 0.86;
+    letter-spacing: 0.025em;
+    margin: 14px 0 0;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: clamp(64px, 13vw, 92px);
+  }
+
+  h2 {
+    font-size: clamp(52px, 10vw, 76px);
+  }
+
+  .accent-pull { color: var(--pull); }
+  .accent-pack { color: var(--pack); }
+  .accent-legs { color: var(--legs); }
+  .accent-push { color: var(--push); }
+
+  .copy {
+    margin-top: 16px;
+    max-width: 320px;
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .big-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 172px;
+    line-height: 0.82;
+    letter-spacing: 0.02em;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.72);
+    text-shadow: 0 0 28px rgba(48, 209, 88, 0.22);
+  }
+
+  .stack {
+    display: grid;
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  .pill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: rgba(21,21,21,0.84);
+    backdrop-filter: blur(14px);
+    color: var(--text);
+    font-size: 12px;
+  }
+
+  .pill strong {
+    color: var(--pull);
+    font-weight: 700;
+  }
+
+  .phone {
+    position: relative;
+    margin: 14px auto 0;
+    width: min(74%, 300px);
+    aspect-ratio: 9 / 16;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 34px;
+    padding: 12px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    box-shadow: 0 24px 70px rgba(0,0,0,0.46);
+  }
+
+  .phone-screen {
+    height: 100%;
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    background: #0a0a0a;
+    padding: 18px 14px;
+    overflow: hidden;
+  }
+
+  .mini-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    padding: 4px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    margin-bottom: 14px;
+  }
+
+  .mini-tabs span {
+    text-align: center;
+    padding: 8px 4px;
+    border-radius: 7px;
+    color: var(--text-dim);
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .mini-tabs span.active {
+    background: var(--pack);
+    color: #fff;
+  }
+
+  .mini-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 34px;
+    line-height: 0.9;
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+  }
+
+  .mini-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .mini-meta div,
+  .mini-ex {
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface);
+  }
+
+  .mini-meta div {
+    padding: 9px 8px;
+    font-size: 8px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .mini-meta strong {
+    display: block;
+    margin-top: 3px;
+    color: var(--text);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    text-transform: none;
+  }
+
+  .mini-ex {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 8px;
+    margin-bottom: 6px;
+  }
+
+  .mini-num {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--text-dim);
+    font-size: 16px;
+  }
+
+  .mini-name {
+    font-size: 9px;
+    font-weight: 700;
+  }
+
+  .mini-note {
+    font-size: 8px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .mini-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: #061106;
+    background: var(--pull);
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  .timer {
+    margin-top: 12px;
+    border-radius: 16px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    text-align: center;
+    box-shadow: 0 0 36px rgba(48, 209, 88, 0.16);
+  }
+
+  .timer-label {
+    color: var(--text-dim);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .timer-time {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--pull);
+    font-size: 82px;
+    line-height: 0.92;
+    margin-top: 8px;
+    text-shadow: 0 0 22px rgba(48, 209, 88, 0.32);
+  }
+
+  .vs {
+    display: grid;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .vs-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(21,21,21,0.82);
+  }
+
+  .vs-row span {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .vs-row strong {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--text);
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+  }
+
+  .badge {
+    display: inline-grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--pull);
+    color: #061106;
+    font-weight: 700;
+  }
+
+  .challenge-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 7px;
+    margin-top: 22px;
+  }
+
+  .day {
+    aspect-ratio: 1;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .day.done {
+    background: var(--pull);
+    border-color: var(--pull);
+    color: #061106;
+    font-weight: 700;
+    box-shadow: 0 0 16px rgba(48, 209, 88, 0.34);
+  }
+
+  .cta {
+    display: grid;
+    gap: 12px;
+  }
+
+  .cta-button {
+    width: 100%;
+    padding: 16px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--pull);
+    color: #061106;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .footer {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--text-dim);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .brand {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .controls {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+    z-index: 40;
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 8px;
+    align-items: center;
+    transition: opacity 0.18s ease;
+  }
+
+  .control-btn,
+  .dot {
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(21,21,21,0.84);
+    color: var(--text);
+    border-radius: 999px;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+  }
+
+  .control-btn {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .dots {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    color: transparent;
+  }
+
+  .dot.active {
+    width: 22px;
+    background: var(--pull);
+    border-color: var(--pull);
+  }
+
+  .nav-zone {
+    position: absolute;
+    top: 54px;
+    bottom: 64px;
+    z-index: 20;
+    width: 38%;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .nav-zone.prev { left: 0; }
+  .nav-zone.next { right: 0; }
+
+  body.clean .controls,
+  body.clean .nav-zone {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (max-width: 380px) {
+    .slide {
+      padding-left: 22px;
+      padding-right: 22px;
+    }
+
+    .phone {
+      width: 88%;
+    }
+  }
+</style>
+</head>
+<body>
+<main class="stage" aria-label="PPL Zuhause Challenge Carousel">
+  <div class="progress" aria-hidden="true"></div>
+
+  <section class="slide active">
+    <div>
+      <div class="kicker">Neues Feature</div>
+      <h1>Kein Gym?<br><span class="accent-pull">Kein Problem.</span></h1>
+      <p class="copy">Die 30 Tage Challenge bekommt eine Zuhause Variante. Kein Equipment, kein Warten, kein komplizierter Plan.</p>
+    </div>
+    <div class="footer"><span class="brand">PPL</span><span>30 Tage Zuhause</span></div>
+  </section>
+
+  <section class="slide">
+    <div>
+      <div class="kicker">Der Hook</div>
+      <h2>Was waere,<br>wenn dein Training<br><span class="accent-legs">12 Minuten</span><br>braucht?</h2>
+      <div class="stack">
+        <div class="pill"><span>Wohnzimmer</span><strong>reicht</strong></div>
+        <div class="pill"><span>Koerpergewicht</span><strong>reicht</strong></div>
+        <div class="pill"><span>Heute anfangen</span><strong>reicht</strong></div>
+      </div>
+    </div>
+    <div class="footer"><span class="brand">PPL</span><span>Speichern fuer Tag 1</span></div>
+  </section>
+
+  <section class="slide">
+    <div>
+      <div class="kicker">So sieht es aus</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="mini-tabs"><span>Gym</span><span class="active">Zuhause</span></div>
+          <div class="mini-title">Beine + Core</div>
+          <div class="mini-meta">
+            <div>Heute<strong>Workout</strong></div>
+            <div>24 min<strong>Runde 1 von 3</strong></div>
+          </div>
+          <div class="mini-ex"><span class="mini-num">01</span><div><div class="mini-name">Kniebeugen</div><div class="mini-note">15 bis 25 Wdh</div></div><span class="mini-check">✓</span></div>
+          <div class="mini-ex"><span class="mini-num">02</span><div><div class="mini-name">Reverse Lunges</div><div class="mini-note">10 bis 14 je Seite</div></div><span class="mini-check">✓</span></div>
+          <div class="mini-ex"><span class="mini-num">03</span><div><div class="mini-name">Glute Bridges</div><div class="mini-note">15 bis 25 Wdh</div></div><span class="mini-check">✓</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span class="brand">PPL</span><span>Gym oder Zuhause</span></div>
+  </section>
+
+  <section class="slide">
+    <div>
+      <div class="kicker">Das Detail</div>
+      <h2>Abhaken.<br><span class="accent-pull">Pause laeuft.</span><br>Weiter.</h2>
+      <div class="timer">
+        <div class="timer-label">Pause</div>
+        <div class="timer-time">0:45</div>
+      </div>
+      <p class="copy">Jede Uebung wird einzeln abgehakt. Danach startet direkt der Timer fuer die naechste Runde.</p>
+    </div>
+    <div class="footer"><span class="brand">PPL</span><span>Keine Zettel, kein Zaehlen</span></div>
+  </section>
+
+  <section class="slide">
+    <div>
+      <div class="kicker">Warum es funktioniert</div>
+      <h2>Du musst nicht<br>motiviert sein.<br>Du brauchst nur<br><span class="accent-pack">den naechsten Haken.</span></h2>
+      <div class="vs">
+        <div class="vs-row"><span>Plan suchen</span><strong>Nein</strong></div>
+        <div class="vs-row"><span>Equipment kaufen</span><strong>Nein</strong></div>
+        <div class="vs-row"><span>Tag 1 starten</span><span class="badge">Ja</span></div>
+      </div>
+    </div>
+    <div class="footer"><span class="brand">PPL</span><span>Einfachheit gewinnt</span></div>
+  </section>
+
+  <section class="slide">
+    <div>
+      <div class="kicker">30 Tage</div>
+      <div class="big-number">30</div>
+      <h2><span class="accent-pull">kleine Wins</span><br>statt ein grosser Vorsatz</h2>
+      <div class="challenge-grid" aria-hidden="true">
+        <span class="day done">1</span><span class="day done">2</span><span class="day done">3</span><span class="day">4</span><span class="day">5</span>
+        <span class="day done">6</span><span class="day">7</span><span class="day">8</span><span class="day">9</span><span class="day">10</span>
+        <span class="day">11</span><span class="day">12</span><span class="day">13</span><span class="day">14</span><span class="day">15</span>
+        <span class="day">16</span><span class="day">17</span><span class="day">18</span><span class="day">19</span><span class="day">20</span>
+        <span class="day">21</span><span class="day">22</span><span class="day">23</span><span class="day">24</span><span class="day">25</span>
+        <span class="day">26</span><span class="day">27</span><span class="day">28</span><span class="day">29</span><span class="day">30</span>
+      </div>
+    </div>
+    <div class="footer"><span class="brand">PPL</span><span>Heute zaehlt</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="cta">
+      <div class="kicker">Call to Action</div>
+      <h1>Starte<br><span class="accent-pull">Tag 1</span><br>zu Hause.</h1>
+      <p class="copy">PPL als App speichern, Challenge oeffnen, Zuhause waehlen und den ersten Haken setzen.</p>
+      <button class="cta-button" type="button">Challenge starten</button>
+    </div>
+    <div class="footer"><span class="brand">PPL</span><span>Push Pull Legs</span></div>
+  </section>
+
+  <button class="nav-zone prev" type="button" aria-label="Vorherige Folie"></button>
+  <button class="nav-zone next" type="button" aria-label="Naechste Folie"></button>
+
+  <div class="controls">
+    <button class="control-btn" type="button" data-action="prev">Zurueck</button>
+    <div class="dots" aria-label="Folien"></div>
+    <button class="control-btn" type="button" data-action="play">Pause</button>
+    <button class="control-btn" type="button" data-action="clean">Ohne UI</button>
+  </div>
+</main>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const progress = document.querySelector('.progress');
+  const dots = document.querySelector('.dots');
+  const playBtn = document.querySelector('[data-action="play"]');
+  const params = new URLSearchParams(window.location.search);
+  const duration = 4200;
+  let active = 0;
+  let playing = params.get('play') !== '0';
+  let timer = null;
+
+  if (params.get('clean') === '1') document.body.classList.add('clean');
+
+  slides.forEach((_, index) => {
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.innerHTML = '<span></span>';
+    progress.appendChild(bar);
+
+    const dot = document.createElement('button');
+    dot.className = 'dot';
+    dot.type = 'button';
+    dot.textContent = String(index + 1);
+    dot.addEventListener('click', () => go(index));
+    dots.appendChild(dot);
+  });
+
+  function render() {
+    slides.forEach((slide, index) => slide.classList.toggle('active', index === active));
+    document.querySelectorAll('.bar').forEach((bar, index) => {
+      bar.classList.toggle('done', index < active);
+      bar.classList.toggle('active', index === active && playing);
+      const fill = bar.querySelector('span');
+      fill.style.animation = 'none';
+      void fill.offsetWidth;
+      fill.style.animation = '';
+    });
+    document.querySelectorAll('.dot').forEach((dot, index) => dot.classList.toggle('active', index === active));
+    playBtn.textContent = playing ? 'Pause' : 'Play';
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    if (!playing) return;
+    timer = setTimeout(() => go((active + 1) % slides.length), duration);
+  }
+
+  function go(index) {
+    active = (index + slides.length) % slides.length;
+    render();
+    schedule();
+  }
+
+  document.querySelector('[data-action="prev"]').addEventListener('click', () => go(active - 1));
+  document.querySelector('[data-action="play"]').addEventListener('click', () => {
+    playing = !playing;
+    render();
+    schedule();
+  });
+  document.querySelector('[data-action="clean"]').addEventListener('click', () => {
+    document.body.classList.toggle('clean');
+  });
+  document.querySelector('.nav-zone.prev').addEventListener('click', () => go(active - 1));
+  document.querySelector('.nav-zone.next').addEventListener('click', () => go(active + 1));
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft') go(active - 1);
+    if (event.key === 'ArrowRight') go(active + 1);
+    if (event.key === ' ') {
+      event.preventDefault();
+      playing = !playing;
+      render();
+      schedule();
+    }
+    if (event.key.toLowerCase() === 'h') document.body.classList.toggle('clean');
+  });
+
+  render();
+  schedule();
+</script>
+</body>
+</html>
